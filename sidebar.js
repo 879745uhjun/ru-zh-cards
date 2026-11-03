@@ -26,8 +26,10 @@
   var html = '<span class="gs-caption">快捷</span>';
   if (!isBook) html += link(backHref || 'book.html', '←', '上一级', 'gsBack', ' gs-back');
   if (isCard) {
-    html += '<button class="gs-btn" id="gsPrev" type="button"><span class="gs-icon" aria-hidden="true">↑</span><span>上一张</span></button>';
-    html += '<button class="gs-btn" id="gsNext" type="button"><span class="gs-icon" aria-hidden="true">↓</span><span>下一张</span></button>';
+    html += '<span class="gs-page-group"><span class="gs-page-label">翻页</span>';
+    html += '<button class="gs-btn gs-page" id="gsPrev" type="button"><span class="gs-icon" aria-hidden="true">↑</span><span>上一页</span></button>';
+    html += '<button class="gs-btn gs-page" id="gsNext" type="button"><span class="gs-icon" aria-hidden="true">↓</span><span>下一页</span></button>';
+    html += '</span>';
   }
   html += '<span class="gs-divider" aria-hidden="true"></span>';
   html += link('book.html', '⌂', '书首页', 'gsBook', page === 'book.html' ? ' active' : '');
