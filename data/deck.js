@@ -1,6 +1,6 @@
 window.RU_ZH_DECK = {
-  "title": "旅游与城市",
-  "subtitle": "Урок 4 · 第 4 课词汇",
+  "title": "第 4 课 · 旅游与城市",
+  "subtitle": "Урок 4 · 词汇 + 句子",
   "tag": "第 4 课",
   "cards": [
     {
