@@ -6,6 +6,7 @@
   var UI_KEY = 'ru-zh-cards-ui-v0.2';
   var PROGRESS_KEY = 'ru-zh-cards-progress-v0.2';
   var SCHEDULE_KEY = 'ru-zh-cards-schedule-v0.3';
+  var PLAN_KEY = 'ru-zh-cards-plan-v1';
   var BUILTIN_DECK = window.RU_ZH_DECK;
   var BUILTIN_LESSON1 = window.RU_ZH_LESSON1;
   var BUILTIN_LESSON2 = window.RU_ZH_LESSON2;
@@ -25,6 +26,7 @@
     mode: 'both',
     revealed: false,
     study: false,
+    editEnabled: false,
     filter: 'all',
     type: 'all',
     query: '',
@@ -44,6 +46,7 @@
   var toastEl = $('#toast');
   var modal = $('#importModal');
   var editModal = $('#editModal');
+  var sourceModal = $('#sourceModal');
   var toastTimer = null;
   var lastFocus = null;
 
@@ -99,6 +102,35 @@
       .replace(/\[([А-Яа-яЁё])\]/g, '$1')
       .replace(/\u0301/g, '')
       .trim();
+  }
+
+  function normalizeSources(raw) {
+    var list = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+    var out = [];
+    list.forEach(function (item) {
+      if (!item || typeof item !== 'object') return;
+      var kind = String(item.kind || item.type || '').indexOf('对话') !== -1 ? '对话' : '课文';
+      var source = {
+        book: String(item.book || '新东方大学俄语（3）').trim(),
+        unit: String(item.unit || item.lesson || '').trim(),
+        kind: kind,
+        number: String(item.number || item.part || '').trim(),
+        title: String(item.title || '').trim(),
+        page: item.page == null ? '' : String(item.page).trim(),
+        text: String(item.text || item.quote || '').trim(),
+        quote: String(item.quote || '').trim()
+      };
+      if (!source.unit && !source.title && !source.text) return;
+      out.push(source);
+    });
+    return out;
+  }
+
+  function sourcesForRu(ru) {
+    var map = window.RU_ZH_SOURCES || {};
+    var key = cleanRu(ru).toLowerCase();
+    var found = map[key] || map[cleanRu(ru)] || [];
+    return normalizeSources(found);
   }
 
   function splitWordPunct(text) {
@@ -219,6 +251,8 @@
     if (!cleaned) throw new Error('俄语原文为空');
 
     var type = normalizeType(raw.type) || detectCardType(cleaned);
+    var sources = normalizeSources(raw.sources || raw.source);
+    if (!sources.length) sources = sourcesForRu(cleaned);
     return {
       id: raw.id || ('c' + (index + 1)),
       ru: cleaned,
@@ -226,6 +260,7 @@
       tag: String(raw.tag || '未分类').trim(),
       type: type,
       note: String(raw.note || '').trim(),
+      sources: sources,
       words: words
     };
   }
@@ -273,6 +308,7 @@
           tag: card.tag,
           type: card.type,
           note: card.note,
+          sources: card.sources || [],
           words: card.words.map(function (w) {
             return { text: w.text, stress: w.stress, grammar: w.grammar, punct: w.punct, lead: w.lead };
           })
@@ -283,7 +319,7 @@
 
   function saveDecks() {
     try {
-      localStorage.setItem(DECKS_KEY, JSON.stringify(state.decks.map(deckPayload)));
+      localStorage.setItem(DECKS_KEY, JSON.stringify(state.decks.filter(function (deck) { return deck.id !== 'plan'; }).map(deckPayload)));
     } catch (err) {
       // localStorage 不可用时，程序仍可继续使用当前会话。
     }
@@ -362,6 +398,39 @@
     var builtins = builtinDecks();
     if (!builtins.length) throw new Error('未找到内置词表 data/deck.js');
     return builtins.map(function (deck) { return normalizeDeck(deck); });
+  }
+
+  function loadPlanDeck() {
+    try {
+      var raw = localStorage.getItem(PLAN_KEY);
+      if (!raw) return null;
+      var plan = JSON.parse(raw);
+      var keys = plan && Array.isArray(plan.keys) ? plan.keys : [];
+      if (!keys.length) return null;
+      var byKey = {};
+      state.decks.forEach(function (deck) {
+        if (deck.id === 'plan') return;
+        deck.cards.forEach(function (card) {
+          var key = cardKey(card);
+          if (!byKey[key]) byKey[key] = card;
+        });
+      });
+      var cards = [];
+      keys.forEach(function (key) {
+        if (byKey[key]) cards.push(byKey[key]);
+      });
+      if (!cards.length) return null;
+      var labels = { sequential: '顺序学习', custom: '自定义学习', review: '复习模式' };
+      return {
+        id: 'plan',
+        title: '学习计划 · ' + (labels[plan.mode] || '自定义'),
+        subtitle: '按计划生成的临时课程',
+        tag: '学习计划',
+        cards: cards
+      };
+    } catch (err) {
+      return null;
+    }
   }
 
   function renderDeckOptions() {
@@ -537,6 +606,7 @@
       localStorage.setItem(UI_KEY, JSON.stringify({
         mode: state.mode,
         study: state.study,
+        editEnabled: state.editEnabled,
         filter: state.filter,
         type: state.type,
         random: state.random,
@@ -823,6 +893,16 @@
     $('#deckTitle').textContent = deck.title;
     var deckSelect = $('#deckSelect');
     if (deckSelect) deckSelect.value = state.deckId;
+    var from = new URLSearchParams(window.location.search).get('from');
+    var backLink = $('#backLevelLink');
+    if (backLink) {
+      backLink.href = from === 'unit'
+        ? 'unit.html?deck=' + encodeURIComponent(state.deckId)
+        : 'book.html';
+      backLink.title = from === 'unit' ? '返回当前单元' : '返回书首页';
+    }
+    var overviewLink = $('#overviewLink');
+    if (overviewLink) overviewLink.href = 'unit.html?deck=' + encodeURIComponent(state.deckId) + '&from=card';
     $('#currentNum').textContent = total ? pad(state.index + 1) : '—';
     $('#totalNum').textContent = pad(total);
     $('#jumpTotal').textContent = total;
@@ -847,7 +927,9 @@
       : '开启学习模式：默认显示全部语法，开启后点击单词才显示';
     studyBtn.querySelector('.study-label').textContent = state.study ? '学习模式 · 开' : '学习模式';
 
-    $('#editCardBtn').hidden = !card;
+    $('#editCardBtn').hidden = !card || !state.editEnabled;
+    var editToggle = $('#editToggle');
+    if (editToggle) editToggle.setAttribute('aria-pressed', state.editEnabled ? 'true' : 'false');
     $('#rehideBtn').hidden = !card || !(state.mode !== 'both' && state.revealed);
     $('#prevBtn').disabled = !total || state.index === 0;
     $('#nextBtn').disabled = !total || state.index === total - 1;
@@ -965,9 +1047,66 @@
     }).join(' ');
   }
 
+  function closeSourceModal() {
+    if (!sourceModal) return;
+    sourceModal.hidden = true;
+    document.body.classList.remove('modal-open');
+  }
+
+  function highlightSource(text, needle) {
+    var raw = String(text || '');
+    var safeNeedle = String(needle || '');
+    if (!safeNeedle) return escapeHtml(raw);
+    var index = raw.toLowerCase().indexOf(safeNeedle.toLowerCase());
+    if (index < 0) return escapeHtml(raw);
+    return escapeHtml(raw.slice(0, index)) +
+      '<mark class="source-hl">' + escapeHtml(raw.slice(index, index + safeNeedle.length)) + '</mark>' +
+      escapeHtml(raw.slice(index + safeNeedle.length));
+  }
+
+  function sourceKicker(source) {
+    var parts = [];
+    if (source.book) parts.push(source.book);
+    if (source.unit) parts.push(source.unit);
+    return parts.join(' · ');
+  }
+
+  function sourceTypeLabel(source) {
+    var number = String(source.number || '').replace(/^(课文|对话)\s*/, '');
+    return source.kind + (number ? ' ' + number : '');
+  }
+
+  function openSourceModal() {
+    var card = currentCard();
+    if (!card || !sourceModal) return;
+    var sources = card.sources || [];
+    $('#sourceSub').textContent = card.ru + ' · ' + card.zh;
+    var list = $('#sourceList');
+    if (!sources.length) {
+      list.innerHTML = '<div class="source-empty"><strong>暂无来源</strong>这张卡还没有录入原课文/对话出处。<br>等 PDF 原文整理后，这里会显示书名、课次、对话编号和原文。</div>';
+    } else {
+      list.innerHTML = sources.map(function (source) {
+        var passage = source.text || source.quote || '';
+        var needle = source.quote || card.ru;
+        return '<article class="source-item">' +
+          '<div class="source-kicker"><span class="source-kind">' + escapeHtml(sourceTypeLabel(source)) + '</span>' + escapeHtml(sourceKicker(source)) + '</div>' +
+          (source.title ? '<h3 class="source-title">' + escapeHtml(source.title) + '</h3>' : '') +
+          (source.page ? '<p class="source-meta">第 ' + escapeHtml(source.page) + ' 页</p>' : '') +
+          '<blockquote class="source-text">' + highlightSource(passage, needle) + '</blockquote>' +
+        '</article>';
+      }).join('');
+    }
+    sourceModal.hidden = false;
+    document.body.classList.add('modal-open');
+  }
+
   function openEditModal() {
     var card = currentCard();
     if (!card) return;
+    if (!state.editEnabled) {
+      showToast('请先开启“编辑权限”');
+      return;
+    }
     editLastFocus = document.activeElement;
     $('#editRu').value = ruWithStress(card);
     $('#editZh').value = card.zh;
@@ -1030,6 +1169,7 @@
         zh: zh,
         tag: tag,
         note: note,
+        sources: card.sources || [],
         grammar: groups
       }, state.deck.cards.indexOf(card));
 
@@ -1300,6 +1440,7 @@
           tag: card.tag,
           type: card.type,
           note: card.note,
+          sources: card.sources || [],
           words: card.words.map(function (w) {
             return { text: w.text, stress: w.stress, grammar: w.grammar, punct: w.punct, lead: w.lead };
           })
@@ -1518,7 +1659,26 @@
   $('#studyToggle').addEventListener('click', toggleStudy);
   $('#importBtn').addEventListener('click', openModal);
   $('#closeModal').addEventListener('click', closeModal);
+  var editToggle = $('#editToggle');
+  if (editToggle) {
+    editToggle.addEventListener('click', function () {
+      state.editEnabled = !state.editEnabled;
+      saveUI();
+      render();
+      showToast(state.editEnabled ? '编辑权限已开启' : '编辑权限已关闭');
+    });
+  }
   $('#editCardBtn').addEventListener('click', openEditModal);
+  $('#sourceBtn').addEventListener('click', openSourceModal);
+  $('#closeSourceModal').addEventListener('click', closeSourceModal);
+  document.querySelectorAll('[data-close-source]').forEach(function (el) {
+    el.addEventListener('click', closeSourceModal);
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && sourceModal && !sourceModal.hidden) {
+      closeSourceModal();
+    }
+  });
   $('#closeEditModal').addEventListener('click', closeEditModal);
   $('#saveCardBtn').addEventListener('click', saveCardEdit);
   $('#importConfirm').addEventListener('click', importCurrent);  $('#validateImportBtn').addEventListener('click', validateImport);
@@ -1789,10 +1949,19 @@
       }
       state.deck = wantedDeck;
       state.deckId = wantedDeck.id;
+      if (params.get('plan') === '1') {
+        var planDeck = loadPlanDeck();
+        if (planDeck) {
+          state.decks.unshift(planDeck);
+          state.deck = planDeck;
+          state.deckId = 'plan';
+        }
+      }
       if (ui.lastCard && !state.lastCards[state.deckId]) state.lastCards[state.deckId] = ui.lastCard;
 
       if (['both', 'ru', 'zh'].includes(ui.mode)) state.mode = ui.mode;
       state.study = !!ui.study;
+      state.editEnabled = !!ui.editEnabled;
       if (typeof ui.filter === 'string') state.filter = ui.filter;
       if (['all', 'phrase', 'sentence'].includes(ui.type)) state.type = ui.type;
       state.random = !!ui.random;
@@ -1807,6 +1976,7 @@
       if (['all', 'phrase', 'sentence'].includes(typeParam)) state.type = typeParam;
       if (params.get('q')) state.query = params.get('q');
       if (params.get('review') === '1') state.onlyReview = true;
+      if (params.get('edit') === '1' || params.get('editSave') === '1') state.editEnabled = true;
       if (params.get('due') === '1') state.dueOnly = true;
       if (params.get('random') === '1') state.random = true;
 
@@ -1863,6 +2033,7 @@
       }
       if (params.get('import') === '1') openModal();
       if (params.get('edit') === '1') openEditModal();
+      if (params.get('source') === '1') openSourceModal();
       if (params.get('editSave') === '1') {
         openEditModal();
         $('#editNote').value = '编辑测试';
