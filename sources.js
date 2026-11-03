@@ -132,6 +132,7 @@
         '</div>' +
         (source.title ? '<div class="source-title" style="font-size:11px;color:#5f574c;margin-top:5px;">' + escapeHtml(source.title) + '</div>' : '') +
         '<blockquote class="source-quote">' + highlight(quote, needle) + '</blockquote>' +
+        (full && full !== quote ? '<details class="source-more"><summary>查看对话 / 全文（OCR 初稿）</summary><blockquote class="source-quote full">' + highlight(full, needle) + '</blockquote></details>' : '') +
       '</article>';
     }).join('');
   }
