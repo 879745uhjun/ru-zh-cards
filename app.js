@@ -912,8 +912,13 @@
     var editToggle = $('#editToggle');
     if (editToggle) editToggle.setAttribute('aria-pressed', state.editEnabled ? 'true' : 'false');
     $('#rehideBtn').hidden = !card || !(state.mode !== 'both' && state.revealed);
+    var nextLesson = nextLessonDeck();
+    var atLast = total > 0 && state.index === total - 1;
     $('#prevBtn').disabled = !total || state.index === 0;
-    $('#nextBtn').disabled = !total || state.index === total - 1;
+    $('#nextBtn').disabled = !total || (atLast && !nextLesson);
+    $('#nextBtn').title = atLast && nextLesson ? '本课结束，继续到：' + nextLesson.title : '';
+    var nextLabel = $('#nextBtn .nav-label');
+    if (nextLabel) nextLabel.textContent = atLast && nextLesson ? '下一课' : '下一页';
 
     renderFilterUI();
 
@@ -948,6 +953,40 @@
     cardBody.innerHTML = body;
     cardBody.classList.toggle('study-mode', state.study);
     saveUI();
+  }
+
+  function nextLessonDeck() {
+    if (!state.deckId || state.deckId === 'plan') return null;
+    var current = -1;
+    for (var i = 0; i < state.decks.length; i++) {
+      if (state.decks[i].id === state.deckId) { current = i; break; }
+    }
+    if (current < 0) return null;
+    for (var j = current + 1; j < state.decks.length; j++) {
+      if (state.decks[j].id !== 'plan') return state.decks[j];
+    }
+    return null;
+  }
+
+  function goNext() {
+    var total = state.visible.length;
+    if (!total) return;
+    if (state.index < total - 1) {
+      goTo(state.index + 1);
+      return;
+    }
+    var next = nextLessonDeck();
+    if (!next) {
+      showToast('已经是最后一个单元');
+      return;
+    }
+    var message = '「' + state.deck.title + '」已结束。\n\n是否继续到下一课：\n「' + next.title + '」？';
+    if (window.confirm(message)) {
+      switchDeck(next.id);
+      state.index = 0;
+      state.revealed = false;
+      render();
+    }
   }
 
   function goTo(index) {
@@ -1823,7 +1862,7 @@
       return;
     }
     if (event.target.closest('#nextBtn')) {
-      goTo(state.index + 1);
+      goNext();
       return;
     }
   });
@@ -1918,7 +1957,7 @@
       goTo(state.index - 1);
     } else if (event.key === 'ArrowRight') {
       event.preventDefault();
-      goTo(state.index + 1);
+      goNext();
     } else if (event.key === ' ' || event.key === 'Spacebar') {
       if (state.mode !== 'both') {
         event.preventDefault();
@@ -1944,7 +1983,7 @@
     touchStartX = null;
     touchStartY = null;
     if (Math.abs(dx) > 52 && Math.abs(dy) < 42) {
-      goTo(state.index + (dx < 0 ? 1 : -1));
+      if (dx < 0) goNext(); else goTo(state.index - 1);
     }
   }, { passive: true });
 
