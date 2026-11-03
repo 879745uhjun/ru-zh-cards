@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>来源查询 · 俄汉记忆卡</title>
+<link rel="stylesheet" href="unit.css">
+<link rel="stylesheet" href="sources.css">
+</head>
+<body>
+<header class="unit-header">
+  <div class="unit-brand">
+    <div class="unit-mark">Я</div>
+    <div>
+      <h1>来源查询</h1>
+      <p>按词组 / 句子查原课文与对话</p>
+    </div>
+  </div>
+  <div class="unit-controls">
+    <a class="unit-btn" href="book.html">← 上一级</a>
+    <a class="unit-btn" href="index.html?deck=lesson1">卡片模式</a>
+    <button class="unit-btn primary" id="printBtn" type="button">打印结果</button>
+  </div>
+</header>
+
+<main class="source-main">
+  <div class="source-hero">
+    <div>
+      <span class="unit-eyebrow">SOURCE INDEX</span>
+      <h2>查这个词从哪里来</h2>
+      <p>输入俄语或中文，查它在哪一本书、哪一课、第几个课文或对话，并显示原文上下文。</p>
+    </div>
+    <div class="source-total" id="sourceTotal">0 条来源</div>
+  </div>
+  <label class="source-search">
+    <span>⌕</span>
+    <input id="sourceSearch" type="search" placeholder="输入俄语 / 中文 / 课文标题" autocomplete="off">
+  </label>
+  <div class="source-hint" id="sourceHint">输入关键词开始查询。</div>
+  <div class="source-results" id="sourceResults"></div>
+</main>
+
+<script src="data/deck.js"></script>
+<script src="data/lesson1.js"></script>
+<script src="data/lesson2.js"></script>
+<script src="data/lesson3.js"></script>
+<script src="data/lesson5.js"></script>
+<script src="data/decks-source.js"></script>
+<script src="data/sources.js"></script>
+<script src="sources.js"></script>
+</body>
+</html>
