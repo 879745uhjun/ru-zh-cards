@@ -303,6 +303,9 @@ button:disabled{cursor:not-allowed;}
 .source-meta{margin:4px 0 0;color:var(--muted);font-size:9.5px;}
 .source-text{margin:10px 0 0;padding:10px 12px;border-left:2px solid #c49a5a;background:#f8f2e8;color:#4f483e;font-family:var(--ru);font-size:14px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;border-radius:0 7px 7px 0;max-height:220px;overflow-y:auto;}
 .source-hl{background:#f4d7a7;color:var(--ink);padding:0 1px;border-radius:2px;}
+.source-more{margin-top:8px;color:var(--muted);font-size:10px;}
+.source-more summary{cursor:pointer;color:var(--accent-deep);font-weight:650;}
+.source-text.full{max-height:180px;margin-top:6px;font-size:12.5px;}
 .source-empty{padding:34px 18px;text-align:center;color:var(--muted);font-size:12px;line-height:1.8;}
 .source-empty strong{display:block;color:var(--ink);font-size:14px;margin-bottom:5px;}
 .source-card-line{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:12px;}
