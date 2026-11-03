@@ -114,7 +114,9 @@
     }
     results.innerHTML = filtered.map(function (record) {
       var source = record.source;
-      var needle = source.quote || cleanRu(record.card.ru);
+      var needle = cleanRu(record.card.ru);
+      var quote = source.quote || source.text || '';
+      var full = source.text || '';
       var href = 'index.html?deck=' + encodeURIComponent(record.deck.id) + '&card=' + (record.index + 1);
       return '<article class="source-result">' +
         '<div class="source-result-head"><div class="source-result-card">' +
@@ -126,7 +128,8 @@
           (source.page ? '<span class="source-page">第 ' + escapeHtml(source.page) + ' 页</span>' : '') +
         '</div>' +
         (source.title ? '<div class="source-title" style="font-size:11px;color:#5f574c;margin-top:5px;">' + escapeHtml(source.title) + '</div>' : '') +
-        '<blockquote class="source-quote">' + highlight(record.passage, needle) + '</blockquote>' +
+        '<blockquote class="source-quote">' + highlight(quote, needle) + '</blockquote>' +
+        (full && full !== quote ? '<details class="source-more"><summary>查看完整原文</summary><blockquote class="source-quote full">' + highlight(full, needle) + '</blockquote></details>' : '') +
       '</article>';
     }).join('');
   }
