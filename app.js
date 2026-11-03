@@ -1086,13 +1086,15 @@
       list.innerHTML = '<div class="source-empty"><strong>暂无来源</strong>这张卡还没有录入原课文/对话出处。<br>等 PDF 原文整理后，这里会显示书名、课次、对话编号和原文。</div>';
     } else {
       list.innerHTML = sources.map(function (source) {
-        var passage = source.text || source.quote || '';
-        var needle = source.quote || card.ru;
+        var passage = source.quote || source.text || '';
+        var full = source.text || '';
+        var needle = card.ru;
         return '<article class="source-item">' +
           '<div class="source-kicker"><span class="source-kind">' + escapeHtml(sourceTypeLabel(source)) + '</span>' + escapeHtml(sourceKicker(source)) + '</div>' +
           (source.title ? '<h3 class="source-title">' + escapeHtml(source.title) + '</h3>' : '') +
           (source.page ? '<p class="source-meta">第 ' + escapeHtml(source.page) + ' 页</p>' : '') +
           '<blockquote class="source-text">' + highlightSource(passage, needle) + '</blockquote>' +
+          (full && full !== passage ? '<details class="source-more"><summary>查看完整原文</summary><blockquote class="source-text full">' + highlightSource(full, needle) + '</blockquote></details>' : '') +
         '</article>';
       }).join('');
     }
