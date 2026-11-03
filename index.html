@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#eee7db">
+<title>俄汉记忆卡 · Alpha v0.2</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">Я</div>
+      <div class="brand-copy">
+        <div class="brand-line">
+          <h1>俄汉记忆卡</h1>
+          <span class="alpha-badge">ALPHA v0.2</span>
+        </div>
+        <p>РУССКИЙ · 逐词重音与语法</p>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <div class="mode-switch" role="tablist" aria-label="学习模式">
+        <button type="button" data-mode="both" role="tab" class="active" aria-selected="true">对照</button>
+        <button type="button" data-mode="ru" role="tab">俄 → 汉</button>
+        <button type="button" data-mode="zh" role="tab">汉 → 俄</button>
+      </div>
+
+      <button type="button" class="btn study-btn" id="studyToggle" aria-pressed="false" title="默认显示语法；开启后点击单词才显示该词语法">
+        <span class="switch" aria-hidden="true"><span></span></span>
+        <span class="study-label">学习模式</span>
+      </button>
+
+      <button type="button" class="btn primary" id="importBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        导入内容
+      </button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <div class="meta-row">
+      <div class="meta-left">
+        <div class="deck-picker-row">
+          <span class="eyebrow" id="deckTag">第 4 课 · 50 张</span>
+          <label class="deck-select-wrap">
+            <span class="sr-only">选择课程</span>
+            <select id="deckSelect"></select>
+          </label>
+        </div>
+        <h2 id="deckTitle">旅游与城市</h2>
+      </div>
+      <div class="counter" aria-label="卡片进度">
+        <span id="currentNum">01</span><span class="counter-slash">/</span><span id="totalNum">50</span>
+      </div>
+    </div>
+    <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+    <div class="toolbar" id="toolbar">
+      <div class="filter-left">
+        <label class="select-wrap">
+          <span class="sr-only">按分类筛选</span>
+          <select id="categorySelect"></select>
+        </label>
+        <label class="search-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <input id="searchInput" type="search" placeholder="搜索俄语 / 中文" autocomplete="off" spellcheck="false">
+        </label>
+      </div>
+      <div class="filter-right">
+        <button type="button" class="filter-btn" id="randomBtn" aria-pressed="false" title="随机打乱当前筛选结果">随机</button>
+        <button type="button" class="filter-btn" id="dueBtn" aria-pressed="false" title="只显示今天到期需要复习的卡片">今日复习 <span class="filter-count" id="dueCount">0</span></button>
+        <button type="button" class="filter-btn" id="reviewBtn" aria-pressed="false" title="错题本：只显示标记为“需复习”的卡片">错题本 <span class="filter-count" id="reviewCount">0</span></button>
+        <span class="summary" id="progressSummary">已掌握 0 · 需复习 0</span>
+      </div>
+    </div>
+
+    <article class="card" id="card" aria-live="polite">
+      <div class="card-top">
+        <span class="card-tag" id="cardTag">交通</span>
+        <div class="card-top-right">
+          <button type="button" class="mini-btn" id="editCardBtn">编辑</button>
+          <button type="button" class="mini-btn" id="rehideBtn" hidden>隐藏答案</button>
+          <span class="card-index" id="cardIndex">CARD 01</span>
+        </div>
+      </div>
+      <div class="card-body" id="cardBody"></div>
+    </article>
+
+    <nav class="pager" aria-label="翻页">
+      <button type="button" class="nav-btn" id="prevBtn"><span class="arrow">←</span><span class="nav-label">上一张</span></button>
+      <div class="page-jump">
+        <label for="jumpInput" class="sr-only">跳到第几张</label>
+        <input id="jumpInput" type="number" min="1" max="50" value="1" inputmode="numeric">
+        <span class="page-total">/ <span id="jumpTotal">50</span></span>
+      </div>
+      <button type="button" class="nav-btn" id="nextBtn"><span class="nav-label">下一张</span><span class="arrow">→</span></button>
+    </nav>
+
+    <div class="hint-row">
+      <p>← → 翻页 · 空格显示答案 · 学习模式下点击单词看语法</p>
+      <p class="legend"><span class="legend-accent">а́</span> 重音 · <span class="legend-rule"></span> 逐词语法</p>
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="importModal" hidden>
+  <div class="modal-backdrop" data-close-modal></div>
+  <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="importTitle">
+    <header class="modal-head">
+      <div>
+        <span class="eyebrow">IMPORT</span>
+        <h2 id="importTitle">导入新内容</h2>
+        <p class="modal-sub">支持表格粘贴、JSON 和文件导入。导入后可继续用翻页背诵。</p>
+      </div>
+      <button type="button" class="icon-btn" id="closeModal" aria-label="关闭导入窗口">×</button>
+    </header>
+
+    <div class="tabs" role="tablist" aria-label="导入格式">
+      <button type="button" class="tab active" data-tab="table" role="tab" aria-selected="true">表格粘贴</button>
+      <button type="button" class="tab" data-tab="json" role="tab" aria-selected="false">JSON</button>
+      <button type="button" class="tab" data-tab="file" role="tab" aria-selected="false">文件</button>
+    </div>
+
+    <div class="tab-panel active" data-panel="table">
+      <p class="help">每行一张卡片，用 <kbd>Tab</kbd> 分隔：<b>俄语</b> → <b>中文</b> → <b>逐词语法</b>（可选）。</p>
+      <textarea id="tableInput" spellcheck="false" placeholder="высокоскоростн[о]й п[о]езд	高铁	形容词 · 阳性单数 · 主格|名词 · 阳性单数 · 主格"></textarea>
+      <details class="format-help">
+        <summary>查看格式说明</summary>
+        <div class="format-body">
+          <p><b>重音：</b>用方括号标出重音元音，例如 <code>чит[а]ет</code>；<code>ё</code> 自动视为重音。</p>
+          <p><b>语法：</b>用 <code>|</code> 分隔不同单词，用 <code>/</code> 分隔同一个词的多个标签。标签数量应与俄语单词数量一致。</p>
+          <p><b>示例：</b></p>
+          <pre>сал[о]н красот[ы]	美容院	名词 · 阳性单数 · 主格|名词 · 阴性单数 · 属格</pre>
+        </div>
+      </details>
+    </div>
+
+    <div class="tab-panel" data-panel="json">
+      <p class="help">可以粘贴卡片数组，或带 <code>title</code> / <code>cards</code> 的对象。推荐直接导出当前卡片作为模板。</p>
+      <textarea id="jsonInput" spellcheck="false" placeholder='{"title":"我的卡片","cards":[{"ru":"чит[а]ть","zh":"读","tag":"动词","grammar":["动词 · 未完成体 · 不定式"]}]}'></textarea>
+      <details class="format-help">
+        <summary>查看 JSON 字段</summary>
+        <div class="format-body">
+          <p><code>ru</code> 俄语，<code>zh</code> 中文，<code>tag</code> 分类，<code>note</code> 提示，<code>grammar</code> 逐词语法数组。</p>
+          <p>也可以写 <code>words</code> 数组，每项包含 <code>text</code>、<code>stress</code>、<code>grammar</code>、<code>punct</code>。</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="tab-panel" data-panel="file">
+      <label class="drop-zone" id="dropZone" for="fileInput">
+        <span class="drop-icon">↓</span>
+        <strong>选择文件，或拖到这里</strong>
+        <span>支持 .json / .txt / .tsv；JSON 按 JSON 解析，其余按表格解析</span>
+        <input id="fileInput" type="file" accept=".json,.txt,.tsv,application/json,text/plain" hidden>
+      </label>
+      <p class="file-name" id="fileName">尚未选择文件</p>
+    </div>
+
+    <div class="import-options">
+      <label><input type="radio" name="importMode" value="append" checked> 追加到当前课程</label>
+      <label><input type="radio" name="importMode" value="replace"> 替换当前课程</label>
+      <label><input type="radio" name="importMode" value="new"> 新建课程</label>
+    </div>
+    <label class="new-deck-field" id="newDeckField" hidden>
+      <span>新课程名称</span>
+      <input type="text" id="newDeckTitle" placeholder="例如：第 1 课 · 外貌与性格">
+    </label>
+
+    <div class="import-validation" id="importValidation" hidden></div>
+    <div class="import-error" id="importError" hidden></div>
+
+    <footer class="modal-foot">
+      <div class="foot-left">
+        <button type="button" class="text-btn" id="resetBtn">恢复内置词表</button>
+        <button type="button" class="text-btn" id="renameDeckBtn">重命名课程</button>
+        <button type="button" class="text-btn" id="deleteDeckBtn">删除当前课程</button>
+        <button type="button" class="text-btn" id="clearProgressBtn">清除全部进度</button>
+        <button type="button" class="text-btn" id="backupBtn">导出备份</button>
+        <button type="button" class="text-btn" id="restoreBackupBtn">恢复备份</button>
+        <input type="file" id="backupFileInput" accept=".json,application/json" hidden>
+        <button type="button" class="text-btn" id="exportBtn">导出当前课程</button>
+        <button type="button" class="text-btn" id="templateBtn">下载表格模板</button>
+      </div>
+      <div class="foot-right">
+        <button type="button" class="btn ghost" id="validateImportBtn">校验</button>
+        <button type="button" class="btn ghost" data-close-modal>取消</button>
+        <button type="button" class="btn primary" id="importConfirm">导入</button>
+      </div>
+    </footer>
+  </section>
+</div>
+
+<div class="modal" id="editModal" hidden>
+  <div class="modal-backdrop" data-close-edit></div>
+  <section class="modal-panel edit-panel" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+    <header class="modal-head">
+      <div>
+        <span class="eyebrow">EDIT</span>
+        <h2 id="editTitle">编辑当前卡片</h2>
+        <p class="modal-sub">修改俄语、中文、分类、逐词语法和提示。</p>
+      </div>
+      <button type="button" class="icon-btn" id="closeEditModal" aria-label="关闭编辑窗口">×</button>
+    </header>
+
+    <div class="edit-grid">
+      <label class="field full">
+        <span>俄语（用 [ ] 标重音，例如 чит[а]ет）</span>
+        <textarea id="editRu" spellcheck="false"></textarea>
+      </label>
+      <label class="field full">
+        <span>中文</span>
+        <textarea id="editZh" spellcheck="false"></textarea>
+      </label>
+      <label class="field">
+        <span>分类</span>
+        <input type="text" id="editTag" placeholder="例如：交通 / 亲情">
+      </label>
+      <label class="field full">
+        <span>逐词语法（每行一个词：单词=标签1/标签2）</span>
+        <textarea id="editGrammar" spellcheck="false"></textarea>
+      </label>
+      <label class="field full">
+        <span>语法提示（可留空）</span>
+        <textarea id="editNote" spellcheck="false"></textarea>
+      </label>
+    </div>
+
+    <div class="import-error" id="editError" hidden></div>
+
+    <footer class="modal-foot">
+      <div class="foot-left"><span class="edit-hint">保存后会写回当前课程；学习进度会跟随卡片内容迁移。</span></div>
+      <div class="foot-right">
+        <button type="button" class="btn ghost" data-close-edit>取消</button>
+        <button type="button" class="btn primary" id="saveCardBtn">保存修改</button>
+      </div>
+    </footer>
+  </section>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<noscript><div class="noscript">请启用 JavaScript 后使用本程序。</div></noscript>
+
+<script src="data/deck.js"></script>
+<script src="data/lesson1.js"></script>
+<script src="data/lesson2.js"></script>
+<script src="data/lesson3.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
