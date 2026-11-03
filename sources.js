@@ -29,6 +29,8 @@
       number: String(item.number || item.part || '').trim(),
       title: String(item.title || '').trim(),
       page: item.page == null ? '' : String(item.page).trim(),
+      pdf: String(item.pdf || '').trim(),
+      pdfPage: item.pdfPage == null ? '' : String(item.pdfPage).trim(),
       text: String(item.text || item.quote || '').trim(),
       quote: String(item.quote || '').trim()
     };
@@ -126,6 +128,7 @@
         '<div class="source-route"><span class="source-kind">' + escapeHtml(typeLabel(source)) + '</span>' +
           escapeHtml(route(source)) +
           (source.page ? '<span class="source-page">第 ' + escapeHtml(source.page) + ' 页</span>' : '') +
+          (source.pdf ? '<a class="source-pdf" target="_blank" rel="noopener" href="' + escapeHtml(source.pdf) + '#page=' + encodeURIComponent(source.pdfPage || '1') + '">原 PDF · 第 ' + escapeHtml(source.pdfPage || '1') + ' 页</a>' : '') +
         '</div>' +
         (source.title ? '<div class="source-title" style="font-size:11px;color:#5f574c;margin-top:5px;">' + escapeHtml(source.title) + '</div>' : '') +
         '<blockquote class="source-quote">' + highlight(quote, needle) + '</blockquote>' +
