@@ -19,7 +19,12 @@
 .gs-icon{font-size:13px;line-height:1;font-family:var(--mono);}
 .gs-divider{display:block;flex:0 0 1px;width:1px;height:20px;margin:0 3px;background:var(--line);}
 .gs-btn[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent-deep);}
-.gs-btn.gs-back{color:var(--accent-deep);}
+.gs-btn.gs-back{border:1px solid #dfb7ae;background:rgba(242,221,216,.6);color:var(--accent-deep);font-weight:700;padding:5px 10px;}
+.gs-btn.gs-back:hover{background:var(--accent-soft);}
+.gs-page-group{display:inline-flex;align-items:center;gap:2px;padding:3px 4px;margin-left:3px;border:1px solid var(--line);border-radius:999px;background:#f5eee2;}
+.gs-page-label{font-size:8px;color:var(--muted);letter-spacing:.08em;padding:0 3px;}
+.gs-page{min-height:25px;padding:4px 7px;font-size:10px;color:var(--soft);}
+.gs-page .gs-icon{font-size:11px;}
 body{padding-top:46px;}
 .unit-header{top:46px!important;}
 @media(max-width:760px){
