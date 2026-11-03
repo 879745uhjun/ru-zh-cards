@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>学习计划 · 俄汉记忆卡</title>
+<link rel="stylesheet" href="unit.css">
+<link rel="stylesheet" href="plan.css">
+</head>
+<body>
+<header class="unit-header">
+  <div class="unit-brand">
+    <div class="unit-mark">Я</div>
+    <div>
+      <h1>学习计划</h1>
+      <p>单元模块 · 顺序 / 自定义 / 复习</p>
+    </div>
+  </div>
+  <div class="unit-controls">
+    <a class="unit-btn" href="book.html" title="返回书首页">← 上一级</a>
+    <button class="unit-btn primary" id="startBtn" type="button">开始学习</button>
+  </div>
+</header>
+
+<main class="plan-main">
+  <div class="plan-intro">
+    <div>
+      <span class="unit-eyebrow">STUDY PLAN</span>
+      <h2>选择要背的内容</h2>
+      <p>顺序模式按单元顺序从头到尾；自定义模式可以选到具体词组；复习模式只取需复习/到期的卡。</p>
+    </div>
+    <div class="plan-count" id="planCount">0 张</div>
+  </div>
+
+  <div class="plan-tabs" role="tablist">
+    <button type="button" class="plan-tab active" data-mode="sequential">顺序模式</button>
+    <button type="button" class="plan-tab" data-mode="custom">自定义模式</button>
+    <button type="button" class="plan-tab" data-mode="review">复习模式</button>
+  </div>
+
+  <div class="plan-toolbar">
+    <span class="plan-hint" id="planHint">按所选单元的顺序排列。</span>
+    <div class="plan-toolbar-actions">
+      <button type="button" class="unit-btn" id="selectAll">全选</button>
+      <button type="button" class="unit-btn" id="clearAll">清空</button>
+    </div>
+  </div>
+
+  <div id="unitList" class="plan-units"></div>
+</main>
+
+<script src="data/deck.js"></script>
+<script src="data/lesson1.js"></script>
+<script src="data/lesson2.js"></script>
+<script src="data/lesson3.js"></script>
+<script src="data/lesson5.js"></script>
+<script src="data/decks-source.js"></script>
+<script src="plan.js"></script>
+</body>
+</html>
