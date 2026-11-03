@@ -1036,13 +1036,51 @@
 
   function highlightSource(text, needle) {
     var raw = String(text || '');
-    var safeNeedle = String(needle || '');
-    if (!safeNeedle) return escapeHtml(raw);
-    var index = raw.toLowerCase().indexOf(safeNeedle.toLowerCase());
-    if (index < 0) return escapeHtml(raw);
-    return escapeHtml(raw.slice(0, index)) +
-      '<mark class="source-hl">' + escapeHtml(raw.slice(index, index + safeNeedle.length)) + '</mark>' +
-      escapeHtml(raw.slice(index + safeNeedle.length));
+    var key = String(needle || '').trim();
+    if (!key) return escapeHtml(raw);
+    var ranges = [];
+    var lower = raw.toLowerCase();
+    var search = key.toLowerCase();
+    var pos = lower.indexOf(search);
+    while (pos !== -1) {
+      ranges.push([pos, pos + search.length]);
+      pos = lower.indexOf(search, pos + search.length);
+    }
+    if (!ranges.length) {
+      var stop = ['и', 'в', 'во', 'не', 'на', 'с', 'со', 'к', 'о', 'об', 'от', 'до', 'по', 'за', 'из', 'у', 'что', 'как', 'это', 'же', 'ли', 'бы'];
+      var words = (key.toLowerCase().replace(/ё/g, 'е').match(/[а-яa-z0-9]+/g) || []).filter(function (w) {
+        return w.length > 2 && stop.indexOf(w) === -1;
+      });
+      if (words.length) {
+        var pattern = words.map(function (w) {
+          return (w.length > 4 ? w.slice(0, 4) : w) + '[а-яё]*';
+        }).join('\\s+(?:[а-яё]+\\s+){0,3}');
+        try {
+          var re = new RegExp(pattern, 'gi');
+          var match;
+          while ((match = re.exec(raw))) {
+            ranges.push([match.index, match.index + match[0].length]);
+            if (match.index === re.lastIndex) re.lastIndex++;
+          }
+        } catch (err) { /* ignore */ }
+      }
+    }
+    if (!ranges.length) return escapeHtml(raw);
+    ranges.sort(function (a, b) { return a[0] - b[0]; });
+    var merged = [];
+    ranges.forEach(function (range) {
+      var last = merged[merged.length - 1];
+      if (last && range[0] <= last[1]) last[1] = Math.max(last[1], range[1]);
+      else merged.push(range.slice());
+    });
+    var out = '';
+    var cursor = 0;
+    merged.forEach(function (range) {
+      out += escapeHtml(raw.slice(cursor, range[0])) +
+        '<mark class="source-hl">' + escapeHtml(raw.slice(range[0], range[1])) + '</mark>';
+      cursor = range[1];
+    });
+    return out + escapeHtml(raw.slice(cursor));
   }
 
   function sourceKicker(source) {
@@ -1082,6 +1120,11 @@
     }
     sourceModal.hidden = false;
     document.body.classList.add('modal-open');
+    var firstHighlight = list.querySelector('.source-text.full .source-hl') || list.querySelector('.source-text .source-hl');
+    if (firstHighlight) {
+      var box = firstHighlight.closest('.source-text');
+      if (box) box.scrollTop = Math.max(0, firstHighlight.offsetTop - box.offsetTop - 20);
+    }
   }
 
   function openEditModal() {
