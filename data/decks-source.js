@@ -55,10 +55,14 @@
     });
     var result = builtins.map(function (builtin) {
       var source = savedById[builtin.id] || builtin;
+      var title = source.title || builtin.title || '未命名单元';
+      if (builtin.id === 'lesson4' && title === '旅游与城市') title = '第 4 课 · 旅游与城市';
+      var subtitle = source.subtitle || builtin.subtitle || '';
+      if (builtin.id === 'lesson4' && subtitle === 'Урок 4 · 第 4 课词汇') subtitle = 'Урок 4 · 词汇 + 句子';
       return {
         id: builtin.id,
-        title: source.title || builtin.title || '未命名单元',
-        subtitle: source.subtitle || builtin.subtitle || '',
+        title: title,
+        subtitle: subtitle,
         tag: source.tag || builtin.tag || '课程',
         cards: (source.cards || []).map(normalizeCard).filter(Boolean)
       };
