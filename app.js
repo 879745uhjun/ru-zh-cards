@@ -28,7 +28,6 @@
     study: false,
     editEnabled: false,
     filter: 'all',
-    type: 'all',
     query: '',
     random: false,
     onlyReview: false,
@@ -252,7 +251,6 @@
     var cleaned = cleanRu(ruRaw);
     if (!cleaned) throw new Error('俄语原文为空');
 
-    var type = normalizeType(raw.type) || detectCardType(cleaned);
     var sources = normalizeSources(raw.sources || raw.source);
     if (!sources.length) sources = sourcesForRu(cleaned);
     return {
@@ -260,7 +258,6 @@
       ru: cleaned,
       zh: String(zh).trim(),
       tag: String(raw.tag || '未分类').trim(),
-      type: type,
       note: String(raw.note || '').trim(),
       sources: sources,
       words: words
@@ -308,7 +305,6 @@
           ru: card.ru,
           zh: card.zh,
           tag: card.tag,
-          type: card.type,
           note: card.note,
           sources: card.sources || [],
           words: card.words.map(function (w) {
@@ -455,7 +451,6 @@
     state.deckId = id;
     state.deck = next;
     state.filter = 'all';
-    state.type = 'all';
     state.query = '';
     state.onlyReview = false;
     state.dueOnly = false;
@@ -479,24 +474,6 @@
     return card.ru + '\u0001' + card.zh;
   }
 
-  function normalizeType(value) {
-    var v = String(value == null ? '' : value).trim().toLowerCase();
-    if (v === 'sentence' || v === '句子' || v === '句') return 'sentence';
-    if (v === 'phrase' || v === '词组' || v === '短语' || v === '词') return 'phrase';
-    return '';
-  }
-
-  function detectCardType(ru) {
-    return /[.!?…]\s*$/.test(String(ru || '').trim()) ? 'sentence' : 'phrase';
-  }
-
-  function typeLabel(card) {
-    return card && card.type === 'sentence' ? '句子' : '词组';
-  }
-
-  function typeMatches(card) {
-    return state.type === 'all' || card.type === state.type;
-  }
 
   function currentCard() {
     return state.visible && state.visible.length ? state.visible[state.index] : null;
@@ -610,7 +587,6 @@
         study: state.study,
         editEnabled: state.editEnabled,
         filter: state.filter,
-        type: state.type,
         random: state.random,
         onlyReview: state.onlyReview,
         dueOnly: state.dueOnly,
@@ -772,7 +748,6 @@
 
   function clearFilters() {
     state.filter = 'all';
-    state.type = 'all';
     state.query = '';
     state.onlyReview = false;
     state.dueOnly = false;
@@ -1394,7 +1369,6 @@
       }
 
       state.filter = 'all';
-      state.type = 'all';
       state.query = '';
       state.onlyReview = false;
       state.dueOnly = false;
@@ -1443,7 +1417,6 @@
           ru: card.ru,
           zh: card.zh,
           tag: card.tag,
-          type: card.type,
           note: card.note,
           sources: card.sources || [],
           words: card.words.map(function (w) {
@@ -1509,7 +1482,6 @@
     state.deck = current;
     state.deckId = current.id;
     state.filter = 'all';
-    state.type = 'all';
     state.query = '';
     state.onlyReview = false;
     state.dueOnly = false;
@@ -1570,7 +1542,6 @@
     }
     state.deck = builtin;
     state.filter = 'all';
-    state.type = 'all';
     state.query = '';
     state.onlyReview = false;
     state.dueOnly = false;
@@ -1611,7 +1582,6 @@
     state.deckId = state.decks[0].id;
     state.deck = state.decks[0];
     state.filter = 'all';
-    state.type = 'all';
     state.query = '';
     state.onlyReview = false;
     state.dueOnly = false;
@@ -1968,7 +1938,6 @@
       state.study = !!ui.study;
       state.editEnabled = !!ui.editEnabled;
       if (typeof ui.filter === 'string') state.filter = ui.filter;
-      if (['all', 'phrase', 'sentence'].includes(ui.type)) state.type = ui.type;
       state.random = !!ui.random;
       state.onlyReview = !!ui.onlyReview;
       state.dueOnly = !!ui.dueOnly;
@@ -1977,8 +1946,6 @@
       if (['both', 'ru', 'zh'].includes(mode)) state.mode = mode;
       if (params.has('study')) state.study = params.get('study') === '1';
       if (params.get('filter')) state.filter = params.get('filter');
-      var typeParam = params.get('type');
-      if (['all', 'phrase', 'sentence'].includes(typeParam)) state.type = typeParam;
       if (params.get('q')) state.query = params.get('q');
       if (params.get('review') === '1') state.onlyReview = true;
       if (params.get('edit') === '1' || params.get('editSave') === '1') state.editEnabled = true;
@@ -1988,7 +1955,6 @@
       var cardParam = parseInt(params.get('card'), 10);
       if (!isNaN(cardParam)) {
         state.filter = params.get('filter') || 'all';
-        state.type = params.get('type') || 'all';
         state.query = params.get('q') || '';
         state.onlyReview = params.get('review') === '1';
         state.random = params.get('random') === '1';
