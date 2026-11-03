@@ -23,7 +23,7 @@
       '<span class="gs-icon" aria-hidden="true">' + icon + '</span><span>' + label + '</span></a>';
   }
 
-  var html = '';
+  var html = '<span class="gs-caption">快捷</span>';
   if (!isBook) html += link(backHref || 'book.html', '←', '上一级', 'gsBack', ' gs-back');
   if (isCard) {
     html += '<button class="gs-btn" id="gsPrev" type="button"><span class="gs-icon" aria-hidden="true">↑</span><span>上一张</span></button>';
