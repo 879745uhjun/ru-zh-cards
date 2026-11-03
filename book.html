@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>书首页 · 俄汉记忆卡</title>
+<style>
+:root{
+  --bg:#ece4d6;--paper:#fffdf8;--ink:#1e2a37;--soft:#5e574d;--muted:#8b8072;--line:#d8ccba;
+  --accent:#b23a2f;--accent-deep:#8d2a22;--accent-soft:#f2ddd8;--gold:#b68a4d;
+  --ru:"Times New Roman",Cambria,"Liberation Serif",serif;
+  --zh:"Noto Serif SC","Source Han Serif SC","Songti SC",STSong,SimSun,serif;
+  --sans:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  --mono:"Cascadia Mono",Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font-family:var(--sans);overflow-x:hidden;background-color:var(--bg);background-image:radial-gradient(circle at 12% 0%,rgba(255,255,255,.92),transparent 36%),radial-gradient(circle at 94% 90%,rgba(178,58,47,.08),transparent 38%),radial-gradient(rgba(30,42,55,.055) 1px,transparent 1px);background-size:auto,auto,22px 22px;}
+button,input{font:inherit}
+a{color:inherit}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:15px 38px;border-bottom:1px solid rgba(216,204,186,.75);background:rgba(236,228,214,.86);backdrop-filter:blur(12px);position:sticky;top:0;z-index:10;}
+.brand{display:flex;align-items:center;gap:11px}
+.brand-mark{width:38px;height:38px;border-radius:12px;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:var(--ru);font-size:24px;box-shadow:0 8px 18px rgba(141,42,34,.2)}
+.brand-name{font-size:14px;font-weight:700;line-height:1.1}
+.brand-sub{margin-top:4px;color:var(--muted);font-size:9px;letter-spacing:.15em;text-transform:uppercase}
+.brand-version{margin-left:2px;padding:1px 5px;border:1px solid #d9b6ad;border-radius:4px;color:var(--accent-deep);font-family:var(--mono);font-size:8px;letter-spacing:.04em;vertical-align:2px}
+.nav{display:flex;align-items:center;gap:22px;color:var(--muted);font-size:11px}
+.nav a{text-decoration:none}
+.nav a.active{color:var(--ink);font-weight:700}
+.nav a:hover{color:var(--accent)}
+.top-actions{display:flex;align-items:center;gap:9px}
+.ghost-btn{border:1px solid var(--line);border-radius:999px;background:rgba(255,253,248,.65);color:var(--soft);padding:8px 13px;font-size:10.5px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.ghost-btn:hover{background:var(--paper)}
+.primary-btn{border:1px solid var(--accent);border-radius:999px;background:var(--accent);color:#fff;padding:9px 15px;font-size:10.5px;font-weight:700;cursor:pointer;box-shadow:0 8px 18px rgba(178,58,47,.18);text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.primary-btn:hover{background:var(--accent-deep)}
+.page{max-width:1440px;margin:0 auto;padding:34px 42px 54px}
+.book-hero{display:grid;grid-template-columns:332px minmax(0,1fr);gap:42px;align-items:center}
+.cover{position:relative;height:420px;border-radius:7px 18px 18px 7px;background:linear-gradient(145deg,#9f3027 0%,#b23a2f 48%,#8a261f 100%);box-shadow:18px 24px 44px rgba(76,37,28,.22),inset -10px 0 20px rgba(0,0,0,.13);padding:34px 30px 28px;color:#f8eee2;overflow:hidden}
+.cover::before{content:"";position:absolute;left:9px;top:0;bottom:0;width:1px;background:rgba(255,255,255,.25)}
+.cover::after{content:"";position:absolute;right:-70px;bottom:-100px;width:240px;height:240px;border:1px solid rgba(255,255,255,.16);border-radius:50%}
+.cover-kicker{font-size:9px;letter-spacing:.24em;color:rgba(255,255,255,.65)}
+.cover-title{margin:64px 0 0;font-family:var(--zh);font-size:31px;font-weight:600;letter-spacing:.12em;line-height:1.35}
+.cover-num{margin-top:6px;font-family:var(--ru);font-size:112px;line-height:.82;color:#f1c9a7;opacity:.92}
+.cover-edition{margin-top:18px;font-size:10px;letter-spacing:.16em;color:rgba(255,255,255,.72)}
+.cover-foot{position:absolute;left:30px;right:28px;bottom:25px;display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid rgba(255,255,255,.2);padding-top:12px;font-size:9px;color:rgba(255,255,255,.7)}
+.cover-foot strong{display:block;font-weight:600;color:#fff;font-size:11px;letter-spacing:.05em}
+.book-copy{padding-top:4px;min-width:0}
+.eyebrow{color:var(--accent);font-size:9.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+.book-copy h1{margin:9px 0 0;font-family:var(--zh);font-size:35px;font-weight:600;letter-spacing:.045em}
+.book-copy .ru-line{margin:6px 0 0;font-family:var(--ru);color:var(--soft);font-size:15px;letter-spacing:.03em}
+.book-desc{margin:18px 0 0;max-width:620px;color:var(--soft);font-size:12.5px;line-height:1.85;overflow-wrap:anywhere}
+.book-stats{display:flex;align-items:center;gap:22px;margin-top:22px;padding:13px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stat{display:flex;flex-direction:column;gap:3px}
+.stat b{font-family:var(--mono);font-size:17px;font-weight:500}
+.stat span{color:var(--muted);font-size:9px;letter-spacing:.07em}
+.stat-sep{width:1px;height:24px;background:var(--line)}
+.book-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:20px}
+.default-toggle{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;background:rgba(255,253,248,.6);color:var(--soft);padding:8px 11px;font-size:10.5px;font-weight:600;cursor:pointer}
+.default-toggle .switch{width:24px;height:13px;border-radius:999px;background:#cabda9;position:relative;transition:.18s}
+.default-toggle .switch::after{content:"";position:absolute;left:2px;top:2px;width:9px;height:9px;border-radius:50%;background:#fff;transition:.18s}
+.default-toggle[aria-pressed="true"]{color:var(--accent-deep);border-color:#dfb7ae;background:rgba(242,221,216,.55)}
+.default-toggle[aria-pressed="true"] .switch{background:var(--accent)}
+.default-toggle[aria-pressed="true"] .switch::after{transform:translateX(11px)}
+.unit-section{margin-top:46px}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:13px}
+.section-head h2{margin:0;font-family:var(--zh);font-size:19px;font-weight:600}
+.section-head p{margin:4px 0 0;color:var(--muted);font-size:10.5px}
+.section-count{font-family:var(--mono);color:var(--muted);font-size:10.5px}
+.unit-list{border-top:1px solid var(--line)}
+.unit-row{display:grid;grid-template-columns:54px minmax(0,1fr) 218px 86px 20px;gap:16px;align-items:center;padding:17px 8px;border-bottom:1px solid rgba(216,204,186,.8);text-decoration:none;transition:background .16s,padding .16s}
+.unit-row:hover{background:rgba(255,253,248,.55);padding-left:14px;padding-right:14px}
+.unit-no{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.08em}
+.unit-title{display:block;font-family:var(--zh);font-size:16px;font-weight:600;letter-spacing:.02em}
+.unit-sub{display:block;margin-top:4px;color:var(--muted);font-size:9.5px;letter-spacing:.04em}
+.unit-progress{display:flex;flex-direction:column;gap:7px}
+.unit-progress-line{display:flex;justify-content:space-between;color:var(--muted);font-size:9px}
+.unit-progress-line b{color:var(--soft);font-weight:600}
+.bar{height:4px;border-radius:99px;background:#ded2c1;overflow:hidden}
+.bar span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#ce7a5f)}
+.unit-count{text-align:right;font-family:var(--mono);font-size:10px;color:var(--soft);line-height:1.4}
+.unit-count span{display:block;color:var(--muted);font-size:8px;letter-spacing:.06em}
+.unit-arrow{font-size:15px;color:#b9ab96;text-align:right}
+.foot{margin-top:38px;display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:9px;letter-spacing:.04em}
+.foot a{text-decoration:none}
+.foot a:hover{color:var(--accent)}
+/* unit detail overlay */
+.unit-overlay{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;display:none}
+.unit-overlay.open{display:block}
+.overlay-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 38px;background:rgba(236,228,214,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.breadcrumb{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:10.5px}
+.breadcrumb button{border:0;background:none;color:var(--accent-deep);font-weight:600;cursor:pointer;padding:0}
+.overlay-body{max-width:1240px;margin:0 auto;padding:30px 38px 60px}
+.overlay-title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
+.overlay-title-row h2{margin:6px 0 0;font-family:var(--zh);font-size:27px;font-weight:600}
+.overlay-title-row p{margin:5px 0 0;color:var(--muted);font-size:10.5px}
+.overlay-actions{display:flex;gap:9px;flex-wrap:wrap}
+.unit-search{display:flex;align-items:center;gap:8px;margin:20px 0 15px;border:1px solid var(--line);border-radius:999px;background:rgba(255,253,248,.6);padding:0 13px;height:36px;max-width:320px}
+.unit-search input{width:100%;border:0;background:none;outline:none;font-size:11px;color:var(--ink)}
+.word-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.word-card{border:1px solid rgba(216,204,186,.9);border-radius:13px;background:rgba(255,253,248,.8);padding:13px 14px 12px;min-height:102px}
+.word-top{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px}
+.word-tag{font-size:8px;color:var(--accent-deep);background:var(--accent-soft);border-radius:99px;padding:2px 7px;font-weight:700}
+.word-num{font-family:var(--mono);font-size:8px;color:#a99d8d}
+.word-ru{font-family:var(--ru);font-size:26px;line-height:1.2}
+.word-ru .vowel{color:var(--accent)}
+.word-grammar{margin-top:3px;color:var(--muted);font-size:8px;line-height:1.4}
+.word-grammar-summary{margin-top:5px;color:var(--muted);font-size:9px;line-height:1.5;overflow-wrap:anywhere}
+.word-grammar .g-case{color:var(--accent);font-weight:700}
+.word-zh{margin-top:8px;padding-top:7px;border-top:1px dashed var(--line);font-family:var(--zh);font-size:12px;line-height:1.45}
+@media(max-width:1100px){.book-hero{grid-template-columns:280px minmax(0,1fr);gap:28px}.cover{height:380px}.unit-row{grid-template-columns:44px minmax(0,1fr) 170px 60px 16px}.word-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.page{padding:26px 24px 44px}}
+@media(max-width:760px){html,body{max-width:100%;}.topbar{padding:13px 16px;flex-wrap:wrap;max-width:100%}.nav{display:none}.top-actions{display:none}.section-count{display:none}.page{padding:20px 16px 40px;width:100%;max-width:100%}.book-hero{display:block;width:100%;max-width:100%;min-width:0}.cover{margin:0 auto}.book-copy{width:100%;max-width:100%}.book-desc{width:100%;max-width:100%}.cover{height:300px;max-width:280px}.cover-title{margin-top:40px;font-size:25px}.cover-num{font-size:88px}.book-copy h1{font-size:28px}.unit-row{grid-template-columns:34px minmax(0,1fr) 22px;gap:10px}.unit-progress,.unit-count{display:none}.unit-title{font-size:14px}.overlay-head{padding:12px 16px}.overlay-body{padding:22px 16px 40px}.overlay-title-row{display:block}.overlay-actions{margin-top:14px}.word-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">Я</div>
+    <div>
+      <div class="brand-name">俄汉记忆卡 <span class="brand-version">ALPHA v2.0</span></div>
+      <div class="brand-sub">РУССКИЙ · 逐词重音与语法</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <a class="active" href="book.html">书首页</a>
+    <a href="unit.html?deck=lesson1">整课浏览</a>
+    <a href="plan.html">学习计划</a>
+    <a href="sources.html">来源查询</a>
+    <a href="index.html?deck=lesson1">卡片模式</a>
+    <a href="#">更新日志</a>
+  </nav>
+  <div class="top-actions">
+    <a class="ghost-btn" href="index.html?deck=lesson1">卡片模式</a>
+    <a class="primary-btn" href="index.html?deck=lesson1">继续学习</a>
+  </div>
+</header>
+
+<main class="page">
+  <section class="book-hero">
+    <div class="cover">
+      <div class="cover-kicker">НОВЫЙ ВОСТОК · УЧЕБНИК</div>
+      <h1 class="cover-title">大学俄语</h1>
+      <div class="cover-num">3</div>
+      <div class="cover-edition">新东方大学俄语（3）</div>
+      <div class="cover-foot">
+        <div><strong><span id="coverUnitCount">5</span> 个单元</strong><span id="coverCardCount">228</span> 张卡片</div>
+        <div>ALPHA · 2026</div>
+      </div>
+    </div>
+    <div class="book-copy">
+      <div class="eyebrow">УЧЕБНИК · 3</div>
+      <h1>新东方大学俄语（3）</h1>
+      <p class="ru-line">Новый восток · 大学俄语 第三册</p>
+      <p class="book-desc">按单元顺序学习，或进入单元浏览全部单词、句子和逐词语法。书首页只显示单元目录，点进单元后再看具体内容。</p>
+      <div class="book-stats">
+        <div class="stat"><b id="bookUnitStat">5</b><span>单元 UNITS</span></div>
+        <div class="stat-sep"></div>
+        <div class="stat"><b id="bookCardStat">228</b><span>卡片 CARDS</span></div>
+        <div class="stat-sep"></div>
+        <div class="stat"><b id="masteredTotal">0</b><span>已掌握 MASTERED</span></div>
+      </div>
+      <div class="book-actions">
+        <a class="primary-btn" href="index.html?deck=lesson1">继续学习 第 1 课</a>
+        <a class="ghost-btn" href="unit.html?deck=lesson1">整课浏览</a>
+        <button class="default-toggle" id="defaultToggle" type="button" aria-pressed="true" onclick="toggleDefault()"><span class="switch"></span>默认打开本书</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="unit-section">
+    <div class="section-head">
+      <div><h2>单元目录</h2><p>点击单元查看该单元的全部单词与句子。</p></div>
+      <div class="section-count" id="sectionCount">5 UNITS · 228 CARDS</div>
+    </div>
+    <div class="unit-list" id="unitList"></div>
+  </section>
+
+  <footer class="foot">
+    <span>新东方大学俄语（3） · Alpha v2.0</span>
+    <a href="#">更新日志</a>
+  </footer>
+</main>
+
+<div class="unit-overlay" id="unitOverlay">
+  <header class="overlay-head">
+    <div class="breadcrumb"><button type="button" onclick="closeUnit()">书首页</button><span>/</span><span id="overlayBreadcrumb">单元</span></div>
+    <button class="ghost-btn" type="button" onclick="closeUnit()">关闭</button>
+  </header>
+  <div class="overlay-body">
+    <div class="overlay-title-row">
+      <div><div class="eyebrow" id="overlayEyebrow">UNIT</div><h2 id="overlayTitle">单元</h2><p id="overlaySub"></p></div>
+      <div class="overlay-actions"><button class="ghost-btn" type="button" onclick="closeUnit()">返回书首页</button><button class="primary-btn" type="button" id="startUnitBtn">开始学习</button></div>
+    </div>
+    <label class="unit-search"><span>⌕</span><input id="unitSearch" type="search" placeholder="筛选本单元俄语 / 中文" oninput="renderUnitCards()"></label>
+    <div class="word-grid" id="wordGrid"></div>
+  </div>
+</div>
+
+<script src="data/deck.js"></script>
+<script src="data/lesson1.js"></script>
+<script src="data/lesson2.js"></script>
+<script src="data/lesson3.js"></script>
+<script src="data/lesson5.js"></script>
+<script src="data/decks-source.js"></script>
+<script>
+(function(){
+  var VOWELS='аеёиоуыэюяАЕЁИОУЫЭЮЯ';
+  var CASE_RE=/(主格|宾格|与格|属格|工具格|前置格|第一格|第二格|第三格|第四格|第五格|第六格)/;
+  var DECKS=(window.RU_ZH_DECKS_SOURCE?window.RU_ZH_DECKS_SOURCE.load():[]).map(function(d,i){
+    return Object.assign({},d,{num:String(i+1).padStart(2,'0'),sub:d.subtitle||('Урок '+(i+1))});
+  });
+  var current=null;
+  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);});}
+  function progress(){try{return JSON.parse(localStorage.getItem('ru-zh-cards-progress-v0.2')||'{}');}catch(e){return {};}}
+  function key(c){return window.RU_ZH_DECKS_SOURCE?window.RU_ZH_DECKS_SOURCE.cardKey(c):(c.ru+'\u0001'+c.zh);}
+  function mastered(deck){var p=progress();return deck.cards.filter(function(c){return p[key(c)]==='mastered';}).length;}
+  function renderHome(){
+    var list=document.getElementById('unitList');
+    var total=0, mast=0;
+    list.innerHTML=DECKS.map(function(d){
+      total+=d.cards.length;mast+=mastered(d);
+      var m=mastered(d), pct=d.cards.length?Math.round(m/d.cards.length*100):0;
+      return '<a class="unit-row" href="#" onclick="openUnit(\''+d.id+'\');return false;">'+
+        '<span class="unit-no">'+d.num+'</span>'+
+        '<span><span class="unit-title">第 '+Number(d.num)+' 课 · '+esc((d.title||'').replace(/^第 \d+ 课 · /,''))+'</span><span class="unit-sub">'+esc(d.sub||'')+'</span></span>'+
+        '<span class="unit-progress"><span class="unit-progress-line"><span>已掌握 <b>'+m+'</b> / '+d.cards.length+'</span><span>'+pct+'%</span></span><span class="bar"><span style="width:'+pct+'%"></span></span></span>'+
+        '<span class="unit-count">'+d.cards.length+' 张<span>CARDS</span></span>'+
+        '<span class="unit-arrow">→</span></a>';
+    }).join('');
+    document.getElementById('masteredTotal').textContent=mast;
+    var units=DECKS.length;
+    ['coverUnitCount','bookUnitStat'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=units;});
+    ['coverCardCount','bookCardStat'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=total;});
+    var section=document.getElementById('sectionCount');
+    if(section)section.textContent=units+' UNITS · '+total+' CARDS';
+  }
+  window.openUnit=function(id){
+    current=DECKS.find(function(d){return d.id===id;});
+    if(!current)return;
+    document.getElementById('overlayBreadcrumb').textContent='第 '+Number(current.num)+' 课';
+    document.getElementById('overlayEyebrow').textContent=current.sub||'UNIT';
+    document.getElementById('overlayTitle').textContent=current.title||'单元';
+    document.getElementById('overlaySub').textContent=current.cards.length+' 张 · 点击单词卡进入学习';
+    document.getElementById('startUnitBtn').onclick=function(){location.href='index.html?deck='+encodeURIComponent(current.id)+'&from=unit';};
+    document.getElementById('unitSearch').value='';
+    renderUnitCards();
+    document.getElementById('unitOverlay').classList.add('open');
+    document.body.style.overflow='hidden';
+  };
+  window.closeUnit=function(){document.getElementById('unitOverlay').classList.remove('open');document.body.style.overflow='';};
+  function tokenize(ru){
+    var re=/(?:[А-Яа-яЁёA-Za-z0-9]|\[[А-Яа-яЁё]\])+(?:[-–—](?:[А-Яа-яЁёA-Za-z0-9]|\[[А-Яа-яЁё]\])+)*/g;
+    var src=String(ru||''),tokens=[],last=0,m;
+    while((m=re.exec(src))){
+      if(m.index>last&&tokens.length)tokens[tokens.length-1].punct+=src.slice(last,m.index);
+      else if(m.index>last)tokens.push({text:src.slice(last,m.index),stress:null,punct:'',punctOnly:true});
+      var raw=m[0],st=null,b=raw.match(/\[([А-Яа-яЁё])\]/);
+      if(b){st=b.index;raw=raw.slice(0,b.index)+b[1]+raw.slice(b.index+b[0].length);}
+      tokens.push({text:raw,stress:st,punct:'',punctOnly:false});
+      last=re.lastIndex;
+    }
+    if(last<src.length&&tokens.length)tokens[tokens.length-1].punct+=src.slice(last);
+    return tokens;
+  }
+  function countV(text){var n=0;for(var i=0;i<text.length;i++)if(VOWELS.indexOf(text[i])>=0)n++;return n;}
+  function wordHtml(w){
+    var mark=Number.isInteger(w.stress)&&w.stress>=0&&countV(w.text)>1&&!(w.stress===0&&/[А-ЯЁ]/.test(w.text[0]));
+    var out='';
+    for(var i=0;i<w.text.length;i++)out+=mark&&i===w.stress?'<span class="vowel">'+esc(w.text[i])+(w.text[i].toLowerCase()==='ё'?'':'\u0301')+'</span>':esc(w.text[i]);
+    return out+w.punct;
+  }
+  function gram(group){
+    if(!group)return '—';
+    var arr=Array.isArray(group)?group:[group];
+    return arr.map(function(g){return esc(g).replace(CASE_RE,'<span class="g-case">$1</span>');}).join(' · ');
+  }
+  function flattenGrammar(groups){
+    var out=[];
+    (groups||[]).forEach(function(g){ if(Array.isArray(g)) out=out.concat(g); else if(g) out.push(g); });
+    return out.join(' · ');
+  }
+  function cardWords(c){
+    if(Array.isArray(c.words)&&c.words.length){
+      return c.words.map(function(w){
+        return {text:w.text||'',stress:Number.isInteger(w.stress)?w.stress:null,punct:w.punct||'',grammar:Array.isArray(w.grammar)?w.grammar:[]};
+      });
+    }
+    return tokenize(c.ru);
+  }
+  function renderUnitCards(){
+    if(!current)return;
+    var q=(document.getElementById('unitSearch').value||'').trim().toLowerCase();
+    var cards=current.cards.filter(function(c){return !q||(c.ru+' '+c.zh+' '+c.tag).toLowerCase().indexOf(q)>=0;});
+    document.getElementById('wordGrid').innerHTML=cards.map(function(c,i){
+      var words=cardWords(c);
+      var ru=words.map(wordHtml).join(' ');
+      var grammar=flattenGrammar(c.grammar);
+      if(!grammar){var gs=[];words.forEach(function(w){gs=gs.concat(w.grammar||[]);});grammar=flattenGrammar(gs);}
+      return '<article class="word-card"><div class="word-top"><span class="word-tag">'+esc(c.tag||'未分类')+'</span><span class="word-num">'+String(i+1).padStart(2,'0')+'</span></div><div class="word-ru">'+ru+'</div>'+(grammar?'<div class="word-grammar-summary">'+grammar+'</div>':'')+'<div class="word-zh">'+esc(c.zh)+'</div></article>';
+    }).join('');
+  }
+  window.toggleDefault=function(){var b=document.getElementById('defaultToggle');var on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem('ru-zh-cards-book-default-v1',on?'1':'0');}catch(e){}};
+  try{if(localStorage.getItem('ru-zh-cards-book-default-v1')==='0')document.getElementById('defaultToggle').setAttribute('aria-pressed','false');}catch(e){}
+  renderHome();
+  if(location.hash.indexOf('#unit-')===0)openUnit(location.hash.slice(6));
+})();
+</script>
+</body>
+</html>
