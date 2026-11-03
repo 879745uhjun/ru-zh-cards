@@ -24,20 +24,16 @@
   }
 
   var html = '<span class="gs-caption">快捷</span>';
-  if (!isBook) html += link(backHref || 'book.html', '←', '上一级', 'gsBack', ' gs-back');
-  if (isCard) {
-    html += '<span class="gs-page-group"><span class="gs-page-label">翻页</span>';
-    html += '<button class="gs-btn gs-page" id="gsPrev" type="button"><span class="gs-icon" aria-hidden="true">↑</span><span>上一页</span></button>';
-    html += '<button class="gs-btn gs-page" id="gsNext" type="button"><span class="gs-icon" aria-hidden="true">↓</span><span>下一页</span></button>';
-    html += '</span>';
-  }
+  html += link(isBook ? 'book.html' : (backHref || 'book.html'), '←', '上一级', 'gsBack', ' gs-back' + (isBook ? ' is-disabled' : ''));
+  html += '<span class="gs-divider" aria-hidden="true"></span>';
+  html += '<span class="gs-page-group"><span class="gs-page-label">翻页</span>';
+  html += '<button class="gs-btn gs-page" id="gsPrev" type="button"' + (isCard ? '' : ' disabled') + '><span class="gs-icon" aria-hidden="true">↑</span><span>上一页</span></button>';
+  html += '<button class="gs-btn gs-page" id="gsNext" type="button"' + (isCard ? '' : ' disabled') + '><span class="gs-icon" aria-hidden="true">↓</span><span>下一页</span></button>';
+  html += '</span>';
   html += '<span class="gs-divider" aria-hidden="true"></span>';
   html += link('book.html', '⌂', '书首页', 'gsBook', page === 'book.html' ? ' active' : '');
-  html += link(unitHref, '▤', '整课', 'gsUnit', page === 'unit.html' ? ' active' : '');
-  html += link('plan.html', '◷', '计划', 'gsPlan', page === 'plan.html' ? ' active' : '');
-  html += link('sources.html', '⌕', '来源', 'gsSources', page === 'sources.html' ? ' active' : '');
   html += link('changelog.html', '≡', '日志', 'gsLog', page === 'changelog.html' ? ' active' : '');
-  if (editToggle) html += '<button class="gs-btn" id="gsEdit" type="button" aria-pressed="false"><span class="gs-icon" aria-hidden="true">✎</span><span>编辑</span></button>';
+  html += '<button class="gs-btn" id="gsEdit" type="button" aria-pressed="false"' + (editToggle ? '' : ' disabled') + '><span class="gs-icon" aria-hidden="true">✎</span><span>编辑</span></button>';
   sidebar.innerHTML = html;
   document.body.appendChild(sidebar);
 
@@ -64,13 +60,20 @@
 
   function sync() {
     if (gsBack) {
-      var source = document.getElementById('backLevelLink');
-      if (source) {
-        gsBack.href = source.getAttribute('href');
+      if (isBook) {
+        gsBack.classList.add('is-disabled');
+        gsBack.setAttribute('aria-disabled', 'true');
       } else {
-        gsBack.href = params.get('from') === 'unit'
-          ? 'unit.html?deck=' + encodeURIComponent(deck)
-          : 'book.html';
+        gsBack.classList.remove('is-disabled');
+        gsBack.removeAttribute('aria-disabled');
+        var source = document.getElementById('backLevelLink');
+        if (source) {
+          gsBack.href = source.getAttribute('href');
+        } else {
+          gsBack.href = params.get('from') === 'unit'
+            ? 'unit.html?deck=' + encodeURIComponent(deck)
+            : 'book.html';
+        }
       }
     }
     if (gsPrev && gsNext) {
@@ -79,10 +82,15 @@
       gsPrev.disabled = !p || p.disabled;
       gsNext.disabled = !n || n.disabled;
     }
-    if (gsEdit && editToggle) {
-      var on = editToggle.getAttribute('aria-pressed') === 'true';
-      gsEdit.setAttribute('aria-pressed', on ? 'true' : 'false');
-      gsEdit.querySelector('span:last-child').textContent = on ? '编辑开' : '编辑';
+    if (gsEdit) {
+      if (!editToggle) {
+        gsEdit.disabled = true;
+      } else {
+        gsEdit.disabled = false;
+        var on = editToggle.getAttribute('aria-pressed') === 'true';
+        gsEdit.setAttribute('aria-pressed', on ? 'true' : 'false');
+        gsEdit.querySelector('span:last-child').textContent = on ? '编辑开' : '编辑';
+      }
     }
   }
 
