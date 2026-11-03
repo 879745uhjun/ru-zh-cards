@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>更新日志 · 俄汉记忆卡</title>
+<link rel="stylesheet" href="unit.css">
+<link rel="stylesheet" href="changelog.css">
+<link rel="stylesheet" href="sidebar.css">
+</head>
+<body>
+<header class="unit-header">
+  <div class="unit-brand">
+    <div class="unit-mark">Я</div>
+    <div>
+      <h1>更新日志</h1>
+      <p>版本变化 · 新功能 · 修复</p>
+    </div>
+  </div>
+  <div class="unit-controls">
+    <a class="unit-btn" id="backLevelLink" href="book.html">← 上一级</a>
+    <a class="unit-btn" href="index.html?deck=lesson1">卡片模式</a>
+    <a class="unit-btn primary" href="book.html">书首页</a>
+  </div>
+</header>
+
+<main class="log-main">
+  <div class="log-hero">
+    <div>
+      <span class="unit-eyebrow">CHANGELOG</span>
+      <h2>更新日志</h2>
+      <p>记录每个版本的界面、功能和内容变化。当前版本：<b>Alpha v2.1</b>。</p>
+    </div>
+    <div class="log-current">Alpha v2.1</div>
+  </div>
+
+  <section class="log-entry">
+    <div class="log-head"><span class="log-version">Alpha v2.1</span><span class="log-date">2026-11-03</span></div>
+    <ul>
+      <li>新增卡片“来源”查询：显示书名、课次、第几个课文/对话、页码和原句。</li>
+      <li>来源附原 PDF：可直接打开对应扫描页。</li>
+      <li>新增全局“来源查询”页：按俄语/中文/标题查全部来源。</li>
+      <li>来源会跟卡片一起保存、导出和恢复。</li>
+      <li>新增顶部固定快捷栏：上一级、上一张、下一张、书首页、整课、计划、来源、编辑。</li>
+      <li>三模式顺序调整为：顺序、复习、自定义。</li>
+      <li>书首页、单元页、卡片模式统一读取同一份课程数据。</li>
+      <li>修复：来源完整原文的 OCR 噪声不再直接铺开；只显示校对句，全文标为 OCR 初稿。</li>
+      <li>卡片固定高度，翻页不跳动；编辑权限默认关闭。</li>
+    </ul>
+  </section>
+
+  <section class="log-entry">
+    <div class="log-head"><span class="log-version">Alpha v2.0</span><span class="log-date">2026-11-03</span></div>
+    <ul>
+      <li>新增“书 → 单元 → 卡片”层级：新东方大学俄语（3）书首页。</li>
+      <li>新增单元目录、单元整课浏览。</li>
+      <li>新增顺序 / 自定义 / 复习学习计划。</li>
+      <li>新增“默认打开本书”本地开关。</li>
+      <li>新增编辑权限开关、返回上一级。</li>
+      <li>卡片固定高度，编辑、导入、备份数据统一。</li>
+    </ul>
+  </section>
+
+  <section class="log-entry">
+    <div class="log-head"><span class="log-version">Alpha v0.2</span><span class="log-date">早期版本</span></div>
+    <ul>
+      <li>俄汉对照卡片、逐词重音与语法。</li>
+      <li>学习模式、搜索、分类、随机、今日复习、错题本。</li>
+      <li>导入、导出、备份恢复、多课程管理。</li>
+    </ul>
+  </section>
+
+  <footer class="log-foot">后续大版本会继续追加到这里。当前线上版本：Alpha v2.1。</footer>
+</main>
+
+<script src="sidebar.js"></script>
+</body>
+</html>
