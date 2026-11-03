@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>整课浏览 · 俄汉记忆卡</title>
+<link rel="stylesheet" href="unit.css">
+</head>
+<body>
+<header class="unit-header">
+  <div class="unit-brand">
+    <div class="unit-mark">Я</div>
+    <div>
+      <h1>整课浏览</h1>
+      <p>一页看完整单元 · 重音 / 语法 / 中文</p>
+    </div>
+  </div>
+  <div class="unit-controls">
+    <a class="unit-btn" id="backLevelLink" href="book.html" title="返回上一级">← 上一级</a>
+    <label class="unit-select-label">课程
+      <select id="deckSelect"></select>
+    </label>
+    <input id="filterInput" class="unit-search" type="search" placeholder="筛选俄语 / 中文 / 分类">
+    <a class="unit-btn primary" id="startStudy" href="index.html">开始学习</a>
+    <button id="printBtn" class="unit-btn" type="button">打印</button>
+  </div>
+</header>
+
+<main class="unit-main">
+  <div class="unit-meta">
+    <div>
+      <span class="unit-eyebrow" id="deckTag">课程</span>
+      <h2 id="deckTitle">加载中…</h2>
+    </div>
+    <div class="unit-count" id="count"></div>
+  </div>
+  <div class="unit-grid" id="unitGrid"></div>
+  <div class="unit-empty" id="empty" hidden>没有匹配的卡片。</div>
+</main>
+
+<script src="data/deck.js"></script>
+<script src="data/lesson1.js"></script>
+<script src="data/lesson2.js"></script>
+<script src="data/lesson3.js"></script>
+<script src="data/lesson5.js"></script>
+<script src="data/decks-source.js"></script>
+<script src="unit.js"></script>
+</body>
+</html>
