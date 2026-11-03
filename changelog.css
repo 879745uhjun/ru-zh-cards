@@ -1,0 +1,14 @@
+.log-main{max-width:980px;margin:0 auto;padding:32px 32px 60px;}
+.log-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:26px;}
+.log-hero h2{margin:6px 0 0;font-family:var(--zh);font-size:28px;font-weight:600;}
+.log-hero p{margin:7px 0 0;color:var(--muted);font-size:11.5px;line-height:1.8;}
+.log-current{font-family:var(--mono);color:var(--accent-deep);font-size:13px;white-space:nowrap;}
+.log-entry{border-top:1px solid var(--line);padding:22px 0 18px;}
+.log-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+.log-version{font-family:var(--ru);font-size:23px;color:var(--ink);letter-spacing:.01em;}
+.log-date{color:var(--muted);font-family:var(--mono);font-size:9.5px;}
+.log-entry ul{margin:12px 0 0;padding-left:19px;color:var(--soft);font-size:12px;line-height:1.9;}
+.log-entry li{margin:4px 0;}
+.log-entry li::marker{color:var(--accent);}
+.log-foot{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:10.5px;line-height:1.7;}
+@media(max-width:700px){.log-main{padding:22px 16px 44px}.log-hero{display:block}.log-current{margin-top:9px}.log-version{font-size:20px}}
