@@ -4,7 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#eee7db">
-<title>俄汉记忆卡 · Alpha v0.2</title>
+<title>俄汉记忆卡 · Alpha v2.0</title>
+<script>
+try {
+  if (!location.search && localStorage.getItem('ru-zh-cards-book-default-v1') !== '0') {
+    location.replace('book.html');
+  }
+} catch (e) {}
+</script>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -15,7 +22,7 @@
       <div class="brand-copy">
         <div class="brand-line">
           <h1>俄汉记忆卡</h1>
-          <span class="alpha-badge">ALPHA v0.2</span>
+          <span class="alpha-badge">ALPHA v2.0</span>
         </div>
         <p>РУССКИЙ · 逐词重音与语法</p>
       </div>
@@ -49,6 +56,10 @@
             <span class="sr-only">选择课程</span>
             <select id="deckSelect"></select>
           </label>
+          <a class="deck-overview-link" id="backLevelLink" href="book.html" title="返回书首页">← 上一级</a>
+          <a class="deck-overview-link" id="overviewLink" href="unit.html">整课浏览</a>
+          <a class="deck-overview-link" href="plan.html">学习计划</a>
+          <button type="button" class="edit-permission" id="editToggle" aria-pressed="false" title="开启后可编辑当前卡片"><span class="edit-switch"><span></span></span>编辑权限</button>
         </div>
         <h2 id="deckTitle">旅游与城市</h2>
       </div>
@@ -81,6 +92,7 @@
       <div class="card-top">
         <span class="card-tag" id="cardTag">交通</span>
         <div class="card-top-right">
+          <button type="button" class="mini-btn" id="sourceBtn">来源</button>
           <button type="button" class="mini-btn" id="editCardBtn">编辑</button>
           <button type="button" class="mini-btn" id="rehideBtn" hidden>隐藏答案</button>
           <span class="card-index" id="cardIndex">CARD 01</span>
@@ -241,6 +253,25 @@
   </section>
 </div>
 
+<div class="modal" id="sourceModal" hidden>
+  <div class="modal-backdrop" data-close-source></div>
+  <section class="modal-panel source-panel" role="dialog" aria-modal="true" aria-labelledby="sourceTitle">
+    <header class="modal-head">
+      <div>
+        <span class="eyebrow">SOURCE</span>
+        <h2 id="sourceTitle">来源</h2>
+        <p class="modal-sub" id="sourceSub">原课文 / 对话出处</p>
+      </div>
+      <button type="button" class="icon-btn" id="closeSourceModal" aria-label="关闭来源窗口">×</button>
+    </header>
+    <div class="source-list" id="sourceList"></div>
+    <footer class="modal-foot">
+      <div class="foot-left"><a class="text-btn" href="sources.html">全局来源查询</a></div>
+      <div class="foot-right"><button type="button" class="btn ghost" data-close-source>关闭</button></div>
+    </footer>
+  </section>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <noscript><div class="noscript">请启用 JavaScript 后使用本程序。</div></noscript>
 
@@ -249,6 +280,7 @@
 <script src="data/lesson2.js"></script>
 <script src="data/lesson3.js"></script>
 <script src="data/lesson5.js"></script>
+<script src="data/sources.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
