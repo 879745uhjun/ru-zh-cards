@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#eee7db">
-<title>俄汉记忆卡 · Alpha v2.2</title>
+<title>俄汉记忆卡 · Beta v1.0</title>
 <script>
 try {
   if (!location.search && localStorage.getItem('ru-zh-cards-book-default-v1') !== '0') {
@@ -23,7 +23,7 @@ try {
       <div class="brand-copy">
         <div class="brand-line">
           <h1>俄汉记忆卡</h1>
-          <span class="alpha-badge">ALPHA v2.2</span>
+          <span class="alpha-badge">BETA v1.0</span>
         </div>
         <p>РУССКИЙ · 逐词重音与语法</p>
       </div>
@@ -59,7 +59,7 @@ try {
           </label>
           <a class="deck-overview-link" id="overviewLink" href="unit.html">整课浏览</a>
           <a class="deck-overview-link" href="plan.html">学习计划</a>
-          <button type="button" class="edit-permission" id="editToggle" aria-pressed="false" title="开启后可编辑当前卡片"><span class="edit-switch"><span></span></span>编辑权限</button>
+          <button type="button" id="editToggle" hidden aria-pressed="false"></button>
         </div>
         <h2 id="deckTitle">旅游与城市</h2>
       </div>
