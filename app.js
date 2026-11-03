@@ -272,6 +272,10 @@
     var subtitle = (!Array.isArray(input) && input.subtitle) ? String(input.subtitle) : '导入内容';
     var tag = (!Array.isArray(input) && input.tag) ? String(input.tag) : '自定义';
     var deckId = (!Array.isArray(input) && input.id) ? String(input.id) : ('deck-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7));
+    if (deckId === 'lesson4' && title === '旅游与城市') {
+      title = '第 4 课 · 旅游与城市';
+      if (subtitle === 'Урок 4 · 第 4 课词汇') subtitle = 'Урок 4 · 词汇 + 句子';
+    }
     var cards = [];
     var warnings = [];
 
