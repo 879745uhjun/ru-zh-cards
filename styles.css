@@ -291,7 +291,7 @@ button:disabled{cursor:not-allowed;}
 .source-pdf:hover{background:#f6e6ce;}
 .source-meta{margin:4px 0 0;color:var(--muted);font-size:9.5px;}
 .source-text{margin:10px 0 0;padding:10px 12px;border-left:2px solid #c49a5a;background:#f8f2e8;color:#4f483e;font-family:var(--ru);font-size:14px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;border-radius:0 7px 7px 0;max-height:220px;overflow-y:auto;}
-.source-hl{background:#f4d7a7;color:var(--ink);padding:0 1px;border-radius:2px;}
+.source-hl{background:#f2c75c;color:#2b2116;font-weight:650;padding:0 2px;border-radius:3px;box-shadow:0 0 0 1px #dfb24a inset;}
 .source-more{margin-top:8px;color:var(--muted);font-size:10px;}
 .source-more summary{cursor:pointer;color:var(--accent-deep);font-weight:650;}
 .source-text.full{max-height:180px;margin-top:6px;font-size:12.5px;}
