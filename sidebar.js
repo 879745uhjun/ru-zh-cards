@@ -34,6 +34,7 @@
   html += link(unitHref, '▤', '整课', 'gsUnit', page === 'unit.html' ? ' active' : '');
   html += link('plan.html', '◷', '计划', 'gsPlan', page === 'plan.html' ? ' active' : '');
   html += link('sources.html', '⌕', '来源', 'gsSources', page === 'sources.html' ? ' active' : '');
+  html += link('changelog.html', '≡', '日志', 'gsLog', page === 'changelog.html' ? ' active' : '');
   if (editToggle) html += '<button class="gs-btn" id="gsEdit" type="button" aria-pressed="false"><span class="gs-icon" aria-hidden="true">✎</span><span>编辑</span></button>';
   sidebar.innerHTML = html;
   document.body.appendChild(sidebar);
