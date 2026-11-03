@@ -1094,7 +1094,6 @@
           (source.title ? '<h3 class="source-title">' + escapeHtml(source.title) + '</h3>' : '') +
           (source.page ? '<p class="source-meta">第 ' + escapeHtml(source.page) + ' 页</p>' : '') +
           '<blockquote class="source-text">' + highlightSource(passage, needle) + '</blockquote>' +
-          (full && full !== passage ? '<details class="source-more"><summary>查看完整原文</summary><blockquote class="source-text full">' + highlightSource(full, needle) + '</blockquote></details>' : '') +
         '</article>';
       }).join('');
     }
