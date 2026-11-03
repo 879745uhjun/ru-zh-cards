@@ -6,6 +6,7 @@
 <title>学习计划 · 俄汉记忆卡</title>
 <link rel="stylesheet" href="unit.css">
 <link rel="stylesheet" href="plan.css">
+<link rel="stylesheet" href="sidebar.css">
 </head>
 <body>
 <header class="unit-header">
@@ -17,7 +18,7 @@
     </div>
   </div>
   <div class="unit-controls">
-    <a class="unit-btn" href="book.html" title="返回书首页">← 上一级</a>
+    <a class="unit-btn" id="backLevelLink" href="book.html" title="返回书首页">← 上一级</a>
     <button class="unit-btn primary" id="startBtn" type="button">开始学习</button>
   </div>
 </header>
@@ -34,8 +35,8 @@
 
   <div class="plan-tabs" role="tablist">
     <button type="button" class="plan-tab active" data-mode="sequential">顺序模式</button>
-    <button type="button" class="plan-tab" data-mode="custom">自定义模式</button>
     <button type="button" class="plan-tab" data-mode="review">复习模式</button>
+    <button type="button" class="plan-tab" data-mode="custom">自定义模式</button>
   </div>
 
   <div class="plan-toolbar">
@@ -56,5 +57,6 @@
 <script src="data/lesson5.js"></script>
 <script src="data/decks-source.js"></script>
 <script src="plan.js"></script>
+<script src="sidebar.js"></script>
 </body>
 </html>
