@@ -63,7 +63,13 @@
   function sync() {
     if (gsBack) {
       var source = document.getElementById('backLevelLink');
-      if (source) gsBack.href = source.getAttribute('href');
+      if (source) {
+        gsBack.href = source.getAttribute('href');
+      } else {
+        gsBack.href = params.get('from') === 'unit'
+          ? 'unit.html?deck=' + encodeURIComponent(deck)
+          : 'book.html';
+      }
     }
     if (gsPrev && gsNext) {
       var p = document.getElementById('prevBtn');
