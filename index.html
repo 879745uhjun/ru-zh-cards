@@ -13,6 +13,7 @@ try {
 } catch (e) {}
 </script>
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="global-search.css">
 <link rel="stylesheet" href="sidebar.css">
 </head>
 <body>
@@ -80,7 +81,7 @@ try {
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
           <input id="searchInput" type="search" placeholder="搜索俄语 / 中文" autocomplete="off" spellcheck="false">
         </label>
-        <a class="deck-overview-link" href="search.html">全书</a>
+        <button type="button" class="deck-overview-link global-search-toggle" data-global-search aria-pressed="false">全书</button>
       </div>
       <div class="filter-right">
         <button type="button" class="filter-btn" id="randomBtn" aria-pressed="false" title="随机打乱当前筛选结果">随机</button>
@@ -283,8 +284,10 @@ try {
 <script src="data/lesson2.js"></script>
 <script src="data/lesson3.js"></script>
 <script src="data/lesson5.js"></script>
+<script src="data/decks-source.js"></script>
 <script src="data/sources.js"></script>
 <script src="app.js"></script>
+<script src="global-search.js"></script>
 <script src="sidebar.js"></script>
 </body>
 </html>
