@@ -45,6 +45,8 @@ button,input,select{font:inherit;}
 .unit-grammar{display:flex;flex-direction:column;align-items:center;gap:0;margin-top:4px;max-width:120px;color:var(--muted);font-size:9px;line-height:1.35;text-align:center;}
 .unit-g-line{display:block;}
 .unit-g-case{color:var(--accent);font-weight:700;}
+.unit-variants{display:flex;flex-direction:column;gap:3px;margin-top:10px;padding:7px 9px;border-left:2px solid #d9b36a;background:#fbf5e9;color:#6f5a3d;font-size:10px;line-height:1.5;border-radius:0 6px 6px 0;}
+.unit-variants span{display:block;}
 .unit-zh{display:flex;align-items:flex-start;gap:10px;margin-top:16px;padding-top:13px;border-top:1px dashed var(--line);}
 .unit-zh-label{flex:0 0 24px;width:24px;padding:5px 0;border-radius:7px;background:var(--accent-soft);color:var(--accent-deep);font-size:9px;font-weight:700;text-align:center;letter-spacing:.1em;}
 .unit-zh-text{margin:0;font-family:var(--zh);font-size:17px;line-height:1.7;color:#2b3541;}
