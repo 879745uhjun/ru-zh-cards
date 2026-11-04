@@ -58,6 +58,15 @@
     return String(text || '').replace(/\[([А-Яа-яЁё])\]/g, '$1');
   }
 
+  function sourceLabel(card) {
+    var map = window.RU_ZH_SOURCES || {};
+    var list = map[cleanRu(card.ru).toLowerCase()] || card.sources || [];
+    if (!list.length) return '暂无来源';
+    var source = list[0];
+    var number = String(source.number || '').replace(/^(课文|对话)\s*/, '');
+    return (source.unit || '') + ' · ' + (source.kind || '课文') + (number ? ' ' + number : '');
+  }
+
   function unitTitle(deck, index) {
     var title = deck.title || '未命名单元';
     if (/^lesson\d+$/.test(deck.id) && !/^第\s*\d+\s*课/.test(title)) {
@@ -123,7 +132,7 @@
       var cards = deck.cards.map(function (card, index) {
         var checked = selectedCards[deckKey(deck.id, card)] ? ' checked' : '';
         return '<label class="plan-card-check"><input type="checkbox" class="card-check" data-deck="' + escapeHtml(deck.id) + '" data-card="' + index + '"' + checked + '>' +
-          '<span><span class="plan-card-ru">' + escapeHtml(cleanRu(card.ru)) + '</span><span class="plan-card-zh">' + escapeHtml(card.zh) + '</span></span></label>';
+          '<span><span class="plan-card-ru">' + escapeHtml(cleanRu(card.ru)) + '</span><span class="plan-card-zh">' + escapeHtml(card.zh) + '</span><span class="plan-card-source">' + escapeHtml(sourceLabel(card)) + '</span></span></label>';
       }).join('');
       return '<section class="plan-unit" data-deck="' + escapeHtml(deck.id) + '">' +
         '<div class="plan-unit-head">' +
