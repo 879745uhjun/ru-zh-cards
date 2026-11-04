@@ -42,6 +42,7 @@
       tag: String(card.tag || '未分类'),
       note: String(card.note || ''),
       grammar: Array.isArray(card.grammar) ? card.grammar : null,
+      ruVariants: Array.isArray(card.ruVariants) ? card.ruVariants : null,
       words: words
     };
   }
