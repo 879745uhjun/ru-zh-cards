@@ -57,6 +57,7 @@ try {
             <span class="sr-only">选择课程</span>
             <select id="deckSelect"></select>
           </label>
+          <span class="plan-mode-badge" id="planModeBadge" hidden>学习计划</span>
           <a class="deck-overview-link" id="overviewLink" href="unit.html">整课浏览</a>
           <a class="deck-overview-link" href="plan.html">学习计划</a>
           <button type="button" id="editToggle" hidden aria-pressed="false"></button>
@@ -79,6 +80,7 @@ try {
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
           <input id="searchInput" type="search" placeholder="搜索俄语 / 中文" autocomplete="off" spellcheck="false">
         </label>
+        <a class="deck-overview-link" href="search.html">全书</a>
       </div>
       <div class="filter-right">
         <button type="button" class="filter-btn" id="randomBtn" aria-pressed="false" title="随机打乱当前筛选结果">随机</button>
@@ -91,6 +93,7 @@ try {
     <article class="card" id="card" aria-live="polite">
       <div class="card-top">
         <span class="card-tag" id="cardTag">交通</span>
+        <span class="card-source" id="cardSource" hidden></span>
         <div class="card-top-right">
           <button type="button" class="mini-btn" id="sourceBtn">来源</button>
           <button type="button" class="mini-btn" id="editCardBtn">编辑</button>
