@@ -1244,7 +1244,7 @@
           (source.page ? '<p class="source-meta">第 ' + escapeHtml(source.page) + ' 页</p>' : '') +
           (source.pdf ? '<a class="source-pdf" target="_blank" rel="noopener" href="' + escapeHtml(source.pdf) + '#page=' + encodeURIComponent(source.pdfPage || '1') + '">查看原 PDF · 第 ' + escapeHtml(source.pdfPage || '1') + ' 页</a>' : '') +
           '<blockquote class="source-text">' + highlightSource(passage, needle) + '</blockquote>' +
-          (full && full !== passage ? '<details class="source-more" open><summary>对话 / 全文（OCR 初稿）</summary><blockquote class="source-text full">' + highlightSource(full, needle) + '</blockquote></details>' : '') +
+          (full && full !== passage ? '<details class="source-more" open><summary>对话 / 全文（OCR 初稿）</summary><blockquote class="source-text full">' + sourceParagraphs(full, needle) + '</blockquote></details>' : '') +
         '</article>';
       }).join('');
     }
