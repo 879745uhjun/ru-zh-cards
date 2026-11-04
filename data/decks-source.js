@@ -58,7 +58,7 @@
     saved.forEach(function (deck) {
       if (deck && deck.id && deck.id !== 'plan' && Array.isArray(deck.cards)) savedById[deck.id] = deck;
     });
-    var result = builtins.map(function (builtin) {
+    var result = builtins.filter(function (builtin) { return !deleted[builtin.id]; }).map(function (builtin) {
       var source = savedById[builtin.id] || builtin;
       var title = source.title || builtin.title || '未命名单元';
       if (builtin.id === 'lesson4' && title === '旅游与城市') title = '第 4 课 · 旅游与城市';
