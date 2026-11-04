@@ -159,6 +159,7 @@
     return '<article class="unit-card" data-search="' + escapeHtml((card.ru + ' ' + card.zh + ' ' + card.tag).toLowerCase()) + '">' +
       '<div class="unit-card-head"><span class="unit-tag">' + escapeHtml(card.tag || '未分类') + '</span><span class="unit-num">' + String(index + 1).padStart(2, '0') + '</span></div>' +
       '<div class="unit-ru">' + ru + '</div>' +
+      (Array.isArray(card.ruVariants) && card.ruVariants.length ? '<div class="unit-variants">' + card.ruVariants.map(function (v) { return '<span>同义：' + escapeHtml(String(v.ru || '').replace(/\[([А-Яа-яЁё])\]/g, '$1')) + '</span>'; }).join('') + '</div>' : '') +
       '<div class="unit-zh"><span class="unit-zh-label">中</span><p class="unit-zh-text">' + escapeHtml(card.zh) + '</p></div>' +
       (card.note ? '<div class="unit-note">' + escapeHtml(card.note) + '</div>' : '') +
     '</article>';
