@@ -52,12 +52,11 @@
   function render(query) {
     var q = String(query || '').trim().toLowerCase();
     if (!q) {
-      panel.innerHTML = '<div class="global-search-head">全书搜索 <span>输入关键词</span></div>' +
-        '<div class="global-search-empty">输入俄语或中文，跨 5 个单元查找。</div>';
+      panel.innerHTML = '<div class="global-search-empty">输入俄语或中文，搜索全书。</div>';
       return;
     }
     var found = records.filter(function (record) { return textOf(record).indexOf(q) !== -1; });
-    panel.innerHTML = '<div class="global-search-head">全书搜索 <span>找到 ' + found.length + ' 张</span></div>' +
+    panel.innerHTML = '<div class="global-search-count">全书结果 · ' + found.length + ' 张</div>' +
       (found.length ? found.slice(0, 80).map(function (record) {
         var card = record.card;
         var href = 'index.html?deck=' + encodeURIComponent(record.deck.id) + '&card=' + (record.index + 1);
