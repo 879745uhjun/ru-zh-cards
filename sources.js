@@ -144,6 +144,15 @@
     return haystack.indexOf(query) !== -1;
   }
 
+  function paragraphs(text, needle) {
+    var raw = String(text || '').replace(/\s*\n\s*/g, ' ').replace(/\s{2,}/g, ' ').trim();
+    if (!raw) return '';
+    var sentences = raw.split(/(?<=[.!?])\s+/);
+    var groups = [];
+    for (var i = 0; i < sentences.length; i += 2) groups.push(sentences.slice(i, i + 2).join(' '));
+    return groups.map(function (group) { return '<p class="source-paragraph">' + highlight(group, needle) + '</p>'; }).join('');
+  }
+
   function render() {
     var query = (search.value || '').trim().toLowerCase();
     var filtered = records.filter(function (record) { return matches(record, query); });
@@ -170,7 +179,7 @@
         '</div>' +
         (source.title ? '<div class="source-title" style="font-size:11px;color:#5f574c;margin-top:5px;">' + escapeHtml(source.title) + '</div>' : '') +
         '<blockquote class="source-quote">' + highlight(quote, needle) + '</blockquote>' +
-        (full && full !== quote ? '<details class="source-more"><summary>查看对话 / 全文（OCR 初稿）</summary><blockquote class="source-quote full">' + highlight(full, needle) + '</blockquote></details>' : '') +
+        (full && full !== quote ? '<details class="source-more"><summary>查看对话 / 全文（OCR 初稿）</summary><blockquote class="source-quote full">' + paragraphs(full, needle) + '</blockquote></details>' : '') +
       '</article>';
     }).join('');
   }
