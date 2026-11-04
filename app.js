@@ -7,6 +7,7 @@
   var PROGRESS_KEY = 'ru-zh-cards-progress-v0.2';
   var SCHEDULE_KEY = 'ru-zh-cards-schedule-v0.3';
   var PLAN_KEY = 'ru-zh-cards-plan-v1';
+  var DELETED_KEY = 'ru-zh-cards-deleted-v1';
   var BUILTIN_DECK = window.RU_ZH_DECK;
   var BUILTIN_LESSON1 = window.RU_ZH_LESSON1;
   var BUILTIN_LESSON2 = window.RU_ZH_LESSON2;
@@ -392,9 +393,27 @@
     return list;
   }
 
+  function loadDeleted() {
+    try {
+      var raw = localStorage.getItem(DELETED_KEY);
+      var data = raw ? JSON.parse(raw) : {};
+      return (data && typeof data === 'object' && !Array.isArray(data)) ? data : {};
+    } catch (err) { return {}; }
+  }
+
+  function rememberDeleted(id) {
+    try {
+      var data = loadDeleted();
+      data[id] = true;
+      localStorage.setItem(DELETED_KEY, JSON.stringify(data));
+    } catch (err) { /* ignore */ }
+  }
+
   function mergeBuiltinDecks(loaded) {
     var builtins = builtinDecks();
+    var deleted = loadDeleted();
     builtins.forEach(function (builtin) {
+      if (deleted[builtin.id]) return;
       var exists = loaded.some(function (deck) { return deck.id === builtin.id; });
       if (!exists) loaded.push(normalizeDeck(builtin));
     });
@@ -407,7 +426,7 @@
       if (saved) {
         var parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length) {
-          var loaded = parsed.map(function (deck) { return normalizeDeck(deck); });
+          var loaded = parsed.map(function (deck) { return normalizeDeck(deck); }).filter(function (deck) { return deck.id !== 'plan'; });
           if (loaded.length) return mergeBuiltinDecks(loaded);
         }
       }
@@ -469,10 +488,15 @@
   function renderDeckOptions() {
     var select = $('#deckSelect');
     if (!select) return;
-    select.innerHTML = state.decks.map(function (deck) {
+    var normalDecks = state.decks.filter(function (deck) { return deck.id !== 'plan'; });
+    select.innerHTML = normalDecks.map(function (deck) {
       return '<option value="' + escapeHtml(deck.id) + '">' + escapeHtml(deck.title) + ' · ' + deck.cards.length + ' 张</option>';
     }).join('');
-    select.value = state.deckId;
+    var planActive = state.deckId === 'plan';
+    select.hidden = planActive;
+    var badge = $('#planModeBadge');
+    if (badge) badge.hidden = !planActive;
+    if (!planActive) select.value = state.deckId;
   }
 
   function switchDeck(id) {
@@ -933,6 +957,18 @@
     $('#jumpInput').placeholder = total ? '' : '–';
     $('#jumpInput').disabled = total === 0;
     $('#cardTag').textContent = card ? tagForDisplay(card) : '无结果';
+    var cardSource = $('#cardSource');
+    if (cardSource) {
+      var firstSource = card && Array.isArray(card.sources) && card.sources.length ? card.sources[0] : null;
+      if (firstSource) {
+        cardSource.textContent = (firstSource.unit || '') + ' · ' + sourceTypeLabel(firstSource);
+        cardSource.title = [firstSource.book, firstSource.unit, firstSource.title].filter(Boolean).join(' · ');
+        cardSource.hidden = false;
+      } else {
+        cardSource.textContent = '';
+        cardSource.hidden = true;
+      }
+    }
     $('#cardIndex').textContent = card ? 'CARD ' + pad(state.index + 1) : '—';
     $('#progressBar').style.width = (total ? ((state.index + 1) / total * 100) : 0) + '%';
 
@@ -1720,6 +1756,7 @@
       return;
     }
     if (!window.confirm('删除当前课程“' + state.deck.title + '”？此操作不会删除学习进度记录。')) return;
+    if (builtinDeckById(state.deckId)) rememberDeleted(state.deckId);
     state.decks = state.decks.filter(function (deck) { return deck.id !== state.deckId; });
     state.deckId = state.decks[0].id;
     state.deck = state.decks[0];
@@ -2069,7 +2106,6 @@
       if (params.get('plan') === '1') {
         var planDeck = loadPlanDeck();
         if (planDeck) {
-          state.decks.unshift(planDeck);
           state.deck = planDeck;
           state.deckId = 'plan';
         }
