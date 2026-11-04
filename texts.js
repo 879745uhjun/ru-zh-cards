@@ -52,7 +52,15 @@
   };
 
   function itemHtml(source) {
-    var title = source.title || (source.kind + ' ' + source.number);
+    var unitNumberMatch = String(source.unit || '').match(/(\d+)/);
+    var itemNumberMatch = String(source.number || '').match(/(\d+)/);
+    var title;
+    if (source.kind === '对话') {
+      title = 'Урок ' + (unitNumberMatch ? unitNumberMatch[1] : '') + ' · Диалог ' + (itemNumberMatch ? itemNumberMatch[1] : '');
+    } else {
+      var textTitle = String(source.title || '').replace(/^Урок\s*\d+\s*·\s*/, '').trim() || 'Текст';
+      title = 'Текст · ' + textTitle;
+    }
     return '<details class="text-item">' +
       '<summary>' +
         '<span class="text-item-copy">' +
