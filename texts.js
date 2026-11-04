@@ -43,8 +43,15 @@
     return groups.map(function (group) { return '<p>' + escapeHtml(group) + '</p>'; }).join('');
   }
 
-  var list = document.getElementById('textsList');
-  list.innerHTML = sections.map(function (source) {
+  var UNIT_TITLES = {
+    '第 1 课': '外貌与性格',
+    '第 2 课': '性格与生活',
+    '第 3 课': '运动与爱好',
+    '第 4 课': '旅游与城市',
+    '第 5 课': '图书馆与阅读'
+  };
+
+  function itemHtml(source) {
     var title = source.title || (source.kind + ' ' + source.number);
     return '<details class="text-item">' +
       '<summary>' +
@@ -59,5 +66,29 @@
         (source.pdf ? '<div class="text-pdf-row"><a class="unit-btn" target="_blank" rel="noopener" href="' + escapeHtml(source.pdf) + '#page=' + encodeURIComponent(source.pdfPage || '1') + '">查看原 PDF · 第 ' + escapeHtml(source.pdfPage || '1') + ' 页</a></div>' : '') +
       '</div>' +
     '</details>';
+  }
+
+  var groups = {};
+  sections.forEach(function (source) {
+    var key = source.unit || '未分课';
+    (groups[key] = groups[key] || []).push(source);
+  });
+  var list = document.getElementById('textsList');
+  list.innerHTML = Object.keys(groups).sort(function (a, b) {
+    var ma = String(a).match(/(\d+)/), mb = String(b).match(/(\d+)/);
+    return (ma ? Number(ma[1]) : 99) - (mb ? Number(mb[1]) : 99);
+  }).map(function (unit) {
+    var items = groups[unit];
+    var dialogues = items.filter(function (s) { return s.kind === '对话'; }).length;
+    var texts = items.filter(function (s) { return s.kind !== '对话'; }).length;
+    var number = String(unit).match(/(\d+)/);
+    return '<section class="text-unit">' +
+      '<div class="text-unit-head">' +
+        '<span class="text-unit-number">' + (number ? String(number[1]).padStart(2, '0') : '—') + '</span>' +
+        '<div class="text-unit-title"><h3>' + escapeHtml(unit) + ' · ' + escapeHtml(UNIT_TITLES[unit] || '') + '</h3>' +
+          '<p>' + items.length + ' 篇 · ' + (dialogues ? '对话 ' + dialogues : '') + (dialogues && texts ? ' · ' : '') + (texts ? '课文 ' + texts : '') + '</p></div>' +
+      '</div>' +
+      '<div class="text-unit-items">' + items.map(itemHtml).join('') + '</div>' +
+    '</section>';
   }).join('');
 })();
