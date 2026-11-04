@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>整课浏览 · 俄汉记忆卡</title>
 <link rel="stylesheet" href="unit.css">
+<link rel="stylesheet" href="global-search.css">
 <link rel="stylesheet" href="sidebar.css">
 </head>
 <body>
@@ -22,7 +23,7 @@
       <select id="deckSelect"></select>
     </label>
     <input id="filterInput" class="unit-search" type="search" placeholder="筛选俄语 / 中文 / 分类">
-    <a class="unit-btn" href="search.html">全书</a>
+    <button type="button" class="unit-btn global-search-toggle" data-global-search aria-pressed="false">全书</button>
     <a class="unit-btn primary" id="startStudy" href="index.html">开始学习</a>
     <button id="printBtn" class="unit-btn" type="button">打印</button>
   </div>
@@ -46,7 +47,9 @@
 <script src="data/lesson3.js"></script>
 <script src="data/lesson5.js"></script>
 <script src="data/decks-source.js"></script>
+<script src="data/sources.js"></script>
 <script src="unit.js"></script>
+<script src="global-search.js"></script>
 <script src="sidebar.js"></script>
 </body>
 </html>
