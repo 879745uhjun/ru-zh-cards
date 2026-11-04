@@ -48,7 +48,11 @@
   }
 
   function load() {
-    var builtins = builtinList();
+    var deleted = {};
+    try {
+      deleted = JSON.parse(localStorage.getItem('ru-zh-cards-deleted-v1') || '{}') || {};
+    } catch (err) { deleted = {}; }
+    var builtins = builtinList().filter(function (deck) { return !deleted[deck.id]; });
     var saved = readSaved();
     var savedById = {};
     saved.forEach(function (deck) {
