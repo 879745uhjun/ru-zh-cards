@@ -1,5 +1,6 @@
 .global-search-toggle.active,.global-search-toggle[aria-pressed="true"]{background:var(--accent-soft);border-color:#e2b9b1;color:var(--accent-deep);}
 .global-search-results{margin-top:16px;border:1px solid rgba(216,205,187,.9);border-radius:18px;background:rgba(255,253,248,.82);box-shadow:0 12px 30px rgba(31,42,56,.08);overflow:hidden;}
+.global-search-count{padding:10px 16px;border-bottom:1px solid var(--line);color:var(--accent-deep);font-size:9.5px;font-weight:700;letter-spacing:.04em;}
 .global-search-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--accent-deep);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;}
 .global-search-head span{color:var(--muted);font-family:var(--mono);font-size:9px;font-weight:400;letter-spacing:0;text-transform:none;}
 .global-result{display:grid;grid-template-columns:minmax(0,1fr);gap:0;padding:11px 16px;border-bottom:1px solid rgba(216,205,187,.55);text-decoration:none;color:inherit;}
