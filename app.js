@@ -412,6 +412,7 @@
   function mergeBuiltinDecks(loaded) {
     var builtins = builtinDecks();
     var deleted = loadDeleted();
+    loaded = loaded.filter(function (deck) { return !deleted[deck.id]; });
     builtins.forEach(function (builtin) {
       if (deleted[builtin.id]) return;
       var exists = loaded.some(function (deck) { return deck.id === builtin.id; });
@@ -449,7 +450,7 @@
 
     var builtins = builtinDecks();
     if (!builtins.length) throw new Error('未找到内置词表 data/deck.js');
-    return builtins.map(function (deck) { return normalizeDeck(deck); });
+    return mergeBuiltinDecks([]);
   }
 
   function loadPlanDeck() {
