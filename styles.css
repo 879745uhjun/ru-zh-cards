@@ -194,6 +194,13 @@ button:disabled{cursor:not-allowed;}
 .study-banner::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);flex:0 0 6px;}
 .ru-block{display:flex;flex-wrap:wrap;align-items:flex-start;gap:26px 16px;padding-top:2px;}
 .ru-block:not(.first){margin-top:30px;padding-top:24px;border-top:1px dashed var(--line);}
+.ru-variants{margin-top:18px;padding-top:14px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:14px;}
+.ru-variant{display:flex;flex-direction:column;gap:2px;}
+.ru-variant-label{display:inline-flex;align-self:flex-start;padding:2px 7px;border-radius:999px;background:#f1e7d7;color:#8d6a3f;font-size:8px;font-weight:800;letter-spacing:.08em;}
+.ru-variant .ru-block{border:0!important;margin:0!important;padding:0!important;gap:16px 10px;}
+.ru-variant .word{font-size:22px;}
+.ru-variant .grammar{font-size:9px;}
+.ru-variant-zh{color:var(--muted);font-size:10px;}
 .token{display:flex;flex-direction:column;align-items:center;min-width:0;}
 .word-line{display:inline-flex;align-items:baseline;justify-content:center;white-space:nowrap;}
 .word{
