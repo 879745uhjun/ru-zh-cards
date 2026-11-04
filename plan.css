@@ -32,6 +32,7 @@
 .plan-card-check input:checked::after{content:"";width:6px;height:3px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(0,-1px);}
 .plan-card-ru{font-family:var(--ru);font-size:13px;color:var(--ink);line-height:1.35;}
 .plan-card-zh{display:block;margin-top:2px;color:var(--muted);font-size:9.5px;}
+.plan-card-source{display:block;margin-top:3px;color:#9a6a35;font-size:8.5px;letter-spacing:.02em;}
 body.mode-sequential .plan-cards,body.mode-review .plan-cards{display:none;}
 #startBtn:disabled{opacity:.45;cursor:not-allowed;}
 .plan-empty{padding:40px;text-align:center;color:var(--muted);font-size:12px;}
