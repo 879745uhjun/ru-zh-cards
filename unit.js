@@ -156,7 +156,7 @@
         gramHtml(word) +
       '</span>';
     }).join('');
-    return '<article class="unit-card" data-search="' + escapeHtml((card.ru + ' ' + card.zh + ' ' + card.tag).toLowerCase()) + '">' +
+    return '<article class="unit-card" data-card-index="' + index + '" tabindex="0" role="link" aria-label="打开 ' + escapeHtml(String(card.ru || '').replace(/\[([А-Яа-яЁё])\]/g, '$1')) + '" data-search="' + escapeHtml((card.ru + ' ' + card.zh + ' ' + card.tag).toLowerCase()) + '">' +
       '<div class="unit-card-head"><span class="unit-tag">' + escapeHtml(card.tag || '未分类') + '</span><span class="unit-num">' + String(index + 1).padStart(2, '0') + '</span></div>' +
       '<div class="unit-ru">' + ru + '</div>' +
       (Array.isArray(card.ruVariants) && card.ruVariants.length ? '<div class="unit-variants">' + card.ruVariants.map(function (v) { return '<span>同义：' + escapeHtml(String(v.ru || '').replace(/\[([А-Яа-яЁё])\]/g, '$1')) + '</span>'; }).join('') + '</div>' : '') +
@@ -215,6 +215,20 @@
     render();
   });
   filterInput.addEventListener('input', render);
+  grid.addEventListener('click', function (event) {
+    var card = event.target.closest('.unit-card');
+    if (!card) return;
+    var deck = getDeckFromUrl();
+    if (!deck) return;
+    location.href = 'index.html?deck=' + encodeURIComponent(deck.id) + '&card=' + (Number(card.getAttribute('data-card-index')) + 1);
+  });
+  grid.addEventListener('keydown', function (event) {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    var card = event.target.closest('.unit-card');
+    if (!card) return;
+    event.preventDefault();
+    card.click();
+  });
   printBtn.addEventListener('click', function () { window.print(); });
   render();
 })();
