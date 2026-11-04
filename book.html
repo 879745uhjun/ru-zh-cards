@@ -50,6 +50,14 @@ a{color:inherit}
 .stat span{color:var(--muted);font-size:9px;letter-spacing:.07em}
 .stat-sep{width:1px;height:24px;background:var(--line)}
 .book-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:20px}
+.text-module{display:flex;align-items:center;justify-content:space-between;gap:24px;max-width:1260px;margin:0 auto 46px;padding:24px 32px;border:1px solid rgba(216,205,187,.9);border-radius:20px;background:linear-gradient(135deg,rgba(255,253,248,.95),rgba(246,237,223,.9));text-decoration:none;color:inherit;box-shadow:0 10px 28px rgba(31,42,56,.06)}
+.text-module:hover{border-color:#c9b7a0;box-shadow:0 16px 36px rgba(31,42,56,.1)}
+.text-module-copy{display:flex;flex-direction:column;gap:5px}
+.text-module-kicker{color:var(--accent);font-size:9px;font-weight:800;letter-spacing:.14em}
+.text-module-title{font-family:var(--ru);font-size:30px;line-height:1.1;color:var(--ink)}
+.text-module-desc{color:var(--muted);font-size:11px}
+.text-module-arrow{color:#b9ab96;font-size:24px}
+@media(max-width:700px){.text-module{margin:0 16px 32px;padding:20px 18px}.text-module-title{font-size:24px}}
 .default-toggle{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;background:rgba(255,253,248,.6);color:var(--soft);padding:8px 11px;font-size:10.5px;font-weight:600;cursor:pointer}
 .default-toggle .switch{width:24px;height:13px;border-radius:999px;background:#cabda9;position:relative;transition:.18s}
 .default-toggle .switch::after{content:"";position:absolute;left:2px;top:2px;width:9px;height:9px;border-radius:50%;background:#fff;transition:.18s}
@@ -112,13 +120,9 @@ a{color:inherit}
   <div class="brand">
     <div class="brand-mark">Я</div>
     <div>
-      <div class="brand-name">俄汉记忆卡 <span class="brand-version">BETA v1.1</span></div>
+      <div class="brand-name">俄汉记忆卡 <span class="brand-version">BETA v1.2</span></div>
       <div class="brand-sub">РУССКИЙ · 逐词重音与语法</div>
     </div>
-  </div>
-  <div class="top-actions">
-    <a class="ghost-btn" href="index.html?deck=lesson1">卡片模式</a>
-    <a class="primary-btn" href="index.html?deck=lesson1">继续学习</a>
   </div>
 </header>
 
@@ -131,7 +135,7 @@ a{color:inherit}
       <div class="cover-edition">新东方大学俄语（3）</div>
       <div class="cover-foot">
         <div><strong><span id="coverUnitCount">5</span> 个单元</strong><span id="coverCardCount">226</span> 张卡片</div>
-        <div>ALPHA · 2026</div>
+        <div>BETA · 2026</div>
       </div>
     </div>
     <div class="book-copy">
@@ -156,6 +160,15 @@ a{color:inherit}
     </div>
   </section>
 
+  <a class="text-module" href="sources.html">
+    <span class="text-module-copy">
+      <span class="text-module-kicker">ТЕКСТЫ · 5 УРОКОВ</span>
+      <span class="text-module-title">Диалоги и Текст</span>
+      <span class="text-module-desc">15 篇对话与课文 · 原文、页码、PDF</span>
+    </span>
+    <span class="text-module-arrow" aria-hidden="true">→</span>
+  </a>
+
   <section class="unit-section">
     <div class="section-head">
       <div><h2>单元目录</h2><p>点击单元查看该单元的全部单词与句子。</p></div>
@@ -165,7 +178,7 @@ a{color:inherit}
   </section>
 
   <footer class="foot">
-    <span>新东方大学俄语（3） · Beta v1.1</span>
+    <span>新东方大学俄语（3） · Beta v1.2</span>
     <a href="changelog.html">更新日志</a>
   </footer>
 </main>
