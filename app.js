@@ -220,6 +220,30 @@
     };
   }
 
+  function normalizeVariant(raw) {
+    if (typeof raw === 'string') raw = { ru: raw };
+    if (!raw || typeof raw !== 'object') return null;
+    var text = String(raw.ru || raw.text || '').trim();
+    if (!text) return null;
+    var groups = normalizeGrammar(raw.grammar);
+    var words = Array.isArray(raw.words) && raw.words.length
+      ? raw.words.map(function (w, i) { return normalizeWord(w, groups[i] || []); })
+      : tokenizeRu(text);
+    var gi = 0;
+    words.forEach(function (word) {
+      if (word.punctOnly) return;
+      if (!Array.isArray(raw.words)) word.grammar = groups[gi] || [];
+      gi++;
+    });
+    return {
+      ru: cleanRu(text),
+      zh: String(raw.zh || '').trim(),
+      note: String(raw.note || '').trim(),
+      grammar: groups,
+      words: words
+    };
+  }
+
   function normalizeCard(raw, index) {
     if (!raw || typeof raw !== 'object') throw new Error('卡片不是对象');
     var ruRaw = raw.ru || raw.russian || '';
@@ -253,6 +277,11 @@
 
     var sources = normalizeSources(raw.sources || raw.source);
     if (!sources.length) sources = sourcesForRu(cleaned);
+    var variantRaw = raw.ruVariants || raw.variants || [];
+    if (typeof variantRaw === 'string') variantRaw = variantRaw.split(/\r?\n/);
+    var variants = (Array.isArray(variantRaw) ? variantRaw : []).map(normalizeVariant).filter(function (v) {
+      return v && v.ru && v.ru.toLowerCase() !== cleaned.toLowerCase();
+    });
     return {
       id: raw.id || ('c' + (index + 1)),
       ru: cleaned,
@@ -260,6 +289,7 @@
       tag: String(raw.tag || '未分类').trim(),
       note: String(raw.note || '').trim(),
       sources: sources,
+      ruVariants: variants,
       words: words
     };
   }
@@ -311,6 +341,7 @@
           tag: card.tag,
           note: card.note,
           sources: card.sources || [],
+          ruVariants: card.ruVariants || [],
           words: card.words.map(function (w) {
             return { text: w.text, stress: w.stress, grammar: w.grammar, punct: w.punct, lead: w.lead };
           })
@@ -609,7 +640,8 @@
     if (state.dueOnly && !isDue(card)) return false;
     var q = state.query.trim().toLowerCase();
     if (q) {
-      var haystack = (card.ru + '\n' + card.zh + '\n' + card.tag).toLowerCase();
+      var variantText = (card.ruVariants || []).map(function (v) { return v.ru + '\n' + v.zh; }).join('\n');
+      var haystack = (card.ru + '\n' + card.zh + '\n' + card.tag + '\n' + variantText).toLowerCase();
       if (haystack.indexOf(q) === -1) return false;
     }
     return true;
@@ -802,7 +834,7 @@
     return '<span class="grammar-wrap"><span class="grammar">' + inner + '</span><span class="grammar-hint">点击</span></span>';
   }
 
-  function ruHtml(card, first) {
+  function ruHtml(card, first, interactive) {
     var tokens = card.words.map(function (word, i) {
       if (word.punctOnly) {
         return '<span class="punct-only">' + escapeHtml(word.text) + '</span>';
@@ -810,7 +842,7 @@
       var hasGrammar = !!(word.grammar && word.grammar.length);
       var noStress = !Number.isInteger(word.stress) || word.stress < 0 || !hasVowel(word.text);
       var title = !hasVowel(word.text) ? ' title="单辅音前置词，无独立重音"' : '';
-      var role = hasGrammar && state.study
+      var role = interactive !== false && hasGrammar && state.study
         ? ' role="button" tabindex="0" data-word-index="' + i + '" aria-expanded="false" aria-label="查看 ' + escapeHtml(word.text) + ' 的语法"'
         : '';
       var cls = 'token' + (hasGrammar ? ' has-grammar' : '');
@@ -823,7 +855,16 @@
         grammarHtml(word) +
       '</span>';
     }).join('');
-    return '<div class="ru-block' + (first ? ' first' : '') + '">' + tokens + '</div>';
+    var block = '<div class="ru-block' + (first ? ' first' : '') + '">' + tokens + '</div>';
+    if (Array.isArray(card.ruVariants) && card.ruVariants.length) {
+      block += '<div class="ru-variants">' + card.ruVariants.map(function (variant) {
+        return '<div class="ru-variant"><span class="ru-variant-label">同义</span>' +
+          ruHtml({ words: variant.words }, false, false) +
+          (variant.zh && variant.zh !== card.zh ? '<span class="ru-variant-zh">' + escapeHtml(variant.zh) + '</span>' : '') +
+        '</div>';
+      }).join('') + '</div>';
+    }
+    return block;
   }
 
   function zhHtml(card, first) {
@@ -1122,6 +1163,19 @@
     return out + escapeHtml(raw.slice(cursor));
   }
 
+  function sourceParagraphs(text, needle) {
+    var raw = String(text || '').replace(/\s*\n\s*/g, ' ').replace(/\s{2,}/g, ' ').trim();
+    if (!raw) return '';
+    var sentences = raw.split(/(?<=[.!?])\s+/);
+    var groups = [];
+    for (var i = 0; i < sentences.length; i += 2) {
+      groups.push(sentences.slice(i, i + 2).join(' '));
+    }
+    return groups.map(function (group) {
+      return '<p class="source-paragraph">' + highlightSource(group, needle) + '</p>';
+    }).join('');
+  }
+
   function sourceKicker(source) {
     var parts = [];
     if (source.book) parts.push(source.book);
@@ -1236,6 +1290,7 @@
         tag: tag,
         note: note,
         sources: card.sources || [],
+        ruVariants: card.ruVariants || [],
         grammar: groups
       }, state.deck.cards.indexOf(card));
 
@@ -1505,6 +1560,7 @@
           tag: card.tag,
           note: card.note,
           sources: card.sources || [],
+          ruVariants: card.ruVariants || [],
           words: card.words.map(function (w) {
             return { text: w.text, stress: w.stress, grammar: w.grammar, punct: w.punct, lead: w.lead };
           })
