@@ -19,6 +19,13 @@
     return String(text || '').replace(/\[([А-Яа-яЁё])\]/g, '$1');
   }
 
+  function sourceText(source) {
+    if (!source) return '';
+    if (source.text) return source.text;
+    var store = window.RU_ZH_SOURCE_TEXTS || {};
+    return source.textKey ? (store[source.textKey] || '') : '';
+  }
+
   function normalizeSource(item) {
     if (!item || typeof item !== 'object') return null;
     var kind = String(item.kind || item.type || '').indexOf('对话') !== -1 ? '对话' : '课文';
@@ -111,7 +118,7 @@
     decks.forEach(function (deck) {
       deck.cards.forEach(function (card, index) {
         sourcesFor(card).forEach(function (source) {
-          var passage = source.text || source.quote || '';
+          var passage = source.quote || sourceText(source) || '';
           var key = cleanRu(card.ru) + '|' + route(source) + '|' + passage.slice(0, 120);
           if (seen[key]) return;
           seen[key] = true;
@@ -138,7 +145,7 @@
       record.source.kind,
       record.source.number,
       record.source.title,
-      record.source.text,
+      sourceText(record.source),
       record.source.quote
     ].join(' ').toLowerCase();
     return haystack.indexOf(query) !== -1;
@@ -164,8 +171,8 @@
     results.innerHTML = filtered.map(function (record) {
       var source = record.source;
       var needle = cleanRu(record.card.ru);
-      var quote = source.quote || source.text || '';
-      var full = source.text || '';
+      var full = sourceText(source);
+      var quote = source.quote || full || '';
       var href = 'index.html?deck=' + encodeURIComponent(record.deck.id) + '&card=' + (record.index + 1);
       return '<article class="source-result">' +
         '<div class="source-result-head"><div class="source-result-card">' +
