@@ -119,13 +119,21 @@
         page: item.page == null ? '' : String(item.page).trim(),
         pdf: String(item.pdf || '').trim(),
         pdfPage: item.pdfPage == null ? '' : String(item.pdfPage).trim(),
-        text: String(item.text || item.quote || '').trim(),
+        text: String(item.text || '').trim(),
+        textKey: String(item.textKey || '').trim(),
         quote: String(item.quote || '').trim()
       };
-      if (!source.unit && !source.title && !source.text) return;
+      if (!source.unit && !source.title && !source.text && !source.textKey) return;
       out.push(source);
     });
     return out;
+  }
+
+  function sourceText(source) {
+    if (!source) return '';
+    if (source.text) return source.text;
+    var store = window.RU_ZH_SOURCE_TEXTS || {};
+    return source.textKey ? (store[source.textKey] || '') : '';
   }
 
   function sourcesForRu(ru) {
@@ -1235,8 +1243,9 @@
       list.innerHTML = '<div class="source-empty"><strong>暂无来源</strong>这张卡还没有录入原课文/对话出处。<br>等 PDF 原文整理后，这里会显示书名、课次、对话编号和原文。</div>';
     } else {
       list.innerHTML = sources.map(function (source) {
-        var passage = source.quote || source.text || '';
-        var full = source.text || '';
+        var fullText = sourceText(source);
+        var passage = source.quote || fullText || '';
+        var full = fullText;
         var needle = card.ru;
         return '<article class="source-item">' +
           '<div class="source-kicker"><span class="source-kind">' + escapeHtml(sourceTypeLabel(source)) + '</span>' + escapeHtml(sourceKicker(source)) + '</div>' +
