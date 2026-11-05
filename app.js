@@ -1616,17 +1616,27 @@
       activeDeckId: state.deckId,
       decks: state.decks.map(deckPayload),
       progress: state.progress,
-      schedule: state.schedule
+      schedule: state.schedule,
+      deleted: loadDeleted()
     };
     download('俄汉卡片-完整备份.json', JSON.stringify(data, null, 2), 'application/json');
     showToast('已导出完整备份（含全部课程与进度）');
   }
 
   function restoreBackupData(data) {
-    if (!data || !Array.isArray(data.decks) || !data.decks.length) {
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      throw new Error('不是有效的备份文件：内容不是 JSON 对象。');
+    }
+    if (data.format && data.format !== 'ru-zh-cards-backup') {
+      throw new Error('不是有效的备份文件：format 不匹配。');
+    }
+    if (!Array.isArray(data.decks) || !data.decks.length) {
       throw new Error('不是有效的备份文件：缺少 decks 数组。');
     }
-    var decks = data.decks.map(function (deck) { return normalizeDeck(deck); });
+    if (data.deleted && typeof data.deleted === 'object' && !Array.isArray(data.deleted)) {
+      try { localStorage.setItem(DELETED_KEY, JSON.stringify(data.deleted)); } catch (err) { /* ignore */ }
+    }
+    var decks = data.decks.map(function (deck) { return normalizeDeck(deck); }).filter(function (deck) { return deck.id !== 'plan'; });
     if (!decks.length) throw new Error('备份中没有有效课程。');
 
     var progress = {};
@@ -1685,8 +1695,14 @@
     reader.onload = function () {
       try {
         var data = JSON.parse(String(reader.result || ''));
-        if (!window.confirm('恢复备份会覆盖当前全部课程和学习进度，继续？')) return;
+        if (!window.confirm('恢复备份会覆盖当前全部课程和学习进度，继续？')) {
+          var cancelInput = $('#backupFileInput');
+          if (cancelInput) cancelInput.value = '';
+          return;
+        }
         restoreBackupData(data);
+        var restoredInput = $('#backupFileInput');
+        if (restoredInput) restoredInput.value = '';
         closeModal();
       } catch (err) {
         showImportError(err && err.message ? err.message : '备份文件读取失败。');
