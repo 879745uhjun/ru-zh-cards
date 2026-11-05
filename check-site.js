@@ -37,10 +37,12 @@ const sourceSandbox = { window: {} };
 vm.createContext(sourceSandbox);
 vm.runInContext(fs.readFileSync(path.join(base, 'data/sources.js'), 'utf8'), sourceSandbox, { filename: 'data/sources.js' });
 const sources = sourceSandbox.window.RU_ZH_SOURCES || {};
+const sourceTexts = sourceSandbox.window.RU_ZH_SOURCE_TEXTS || {};
 const sourceKeys = Object.keys(sources);
 check('来源至少 150 个键', sourceKeys.length >= 150, String(sourceKeys.length));
-check('来源全文无 Привёт', !JSON.stringify(sources).includes('Привёт'));
-check('来源全文无 хотёл', !JSON.stringify(sources).includes('хотёл'));
+check('15 篇全文各存一份', Object.keys(sourceTexts).length === 15, String(Object.keys(sourceTexts).length));
+check('来源全文无 Привёт', !JSON.stringify(sourceTexts).includes('Привёт'));
+check('来源全文无 хотёл', !JSON.stringify(sourceTexts).includes('хотёл'));
 
 const sections = {};
 Object.values(sources).forEach(list => (list || []).forEach(source => {
