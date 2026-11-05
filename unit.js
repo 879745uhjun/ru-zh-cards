@@ -194,7 +194,7 @@
       backLevelLink.href = from === 'card'
         ? 'index.html?deck=' + encodeURIComponent(deck.id)
         : 'book.html';
-      backLevelLink.title = from === 'card' ? '返回卡片模式' : '返回书首页';
+      backLevelLink.title = '返回上一级';
     }
     if (startStudy) startStudy.href = 'index.html?deck=' + encodeURIComponent(deck.id) + '&from=unit';
     history.replaceState(null, '', '?deck=' + encodeURIComponent(deck.id) + (from ? '&from=' + encodeURIComponent(from) : ''));
