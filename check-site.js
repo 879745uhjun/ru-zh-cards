@@ -43,6 +43,8 @@ check('来源至少 150 个键', sourceKeys.length >= 150, String(sourceKeys.len
 check('15 篇全文各存一份', Object.keys(sourceTexts).length === 15, String(Object.keys(sourceTexts).length));
 check('来源全文无 Привёт', !JSON.stringify(sourceTexts).includes('Привёт'));
 check('来源全文无 хотёл', !JSON.stringify(sourceTexts).includes('хотёл'));
+check('来源全文无 °®©™• 等符号', !/[°®©™•|]/.test(JSON.stringify(sourceTexts)));
+check('来源引文无 °®©™• 等符号', !/[°®©™•|]/.test(JSON.stringify(sources)));
 
 const sections = {};
 Object.values(sources).forEach(list => (list || []).forEach(source => {
