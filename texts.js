@@ -34,6 +34,13 @@
     });
   }
 
+  function sourceText(source) {
+    if (!source) return '';
+    if (source.text) return source.text;
+    var store = window.RU_ZH_SOURCE_TEXTS || {};
+    return source.textKey ? (store[source.textKey] || '') : '';
+  }
+
   function paragraphs(text) {
     var raw = String(text || '').replace(/\s*\n\s*/g, ' ').replace(/\s{2,}/g, ' ').trim();
     if (!raw) return '<p>暂无全文。</p>';
@@ -70,7 +77,7 @@
         '</span>' +
         '<span class="text-item-arrow" aria-hidden="true">⌄</span>' +
       '</summary>' +
-      '<div class="text-body">' + paragraphs(source.text) +
+      '<div class="text-body">' + paragraphs(sourceText(source)) +
         (source.pdf ? '<div class="text-pdf-row"><a class="unit-btn" target="_blank" rel="noopener" href="' + escapeHtml(source.pdf) + '#page=' + encodeURIComponent(source.pdfPage || '1') + '">查看原 PDF · 第 ' + escapeHtml(source.pdfPage || '1') + ' 页</a></div>' : '') +
       '</div>' +
     '</details>';
