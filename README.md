@@ -12,7 +12,7 @@
 |---|---|
 | \`index.html\` | 卡片学习模式 |
 | \`book.html\` | 书首页 / 单元目录 |
-| \`unit.html\` | 整课浏览 |
+| \`unit.html\` | 本课全部 |
 | \`plan.html\` | 学习计划：顺序 / 复习 / 自定义 |
 | \`sources.html\` | 全局来源查询 |
 | \`changelog.html\` | 更新日志 |
