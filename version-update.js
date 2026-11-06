@@ -3,47 +3,17 @@
   if (document.getElementById('versionUpdateModal')) return;
   if (/changelog\.html$/i.test(location.pathname)) return;
 
-  var CURRENT = '1.3';
-  var DEFAULT_SEEN = '1.2';
+  var DATA = window.RU_ZH_VERSIONS || {};
+  var CURRENT = DATA.current;
+  var VERSIONS = Array.isArray(DATA.versions) ? DATA.versions : [];
+  if (!CURRENT || !VERSIONS.length) return;
+
   var SEEN_KEY = 'ru-zh-cards-version-seen-v1';
   var MUTE_KEY = 'ru-zh-cards-version-muted-v1';
-  var VERSIONS = [
-    {
-      version: '1.3', label: 'Beta v1.3', date: '2026-11-06',
-      items: [
-        '15 篇对话/课文替换为裁切图精校稿。',
-        '来源匹配更新为 192 张有来源、34 张暂无来源。',
-        '书首页“查看本课”卡片可点击进入背诵，并显示掌握状态。',
-        '手机端俄语词组字号调小。'
-      ]
-    },
-    {
-      version: '1.2', label: 'Beta v1.2', date: '2026-11-04',
-      summary: '界面与稳定性更新',
-      items: [
-        '新增 Диалоги и Текст 文本模块，按课分组。',
-        '单元预览卡片可点击进入对应卡片。',
-        '来源全文改为正常段落排版，对应内容高亮。',
-        '备份恢复、缓存和回归检查完善。'
-      ]
-    },
-    {
-      version: '1.1', label: 'Beta v1.1', date: '2026-11-03',
-      summary: '同义表达与搜索更新',
-      items: [
-        '同义表达合并到同一张卡，各自标注重音和语法。',
-        '新增全书搜索，不再跳转新页面。',
-        '自定义学习显示来源。'
-      ]
-    }
-  ];
+  var DEFAULT_SEEN = VERSIONS[1] ? VERSIONS[1].version : '0';
 
-  function read(key) {
-    try { return localStorage.getItem(key); } catch (err) { return null; }
-  }
-  function write(key, value) {
-    try { localStorage.setItem(key, value); } catch (err) {}
-  }
+  function read(key) { try { return localStorage.getItem(key); } catch (err) { return null; } }
+  function write(key, value) { try { localStorage.setItem(key, value); } catch (err) {} }
   function num(v) { return parseFloat(String(v || '0').replace(/[^\d.]/g, '')) || 0; }
   function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
@@ -78,8 +48,7 @@
               '<strong>' + esc(item.label) + '</strong>' +
               '<time>' + esc(item.date) + '</time>' +
             '</div>' +
-            (item.summary ? '<p class="version-summary">' + esc(item.summary) + '</p>' : '') +
-            '<ul>' + item.items.map(function (text) { return '<li>' + esc(text) + '</li>'; }).join('') + '</ul>' +
+            '<ul>' + (item.items || []).map(function (text) { return '<li>' + esc(text) + '</li>'; }).join('') + '</ul>' +
           '</article>';
         }).join('') +
       '</div>' +
