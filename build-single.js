@@ -49,7 +49,7 @@ while (pwaAt !== -1) {
   html = html.slice(0, pwaAt) + html.slice(end);
   pwaAt = html.indexOf('<script src="pwa.js');
 }
-html = html.replace('<title>俄汉记忆卡 · Beta v1.3</title>', '<title>俄汉记忆卡 · Beta v1.3 · 单文件版</title>');
+html = html.replace('<title>俄汉记忆卡 · Beta v1.4</title>', '<title>俄汉记忆卡 · Beta v1.4 · 单文件版</title>');
 html = html.replace('<body>', '<body>\n<!-- 单文件离线版：卡片学习可用；书首页、整课、计划、来源、文本等跨页链接需要完整包。 -->');
 fs.writeFileSync(path.join(base, 'single.html'), html, 'utf8');
 console.log('single file', html.length);
