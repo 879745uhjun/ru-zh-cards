@@ -135,6 +135,35 @@
     render();
   }
 
+  var RU_LEMMAS = window.RU_ZH_LEMMAS || {};
+  var RU_SUFFIXES = ['иями', 'ями', 'ами', 'ией', 'иях', 'ях', 'ах', 'ов', 'ев', 'ий', 'ый', 'ой', 'ая', 'яя', 'ое', 'ее', 'ые', 'ие', 'ую', 'юю', 'ем', 'ом', 'ам', 'ям', 'ия', 'ию', 'ии', 'ей', 'а', 'я', 'о', 'е', 'ы', 'и', 'у', 'ю'];
+  function russianWords(value) {
+    return String(value || '').match(/[А-Яа-яЁё-]+/g) || [];
+  }
+  function stemRu(word) {
+    var w = String(word || '').toLowerCase().replace(/[^а-яё-]/g, '');
+    for (var i = 0; i < RU_SUFFIXES.length; i++) {
+      var suffix = RU_SUFFIXES[i];
+      if (w.length - suffix.length >= 3 && w.slice(-suffix.length) === suffix) return w.slice(0, -suffix.length);
+    }
+    return w;
+  }
+  function lemmaFor(word) {
+    var lower = String(word || '').toLowerCase();
+    return stemRu(RU_LEMMAS[lower] || lower);
+  }
+  function normalizeZh(value) {
+    return String(value || '').toLowerCase().replace(/[\s，。！？；：、“”‘’（）()《》【】·,.!?;:'"\-—]/g, '');
+  }
+  function isChineseQuery(value) {
+    return /[\u3400-\u9fff]/.test(value);
+  }
+  function queryLemmas(query) {
+    var out = {};
+    russianWords(query).forEach(function (word) { out[lemmaFor(word)] = true; });
+    return Object.keys(out);
+  }
+
   function matches(record, query) {
     if (!query) return true;
     var haystack = [
@@ -148,7 +177,18 @@
       sourceText(record.source),
       record.source.quote
     ].join(' ').toLowerCase();
-    return haystack.indexOf(query) !== -1;
+    if (haystack.indexOf(query) !== -1) return true;
+    if (isChineseQuery(query) && normalizeZh(haystack).indexOf(normalizeZh(query)) !== -1) return true;
+    var lemmas = queryLemmas(query);
+    if (lemmas.length) {
+      var available = {};
+      russianWords(haystack).forEach(function (word) { available[lemmaFor(word)] = true; });
+      for (var i = 0; i < lemmas.length; i++) {
+        if (!available[lemmas[i]]) return false;
+      }
+      return true;
+    }
+    return false;
   }
 
   function paragraphs(text, needle) {
@@ -176,8 +216,8 @@
       var href = 'index.html?deck=' + encodeURIComponent(record.deck.id) + '&card=' + (record.index + 1);
       return '<article class="source-result">' +
         '<div class="source-result-head"><div class="source-result-card">' +
-          '<div class="source-result-ru">' + escapeHtml(cleanRu(record.card.ru)) + '</div>' +
-          '<div class="source-result-zh">' + escapeHtml(record.card.zh) + '</div>' +
+          '<div class="source-result-ru">' + highlight(cleanRu(record.card.ru), query) + '</div>' +
+          '<div class="source-result-zh">' + highlight(record.card.zh, query) + '</div>' +
         '</div><a class="unit-btn" href="' + href + '">打开卡片</a></div>' +
         '<div class="source-route"><span class="source-kind">' + escapeHtml(typeLabel(source)) + '</span>' +
           escapeHtml(route(source)) +
