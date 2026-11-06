@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Static regression checks
+        run: node check-site.js
+      - name: JavaScript syntax checks
+        run: |
+          node --check app.js
+          node --check unit.js
+          node --check plan.js
+          node --check sources.js
+          node --check texts.js
+          node --check sidebar.js
+          node --check global-search.js
+          node --check version-update.js
+      - name: Verify version data is generated from changelog
+        run: |
+          node build-version-data.js
+          git diff --exit-code data/versions.js
