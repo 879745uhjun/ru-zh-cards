@@ -3,15 +3,17 @@
 
   var map = window.RU_ZH_SOURCES || {};
   var seen = {};
-  var sections = [];
-  Object.keys(map).forEach(function (key) {
-    (map[key] || []).forEach(function (source) {
-      var id = [source.unit, source.kind, source.number].join('|');
-      if (seen[id]) return;
-      seen[id] = true;
-      sections.push(source);
+  var sections = Array.isArray(window.RU_ZH_SOURCE_SECTIONS) ? window.RU_ZH_SOURCE_SECTIONS.slice() : [];
+  if (!sections.length) {
+    Object.keys(map).forEach(function (key) {
+      (map[key] || []).forEach(function (source) {
+        var id = [source.unit, source.kind, source.number].join('|');
+        if (seen[id]) return;
+        seen[id] = true;
+        sections.push(source);
+      });
     });
-  });
+  }
 
   function unitNumber(source) {
     var m = String(source.unit || '').match(/(\d+)/);
