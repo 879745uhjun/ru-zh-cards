@@ -17,6 +17,12 @@ window.RU_ZH_VERSIONS = {
         "详情卡片右上角显示“已掌握 / 需复习 / 未掌握”状态。",
         "手机端俄语词组字号从 29px 降到 24px，390px 以下再降到 22px。",
         "新增版本更新弹窗：版本变化时自动提示，多版本按时间倒序列出，可设置不再自动弹出。",
+        "版本弹窗数据改为从 changelog 生成，避免两处手写不一致。",
+        "新增 PWA：manifest、Service Worker、192/512 图标，可安装到桌面。",
+        "新增 single.html 单文件版，仅保留卡片学习。",
+        "新增 account-demo.html 账号与同步界面测试版，不上传数据。",
+        "补齐 favicon.ico / favicon.svg，解决浏览器 404。",
+        "新增 CI / Pages 部署配置文件，等待 GitHub 仓库启用。",
         "从 Beta v1.3 起，后续更新归入 v1.3。"
       ]
     },
