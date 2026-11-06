@@ -1,4 +1,4 @@
-const CACHE = 'ru-zh-cards-v1.4.1';
+const CACHE = 'ru-zh-cards-v1.4.2';
 const ASSETS = [
   './', './index.html', './book.html', './unit.html', './plan.html', './sources.html', './texts.html',
   './styles.css', './unit.css', './plan.css', './sources.css', './texts.css', './changelog.css',
@@ -11,7 +11,11 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', function (event) {
-  event.waitUntil(caches.open(CACHE).then(function (cache) { return cache.addAll(ASSETS); }).then(function () { return self.skipWaiting(); }));
+  event.waitUntil(caches.open(CACHE).then(function (cache) { return cache.addAll(ASSETS); }));
+});
+
+self.addEventListener('message', function (event) {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('activate', function (event) {
