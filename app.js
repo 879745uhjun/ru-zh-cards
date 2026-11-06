@@ -667,6 +667,74 @@
     }
   }
 
+  var RU_LEMMAS = window.RU_ZH_LEMMAS || {};
+  var RU_SUFFIXES = ['иями', 'ями', 'ами', 'ией', 'иях', 'ях', 'ах', 'ов', 'ев', 'ий', 'ый', 'ой', 'ая', 'яя', 'ое', 'ее', 'ые', 'ие', 'ую', 'юю', 'ем', 'ом', 'ам', 'ям', 'ия', 'ию', 'ии', 'ей', 'а', 'я', 'о', 'е', 'ы', 'и', 'у', 'ю'];
+  function russianWords(value) {
+    return String(value || '').match(/[А-Яа-яЁё-]+/g) || [];
+  }
+  function stemRu(word) {
+    var w = String(word || '').toLowerCase().replace(/[^а-яё-]/g, '');
+    for (var i = 0; i < RU_SUFFIXES.length; i++) {
+      var suffix = RU_SUFFIXES[i];
+      if (w.length - suffix.length >= 3 && w.slice(-suffix.length) === suffix) {
+        return w.slice(0, -suffix.length);
+      }
+    }
+    return w;
+  }
+  function lemmaFor(word) {
+    var lower = String(word || '').toLowerCase();
+    return stemRu(RU_LEMMAS[lower] || lower);
+  }
+  function normalizeZh(value) {
+    return String(value || '').toLowerCase().replace(/[\s，。！？；：、“”‘’（）()《》【】·,.!?;:'"\-—]/g, '');
+  }
+  function queryLemmas() {
+    var out = {};
+    russianWords(state.query).forEach(function (word) { out[lemmaFor(word)] = true; });
+    return Object.keys(out);
+  }
+  function cardLemmas(card) {
+    var out = {};
+    var text = card.ru + '\n' + (card.ruVariants || []).map(function (v) { return v.ru || ''; }).join('\n');
+    russianWords(text).forEach(function (word) { out[lemmaFor(word)] = true; });
+    return out;
+  }
+  function isRussianQuery() {
+    return /[А-Яа-яЁё]/.test(state.query);
+  }
+  function isChineseQuery() {
+    return /[\u3400-\u9fff]/.test(state.query);
+  }
+  function wordMatchesQuery(word) {
+    if (!isRussianQuery()) return false;
+    var needle = state.query.toLowerCase();
+    var text = String(word.text || '').toLowerCase();
+    if (text.indexOf(needle) !== -1) return true;
+    var lemmas = queryLemmas();
+    for (var i = 0; i < lemmas.length; i++) {
+      if (lemmaFor(word.text) === lemmas[i]) return true;
+    }
+    return false;
+  }
+  function highlightZh(value) {
+    var raw = String(value || '');
+    var query = state.query.trim();
+    if (!query || !isChineseQuery()) return escapeHtml(raw);
+    var lower = raw.toLowerCase();
+    var needle = query.toLowerCase();
+    var pos = lower.indexOf(needle);
+    if (pos === -1) return escapeHtml(raw);
+    var out = '';
+    var start = 0;
+    while (pos !== -1) {
+      out += escapeHtml(raw.slice(start, pos)) + '<mark class="search-hl">' + escapeHtml(raw.slice(pos, pos + needle.length)) + '</mark>';
+      start = pos + needle.length;
+      pos = lower.indexOf(needle, start);
+    }
+    return out + escapeHtml(raw.slice(start));
+  }
+
   function matchesFilter(card) {
     if (state.filter !== 'all' && card.tag !== state.filter) return false;
     if (state.onlyReview && statusOf(card) !== 'review') return false;
@@ -675,7 +743,17 @@
     if (q) {
       var variantText = (card.ruVariants || []).map(function (v) { return v.ru + '\n' + v.zh; }).join('\n');
       var haystack = (card.ru + '\n' + card.zh + '\n' + card.tag + '\n' + variantText).toLowerCase();
-      if (haystack.indexOf(q) === -1) return false;
+      if (haystack.indexOf(q) !== -1) return true;
+      if (isChineseQuery() && normalizeZh(card.zh + '\n' + variantText).indexOf(normalizeZh(q)) !== -1) return true;
+      var lemmas = queryLemmas();
+      if (lemmas.length) {
+        var available = cardLemmas(card);
+        for (var i = 0; i < lemmas.length; i++) {
+          if (!available[lemmas[i]]) return false;
+        }
+        return true;
+      }
+      return false;
     }
     return true;
   }
@@ -881,9 +959,11 @@
       var cls = 'token' + (hasGrammar ? ' has-grammar' : '');
       var lead = word.lead ? '<span class="lead">' + escapeHtml(word.lead) + '</span>' : '';
       var punct = word.punct ? '<span class="punct">' + escapeHtml(word.punct) + '</span>' : '';
+      var body = wordBody(word);
+      if (isRussianQuery() && wordMatchesQuery(word)) body = '<mark class="search-hl">' + body + '</mark>';
       return '<span class="' + cls + '" style="--i:' + i + '"' + role + '>' +
         '<span class="word-line">' + lead +
-          '<span class="word' + (noStress ? ' no-stress' : '') + '"' + title + '>' + wordBody(word) + '</span>' + punct +
+          '<span class="word' + (noStress ? ' no-stress' : '') + '"' + title + '>' + body + '</span>' + punct +
         '</span>' +
         grammarHtml(word) +
       '</span>';
@@ -903,7 +983,7 @@
   function zhHtml(card, first) {
     return '<div class="zh-wrap' + (first ? ' first' : '') + '">' +
       '<span class="zh-label" aria-hidden="true"><span>中</span><span>文</span></span>' +
-      '<p class="zh-text">' + escapeHtml(card.zh) + '</p>' +
+      '<p class="zh-text">' + highlightZh(card.zh) + '</p>' +
     '</div>';
   }
 
