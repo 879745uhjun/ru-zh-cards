@@ -88,6 +88,11 @@ function serve() {
     });
     check('Service Worker 注册', sw === 1);
 
+    const texts = await context.newPage();
+    await texts.goto(base + 'texts.html', { waitUntil: 'load' });
+    await texts.waitForTimeout(300);
+    check('文本库 15 篇', await texts.locator('.text-item').count() === 15);
+
     const single = await context.newPage();
     await single.goto(base + 'single.html', { waitUntil: 'load' });
     await single.waitForTimeout(300);
