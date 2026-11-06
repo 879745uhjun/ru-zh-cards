@@ -37,6 +37,10 @@
 - 分类筛选、搜索、随机、页码跳转、键盘翻页
 - 导入、导出、完整备份/恢复、多课程管理
 - 书首页 / 单元页 / 卡片模式共用同一份本地课程数据
+- PWA：支持安装到桌面，Service Worker 缓存核心页面
+- 单文件版：`single.html`，仅卡片学习
+- 账号测试界面：`account-demo.html`，只演示不上传
+- 版本更新弹窗：版本数据由 `build-version-data.js` 从 `changelog.html` 生成
 
 ## 来源
 
