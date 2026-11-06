@@ -14,7 +14,19 @@
 
   function read(key) { try { return localStorage.getItem(key); } catch (err) { return null; } }
   function write(key, value) { try { localStorage.setItem(key, value); } catch (err) {} }
-  function num(v) { return parseFloat(String(v || '0').replace(/[^\d.]/g, '')) || 0; }
+  function versionParts(v) {
+    return String(v || '0').split('.').map(function (part) { return parseInt(part, 10) || 0; });
+  }
+  function compareVersion(a, b) {
+    var left = versionParts(a);
+    var right = versionParts(b);
+    var length = Math.max(left.length, right.length);
+    for (var i = 0; i < length; i++) {
+      var diff = (left[i] || 0) - (right[i] || 0);
+      if (diff !== 0) return diff;
+    }
+    return 0;
+  }
   function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
       return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]);
@@ -23,8 +35,8 @@
 
   var seen = read(SEEN_KEY) || DEFAULT_SEEN;
   var muted = read(MUTE_KEY) === '1';
-  if (muted || num(seen) >= num(CURRENT)) return;
-  var missed = VERSIONS.filter(function (item) { return num(item.version) > num(seen); });
+  if (muted || compareVersion(seen, CURRENT) >= 0) return;
+  var missed = VERSIONS.filter(function (item) { return compareVersion(item.version, seen) > 0; });
   if (!missed.length) return;
 
   var modal = document.createElement('div');
