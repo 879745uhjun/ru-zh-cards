@@ -31,7 +31,7 @@ for (const marker of ['<link rel="icon"', '<link rel="apple-touch-icon"', '<link
 // Inline scripts in document order.
 const scripts = [
   'data/deck.js', 'data/lesson1.js', 'data/lesson2.js', 'data/lesson3.js', 'data/lesson5.js',
-  'data/decks-source.js', 'data/sources.js', 'app.js', 'global-search.js', 'sidebar.js',
+  'data/decks-source.js', 'data/sources.js', 'data/lemmas.js', 'app.js', 'global-search.js', 'sidebar.js',
   'data/versions.js', 'version-update.js'
 ];
 for (const file of scripts) {
