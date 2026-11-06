@@ -70,7 +70,7 @@ a{color:inherit}
 .section-head p{margin:4px 0 0;color:var(--muted);font-size:10.5px}
 .section-count{font-family:var(--mono);color:var(--muted);font-size:10.5px}
 .unit-list{border-top:1px solid var(--line)}
-.unit-row{display:grid;grid-template-columns:54px minmax(0,1fr) 218px 86px 20px;gap:16px;align-items:center;padding:17px 8px;border-bottom:1px solid rgba(216,204,186,.8);text-decoration:none;transition:background .16s,padding .16s}
+.unit-row{display:grid;grid-template-columns:54px minmax(0,1fr) 218px 86px 88px 20px;gap:16px;align-items:center;padding:17px 8px;border-bottom:1px solid rgba(216,204,186,.8);text-decoration:none;transition:background .16s,padding .16s}
 .unit-row:hover{background:rgba(255,253,248,.55);padding-left:14px;padding-right:14px}
 .unit-no{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.08em}
 .unit-title{display:block;font-family:var(--zh);font-size:16px;font-weight:600;letter-spacing:.02em}
@@ -83,6 +83,7 @@ a{color:inherit}
 .unit-count{text-align:right;font-family:var(--mono);font-size:10px;color:var(--soft);line-height:1.4}
 .unit-count span{display:block;color:var(--muted);font-size:8px;letter-spacing:.06em}
 .unit-arrow{font-size:15px;color:#b9ab96;text-align:right}
+.unit-open{font-size:9.5px;color:var(--muted);text-align:right;letter-spacing:.03em;white-space:nowrap}
 .foot{margin-top:38px;display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:9px;letter-spacing:.04em}
 .foot a{text-decoration:none}
 .foot a:hover{color:var(--accent)}
@@ -110,10 +111,10 @@ a{color:inherit}
 .word-grammar-summary{margin-top:5px;color:var(--muted);font-size:9px;line-height:1.5;overflow-wrap:anywhere}
 .word-grammar .g-case{color:var(--accent);font-weight:700}
 .word-zh{margin-top:8px;padding-top:7px;border-top:1px dashed var(--line);font-family:var(--zh);font-size:12px;line-height:1.45}
-@media(max-width:1100px){.book-hero{grid-template-columns:280px minmax(0,1fr);gap:28px}.cover{height:380px}.unit-row{grid-template-columns:44px minmax(0,1fr) 170px 60px 16px}.word-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.page{padding:26px 24px 44px}}
-@media(max-width:760px){html,body{max-width:100%;}.topbar{padding:13px 16px;flex-wrap:wrap;max-width:100%}.top-actions{display:none}.section-count{display:none}.page{padding:20px 16px 40px;width:100%;max-width:100%}.book-hero{display:block;width:100%;max-width:100%;min-width:0}.cover{margin:0 auto}.book-copy{width:100%;max-width:100%}.book-desc{width:100%;max-width:100%}.cover{height:300px;max-width:280px}.cover-title{margin-top:40px;font-size:25px}.cover-num{font-size:88px}.book-copy h1{font-size:28px}.unit-row{grid-template-columns:34px minmax(0,1fr) 22px;gap:10px}.unit-progress,.unit-count{display:none}.unit-title{font-size:14px}.overlay-head{padding:12px 16px}.overlay-body{padding:22px 16px 40px}.overlay-title-row{display:block}.overlay-actions{margin-top:14px}.word-grid{grid-template-columns:1fr}}
+@media(max-width:1100px){.unit-open{display:none}.book-hero{grid-template-columns:280px minmax(0,1fr);gap:28px}.cover{height:380px}.unit-row{grid-template-columns:44px minmax(0,1fr) 170px 60px 16px}.word-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.page{padding:26px 24px 44px}}
+@media(max-width:760px){.unit-open{display:none}html,body{max-width:100%;}.topbar{padding:13px 16px;flex-wrap:wrap;max-width:100%}.top-actions{display:none}.section-count{display:none}.page{padding:20px 16px 40px;width:100%;max-width:100%}.book-hero{display:block;width:100%;max-width:100%;min-width:0}.cover{margin:0 auto}.book-copy{width:100%;max-width:100%}.book-desc{width:100%;max-width:100%}.cover{height:300px;max-width:280px}.cover-title{margin-top:40px;font-size:25px}.cover-num{font-size:88px}.book-copy h1{font-size:28px}.unit-row{grid-template-columns:34px minmax(0,1fr) 22px;gap:10px}.unit-progress,.unit-count{display:none}.unit-title{font-size:14px}.overlay-head{padding:12px 16px}.overlay-body{padding:22px 16px 40px}.overlay-title-row{display:block}.overlay-actions{margin-top:14px}.word-grid{grid-template-columns:1fr}}
 </style>
-<link rel="stylesheet" href="sidebar.css?v=1.3.0">
+<link rel="stylesheet" href="sidebar.css?v=1.3.2">
 </head>
 <body>
 <header class="topbar">
@@ -142,7 +143,7 @@ a{color:inherit}
       <div class="eyebrow">УЧЕБНИК · 3</div>
       <h1>新东方大学俄语（3）</h1>
       <p class="ru-line">Новый восток · 大学俄语 第三册</p>
-      <p class="book-desc">按单元顺序学习，或进入单元浏览全部单词、句子和逐词语法。书首页只显示单元目录，点进单元后再看具体内容。</p>
+      <p class="book-desc">按课顺序学习，或点击某一课查看本课全部单词、句子和逐词语法。书首页只显示课程列表，点进某一课后再看具体内容。</p>
       <div class="book-stats">
         <div class="stat"><b id="bookUnitStat">5</b><span>单元 UNITS</span></div>
         <div class="stat-sep"></div>
@@ -152,7 +153,6 @@ a{color:inherit}
       </div>
       <div class="book-actions">
         <a class="primary-btn" href="index.html?deck=lesson1">继续学习 第 1 课</a>
-        <a class="ghost-btn" href="unit.html?deck=lesson1">整课浏览</a>
         <a class="ghost-btn" href="plan.html">学习计划</a>
         <a class="ghost-btn" href="sources.html">来源查询</a>
         <button class="default-toggle" id="defaultToggle" type="button" aria-pressed="true" onclick="toggleDefault()"><span class="switch"></span>默认打开本书</button>
@@ -160,7 +160,7 @@ a{color:inherit}
     </div>
   </section>
 
-  <a class="text-module" href="texts.html?v=1.3.0">
+  <a class="text-module" href="texts.html?v=1.3.2">
     <span class="text-module-copy">
       <span class="text-module-kicker">ТЕКСТЫ · 5 УРОКОВ</span>
       <span class="text-module-title">Диалоги и Текст</span>
@@ -171,7 +171,7 @@ a{color:inherit}
 
   <section class="unit-section">
     <div class="section-head">
-      <div><h2>单元目录</h2><p>点击单元查看该单元的全部单词与句子。</p></div>
+      <div><h2>按课浏览</h2><p>点击某一课，查看本课全部单词与句子。</p></div>
       <div class="section-count" id="sectionCount">5 UNITS · 226 CARDS</div>
     </div>
     <div class="unit-list" id="unitList"></div>
@@ -227,6 +227,7 @@ a{color:inherit}
         '<span><span class="unit-title">第 '+Number(d.num)+' 课 · '+esc((d.title||'').replace(/^第 \d+ 课 · /,''))+'</span><span class="unit-sub">'+esc(d.sub||'')+'</span></span>'+
         '<span class="unit-progress"><span class="unit-progress-line"><span>已掌握 <b>'+m+'</b> / '+d.cards.length+'</span><span>'+pct+'%</span></span><span class="bar"><span style="width:'+pct+'%"></span></span></span>'+
         '<span class="unit-count">'+d.cards.length+' 张<span>CARDS</span></span>'+
+        '<span class="unit-open">查看本课</span>'+
         '<span class="unit-arrow">→</span></a>';
     }).join('');
     document.getElementById('masteredTotal').textContent=mast;
@@ -307,6 +308,6 @@ a{color:inherit}
   if(location.hash.indexOf('#unit-')===0)openUnit(location.hash.slice(6));
 })();
 </script>
-<script src="sidebar.js?v=1.3.0"></script>
+<script src="sidebar.js?v=1.3.2"></script>
 </body>
 </html>
