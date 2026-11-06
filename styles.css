@@ -483,3 +483,7 @@ textarea#tableInput:focus, textarea#jsonInput:focus{border-color:#c9978d;box-sha
 .fatal-error p{margin:5px 0;}
 body.modal-open{overflow:hidden;}
 
+
+/* 搜索命中的词/释义 */
+mark.search-hl{background:#f2d98b;color:inherit;padding:0 .08em;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.word mark.search-hl{background:#f2d98b}
