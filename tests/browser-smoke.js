@@ -99,6 +99,16 @@ function serve() {
     await texts.waitForTimeout(300);
     check('文本库 15 篇', await texts.locator('.text-item').count() === 15);
 
+    const sourcePage = await context.newPage();
+    await sourcePage.goto(base + 'sources.html', { waitUntil: 'load' });
+    if (await sourcePage.locator('#versionOk').count()) await sourcePage.click('#versionOk');
+    await sourcePage.fill('#sourceSearch', 'длинная');
+    await sourcePage.waitForTimeout(400);
+    check('来源页词形还原', await sourcePage.locator('.source-result').count() > 0);
+    await sourcePage.fill('#sourceSearch', '长发');
+    await sourcePage.waitForTimeout(400);
+    check('来源页中文搜索高亮', await sourcePage.locator('.source-result-zh .source-hl').count() > 0);
+
     const single = await context.newPage();
     await single.goto(base + 'single.html', { waitUntil: 'load' });
     await single.waitForTimeout(300);
