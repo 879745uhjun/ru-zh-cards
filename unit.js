@@ -180,7 +180,7 @@
     }
     deckSelect.value = deck.id;
     titleEl.textContent = deck.title || '未命名课程';
-    tagEl.textContent = (deck.tag || '课程') + ' · 整课浏览';
+    tagEl.textContent = (deck.tag || '课程') + ' · 本课全部';
     var q = (filterInput.value || '').trim().toLowerCase();
     var cards = deck.cards.map(function (card, i) { return { card: card, i: i }; }).filter(function (item) {
       if (!q) return true;
