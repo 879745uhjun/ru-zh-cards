@@ -427,9 +427,9 @@ textarea#tableInput:focus, textarea#jsonInput:focus{border-color:#c9978d;box-sha
   .card{border-radius:22px;}
   .card-top{padding:21px 19px 0;}
   .card-body{padding:27px 19px 28px;}
-  .ru-block{gap:22px 15px;}
-  .word,.lead,.punct{font-size:29px;}
-  .grammar{font-size:10.5px;max-width:128px;}
+  .ru-block{gap:18px 12px;}
+  .word,.lead,.punct{font-size:24px;}
+  .grammar{font-size:9.5px;max-width:118px;}
   .grammar-hint{font-size:9px;}
   .zh-wrap{gap:13px;margin-top:28px;padding-top:22px;}
   .zh-label{flex-basis:29px;width:29px;font-size:10.5px;}
@@ -461,6 +461,12 @@ textarea#tableInput:focus, textarea#jsonInput:focus{border-color:#c9978d;box-sha
   .modal-foot{gap:12px;}
   .foot-left{order:2;width:100%;justify-content:center;}
   .foot-right{order:1;width:100%;justify-content:flex-end;}
+}
+@media (max-width: 390px){
+  .word,.lead,.punct{font-size:22px;}
+  .ru-block{gap:16px 10px;}
+  .grammar{font-size:9px;max-width:108px;}
+  .zh-text{font-size:19px;}
 }
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important;}
