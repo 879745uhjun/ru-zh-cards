@@ -58,10 +58,16 @@ function serve() {
       check('版本弹窗出现', false);
     }
 
-    await page.fill('#searchInput', 'длинные');
+    await page.fill('#searchInput', 'длинная');
     await page.waitForTimeout(500);
     const searchWords = (await page.locator('.card .word').allTextContents()).join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    check('搜索过滤', searchWords.includes('длинные'));
+    check('搜索过滤（俄语词形还原）', searchWords.includes('длинные'));
+    check('俄语搜索高亮', await page.locator('.search-hl').count() > 0);
+
+    await page.fill('#searchInput', '长发');
+    await page.waitForTimeout(500);
+    check('中文释义搜索', (await page.locator('.zh-text').textContent()).includes('长发'));
+    check('中文搜索高亮', await page.locator('.zh-text .search-hl').count() > 0);
 
     await page.fill('#searchInput', '');
     await page.waitForTimeout(400);
