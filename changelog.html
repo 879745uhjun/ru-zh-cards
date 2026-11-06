@@ -32,10 +32,25 @@
     <div>
       <span class="unit-eyebrow">CHANGELOG</span>
       <h2>更新日志</h2>
-      <p>记录每个版本的界面、功能和内容变化。当前版本：<b>Beta v1.3</b>。</p>
+      <p>记录每个版本的界面、功能和内容变化。当前版本：<b>Beta v1.4</b>。</p>
     </div>
-    <div class="log-current">Beta v1.3</div>
+    <div class="log-current">Beta v1.4</div>
   </div>
+
+  <section class="log-entry">
+    <div class="log-head"><span class="log-version">Beta v1.4</span><span class="log-date">2026-11-06</span></div>
+    <ul>
+      <li>版本号升至 Beta v1.4，后续更新归入 v1.4。</li>
+      <li>CI 加入 Playwright 浏览器冒烟测试，覆盖页面、搜索、翻页、版本弹窗、PWA、单文件和账号测试页。</li>
+      <li>Pages 切换到 GitHub Actions 部署，并修复旧的 errored 状态。</li>
+      <li>PWA 缓存 5 份 PDF，离线也能打开原文。</li>
+      <li>版本弹窗数据改为从 changelog 生成，避免两处手写不一致。</li>
+      <li>新增 PWA：manifest、Service Worker、192/512 图标，可安装到桌面。</li>
+      <li>新增 single.html 单文件版，仅保留卡片学习。</li>
+      <li>新增 account-demo.html 账号与同步界面测试版，不上传数据。</li>
+      <li>补齐 favicon.ico / favicon.svg，解决浏览器 404。</li>
+    </ul>
+  </section>
 
   <section class="log-entry">
     <div class="log-head"><span class="log-version">Beta v1.3</span><span class="log-date">2026-11-06</span></div>
@@ -51,13 +66,7 @@
       <li>详情卡片右上角显示“已掌握 / 需复习 / 未掌握”状态。</li>
       <li>手机端俄语词组字号从 29px 降到 24px，390px 以下再降到 22px。</li>
       <li>新增版本更新弹窗：版本变化时自动提示，多版本按时间倒序列出，可设置不再自动弹出。</li>
-      <li>版本弹窗数据改为从 changelog 生成，避免两处手写不一致。</li>
-      <li>新增 PWA：manifest、Service Worker、192/512 图标，可安装到桌面。</li>
-      <li>新增 single.html 单文件版，仅保留卡片学习。</li>
-      <li>新增 account-demo.html 账号与同步界面测试版，不上传数据。</li>
-      <li>补齐 favicon.ico / favicon.svg，解决浏览器 404。</li>
-      <li>新增 CI / Pages 部署配置文件，等待 GitHub 仓库启用。</li>
-      <li>从 Beta v1.3 起，后续更新归入 v1.3。</li>
+      <li>此版本为 v1.3 的内容与阅读体验收尾。</li>
     </ul>
   </section>
 
@@ -151,7 +160,7 @@
     </ul>
   </section>
 
-  <footer class="log-foot">后续大版本会继续追加到这里。当前线上版本：Beta v1.3。</footer>
+  <footer class="log-foot">后续大版本会继续追加到这里。当前线上版本：Beta v1.4。</footer>
 </main>
 
 <script src="sidebar.js"></script>
