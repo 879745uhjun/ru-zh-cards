@@ -2,8 +2,12 @@
   'use strict';
 
   var map = window.RU_ZH_SOURCES || {};
+  var extra = window.RU_ZH_EXTRA_TEXTS || {};
   var seen = {};
   var sections = Array.isArray(window.RU_ZH_SOURCE_SECTIONS) ? window.RU_ZH_SOURCE_SECTIONS.slice() : [];
+  (extra.sections || []).forEach(function (source) {
+    if (!sections.some(function (item) { return item.id === source.id; })) sections.push(source);
+  });
   if (!sections.length) {
     Object.keys(map).forEach(function (key) {
       (map[key] || []).forEach(function (source) {
@@ -40,7 +44,9 @@
     if (!source) return '';
     if (source.text) return source.text;
     var store = window.RU_ZH_SOURCE_TEXTS || {};
-    return source.textKey ? (store[source.textKey] || '') : '';
+    var extraStore = (window.RU_ZH_EXTRA_TEXTS || {}).texts || {};
+    var key = source.textKey || source.id;
+    return key ? (store[key] || extraStore[key] || '') : '';
   }
 
   function paragraphs(text) {
@@ -57,7 +63,14 @@
     '第 2 课': '性格与生活',
     '第 3 课': '运动与爱好',
     '第 4 课': '旅游与城市',
-    '第 5 课': '图书馆与阅读'
+    '第 5 课': '图书馆与阅读',
+    '第 6 课': '居住',
+    '第 7 课': '俄语学习',
+    '第 8 课': '传媒',
+    '第 9 课': '节日',
+    '第 10 课': '民族饮食',
+    '第 11 课': '博物馆与展览',
+    '第 12 课': '戏剧与电影'
   };
 
   function itemHtml(source) {
