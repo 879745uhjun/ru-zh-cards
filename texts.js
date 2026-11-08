@@ -49,6 +49,15 @@
     return key ? (store[key] || extraStore[key] || '') : '';
   }
 
+  function dialogueHtml(text) {
+    var lines = String(text || '').replace(/\r/g, '').split(/\n+/).map(function (line) {
+      return line.replace(/\s+/g, ' ').trim();
+    }).filter(Boolean);
+    return lines.map(function (line) {
+      return '<p class="source-paragraph dialogue-line">' + escapeHtml(line) + '</p>';
+    }).join('');
+  }
+
   function paragraphs(text) {
     var raw = String(text || '').replace(/\s*\n\s*/g, ' ').replace(/\s{2,}/g, ' ').trim();
     if (!raw) return '<p>暂无全文。</p>';
@@ -92,7 +101,7 @@
         '</span>' +
         '<span class="text-item-arrow" aria-hidden="true">⌄</span>' +
       '</summary>' +
-      '<div class="text-body">' + paragraphs(sourceText(source)) +
+      '<div class="text-body">' + (source.kind === '对话' ? dialogueHtml(sourceText(source)) : paragraphs(sourceText(source))) +
         (source.pdf ? '<div class="text-pdf-row"><a class="unit-btn" target="_blank" rel="noopener" href="' + escapeHtml(source.pdf) + '#page=' + encodeURIComponent(source.pdfPage || '1') + '">查看原 PDF · 第 ' + escapeHtml(source.pdfPage || '1') + ' 页</a></div>' : '') +
       '</div>' +
     '</details>';
