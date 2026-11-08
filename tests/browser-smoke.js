@@ -97,7 +97,8 @@ function serve() {
     const texts = await context.newPage();
     await texts.goto(base + 'texts.html', { waitUntil: 'load' });
     await texts.waitForTimeout(300);
-    check('文本库 15 篇', await texts.locator('.text-item').count() === 15);
+    check('文本库 36 篇', await texts.locator('.text-item').count() === 36);
+    check('文本库 12 课', await texts.locator('.text-unit').count() === 12);
 
     const sourcePage = await context.newPage();
     await sourcePage.goto(base + 'sources.html', { waitUntil: 'load' });
