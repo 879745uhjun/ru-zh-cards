@@ -1,4 +1,4 @@
-const CACHE = 'ru-zh-cards-v2.0.1';
+const CACHE = 'ru-zh-cards-v2.0.2';
 const ASSETS = [
   './', './index.html', './book.html', './unit.html', './plan.html', './sources.html', './texts.html',
   './styles.css', './unit.css', './plan.css', './sources.css', './texts.css', './changelog.css',
@@ -7,7 +7,7 @@ const ASSETS = [
   './pwa.js', './manifest.webmanifest', './favicon.svg', './favicon.ico',
   './icons/icon-192.png', './icons/icon-512.png',
   './data/versions.js', './data/deck.js', './data/lesson1.js', './data/lesson2.js', './data/lesson3.js', './data/lesson5.js',
-  './data/decks-source.js', './data/sources.js', './data/lemmas.js'
+  './data/decks-source.js', './data/sources.js', './data/lemmas.js', './data/extra-texts.js'
 ];
 
 self.addEventListener('install', function (event) {
