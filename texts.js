@@ -82,20 +82,40 @@
     '第 12 课': '戏剧与电影'
   };
 
+  var UNIT_TITLES_RU = {
+    '第 1 课': 'Портрет, внешность человека',
+    '第 2 课': 'Характер человека',
+    '第 3 课': 'Мир интересов и увлечений',
+    '第 4 课': 'Путешествие',
+    '第 5 课': 'Чтение — полезная привычка',
+    '第 6 课': 'Где мы живём?',
+    '第 7 课': 'Русский язык — не проблема!',
+    '第 8 课': 'Медиа в современной жизни',
+    '第 9 课': 'Праздники',
+    '第 10 课': 'Национальные кухни',
+    '第 11 课': 'Музей и выставка — источник знаний',
+    '第 12 课': 'Театр или кино?'
+  };
+
   function itemHtml(source) {
     var unitNumberMatch = String(source.unit || '').match(/(\d+)/);
     var itemNumberMatch = String(source.number || '').match(/(\d+)/);
+    var lessonNo = unitNumberMatch ? unitNumberMatch[1] : '';
+    var itemNo = itemNumberMatch ? itemNumberMatch[1] : '';
     var title;
+    var route;
     if (source.kind === '对话') {
-      title = 'Урок ' + (unitNumberMatch ? unitNumberMatch[1] : '') + ' · Диалог ' + (itemNumberMatch ? itemNumberMatch[1] : '');
+      route = 'Урок ' + lessonNo + ' · Диалог ' + itemNo;
+      title = 'Диалог ' + itemNo;
     } else {
       var textTitle = String(source.title || '').replace(/^Урок\s*\d+\s*·\s*/, '').trim() || 'Текст';
+      route = 'Урок ' + lessonNo + ' · Текст ' + itemNo;
       title = 'Текст · ' + textTitle;
     }
     return '<details class="text-item">' +
       '<summary>' +
         '<span class="text-item-copy">' +
-          '<span class="text-item-route">' + escapeHtml(source.unit) + ' · ' + escapeHtml(source.kind) + ' ' + escapeHtml(String(source.number || '').replace(/^(课文|对话)\s*/, '')) + '</span>' +
+          '<span class="text-item-route">' + escapeHtml(route) + '</span>' +
           '<span class="text-item-title">' + escapeHtml(title) + '</span>' +
           '<span class="text-item-meta">' + (source.page ? '第 ' + escapeHtml(source.page) + ' 页' : '') + ' · 点击展开全文</span>' +
         '</span>' +
@@ -124,8 +144,8 @@
     return '<section class="text-unit">' +
       '<div class="text-unit-head">' +
         '<span class="text-unit-number">' + (number ? String(number[1]).padStart(2, '0') : '—') + '</span>' +
-        '<div class="text-unit-title"><h3>' + escapeHtml(unit) + ' · ' + escapeHtml(UNIT_TITLES[unit] || '') + '</h3>' +
-          '<p>' + items.length + ' 篇 · ' + (dialogues ? '对话 ' + dialogues : '') + (dialogues && texts ? ' · ' : '') + (texts ? '课文 ' + texts : '') + '</p></div>' +
+        '<div class="text-unit-title"><h3>Урок ' + (number ? number[1] : '') + ' · ' + escapeHtml(UNIT_TITLES_RU[unit] || '') + '</h3>' +
+          '<p>第 ' + (number ? number[1] : '') + ' 课 · ' + escapeHtml(UNIT_TITLES[unit] || '') + ' · ' + items.length + ' 篇 · ' + (dialogues ? '对话 ' + dialogues : '') + (dialogues && texts ? ' · ' : '') + (texts ? '课文 ' + texts : '') + '</p></div>' +
       '</div>' +
       '<div class="text-unit-items">' + items.map(itemHtml).join('') + '</div>' +
     '</section>';
