@@ -144,8 +144,8 @@
     return '<section class="text-unit">' +
       '<div class="text-unit-head">' +
         '<span class="text-unit-number">' + (number ? String(number[1]).padStart(2, '0') : '—') + '</span>' +
-        '<div class="text-unit-title"><h3>Урок ' + (number ? number[1] : '') + ' · ' + escapeHtml(UNIT_TITLES_RU[unit] || '') + '</h3>' +
-          '<p>第 ' + (number ? number[1] : '') + ' 课 · ' + escapeHtml(UNIT_TITLES[unit] || '') + ' · ' + items.length + ' 篇 · ' + (dialogues ? '对话 ' + dialogues : '') + (dialogues && texts ? ' · ' : '') + (texts ? '课文 ' + texts : '') + '</p></div>' +
+        '<div class="text-unit-title"><h3>' + escapeHtml(unit) + ' · ' + escapeHtml(UNIT_TITLES[unit] || '') + '</h3>' +
+          '<p>' + items.length + ' 篇 · ' + (dialogues ? '对话 ' + dialogues : '') + (dialogues && texts ? ' · ' : '') + (texts ? '课文 ' + texts : '') + '</p></div>' +
       '</div>' +
       '<div class="text-unit-items">' + items.map(itemHtml).join('') + '</div>' +
     '</section>';
