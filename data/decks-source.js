@@ -18,6 +18,7 @@
     if (window.RU_ZH_LESSON3) list.push(Object.assign({ id: 'lesson3' }, window.RU_ZH_LESSON3));
     if (window.RU_ZH_DECK) list.push(Object.assign({ id: 'lesson4' }, window.RU_ZH_DECK));
     if (window.RU_ZH_LESSON5) list.push(Object.assign({ id: 'lesson5' }, window.RU_ZH_LESSON5));
+    if (window.RU_ZH_LESSON6) list.push(Object.assign({ id: 'lesson6' }, window.RU_ZH_LESSON6));
     return list;
   }
 
