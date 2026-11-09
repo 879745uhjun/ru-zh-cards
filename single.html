@@ -872,7 +872,7 @@ body{padding-top:46px;}
     </header>
     <div class="source-list" id="sourceList"></div>
     <footer class="modal-foot">
-      <div class="foot-left"><a class="text-btn" href="sources.html?v=2.0.5">全局来源查询</a></div>
+      <div class="foot-left"><a class="text-btn" href="sources.html?v=2.1.0">全局来源查询</a></div>
       <div class="foot-right"><button type="button" class="btn ghost" data-close-source>关闭</button></div>
     </footer>
   </section>
@@ -3575,6 +3575,119 @@ window.RU_ZH_LESSON5 = {
 
 </script>
 <script>
+window.RU_ZH_LESSON6 = {
+  "title": "第 6 课 · 居住",
+  "subtitle": "Урок 6 · 词汇 + 句子",
+  "tag": "第 6 课",
+  "cards": [
+    {
+      "ru": "однокомн[а]тная кварт[и]ра",
+      "zh": "一居室",
+      "tag": "对话 1",
+      "grammar": [
+        "形容词 · 阴性 · 主格",
+        "名词 · 阴性 · 主格"
+      ]
+    },
+    {
+      "ru": "уход[и]ть от др[у]га",
+      "zh": "离开朋友",
+      "tag": "对话 1",
+      "grammar": [
+        "动词 · 未完成体",
+        "前置词 · 接第二格",
+        "名词 · 阳性 · 第二格"
+      ],
+      "ruVariants": [
+        {
+          "ru": "покид[а]ть др[у]га",
+          "zh": "离开朋友",
+          "grammar": [
+            "动词 · 未完成体",
+            "名词 · 阳性 · 第二格"
+          ]
+        }
+      ]
+    },
+    {
+      "ru": "т[е]м б[о]лее",
+      "zh": "尤其是；更何况",
+      "tag": "对话 1",
+      "grammar": [
+        "副词 · 递进",
+        "副词 · 更"
+      ]
+    },
+    {
+      "ru": "кварт[и]ра со вс[е]ми удобств[а]ми",
+      "zh": "设施齐全的住宅",
+      "tag": "对话 1",
+      "grammar": [
+        "名词 · 阴性 · 主格",
+        "前置词 · 接第五格",
+        "代词 · 复数 · 第五格",
+        "名词 · 复数 · 第五格"
+      ]
+    },
+    {
+      "ru": "продукт[о]вый магаз[и]н",
+      "zh": "食品店",
+      "tag": "对话 1",
+      "grammar": [
+        "形容词 · 阳性 · 主格",
+        "名词 · 阳性 · 主格"
+      ]
+    },
+    {
+      "ru": "удоб[ы]ный микрорай[о]н",
+      "zh": "方便的小区",
+      "tag": "对话 1",
+      "grammar": [
+        "形容词 · 阳性 · 主格",
+        "名词 · 阳性 · 主格"
+      ]
+    },
+    {
+      "ru": "в дв[у]х шаг[а]х от инстит[у]та",
+      "zh": "距离学院几步远",
+      "tag": "对话 1",
+      "grammar": [
+        "前置词 · 接第六格",
+        "数词 · 第二格",
+        "名词 · 复数 · 第六格",
+        "前置词 · 接第二格",
+        "名词 · 阳性 · 第二格"
+      ],
+      "ruVariants": [
+        {
+          "ru": "в н[е]скольких шаг[а]х от инстит[у]та",
+          "zh": "距离学院几步远",
+          "grammar": [
+            "前置词 · 接第六格",
+            "代词 · 复数 · 第六格",
+            "名词 · 复数 · 第六格",
+            "前置词 · 接第二格",
+            "名词 · 阳性 · 第二格"
+          ]
+        }
+      ]
+    },
+    {
+      "ru": "Мне нужн[а] тишин[а].",
+      "zh": "我需要安静。",
+      "tag": "对话 1",
+      "grammar": [
+        "代词 · 第一人称 · 第三格",
+        "短尾形容词 · 阴性",
+        "名词 · 阴性 · 主格"
+      ],
+      "note": "нужна 是 нужный 的短尾阴性形式，与主语 тишина 一致。"
+    }
+  ]
+};
+
+</script>
+<script>
 (function () {
   'use strict';
 
@@ -3595,6 +3708,7 @@ window.RU_ZH_LESSON5 = {
     if (window.RU_ZH_LESSON3) list.push(Object.assign({ id: 'lesson3' }, window.RU_ZH_LESSON3));
     if (window.RU_ZH_DECK) list.push(Object.assign({ id: 'lesson4' }, window.RU_ZH_DECK));
     if (window.RU_ZH_LESSON5) list.push(Object.assign({ id: 'lesson5' }, window.RU_ZH_LESSON5));
+    if (window.RU_ZH_LESSON6) list.push(Object.assign({ id: 'lesson6' }, window.RU_ZH_LESSON6));
     return list;
   }
 
@@ -3697,6 +3811,7 @@ window.RU_ZH_LEMMAS = {"августа":"август","автобус":"авт�
   var BUILTIN_LESSON2 = window.RU_ZH_LESSON2;
   var BUILTIN_LESSON3 = window.RU_ZH_LESSON3;
   var BUILTIN_LESSON5 = window.RU_ZH_LESSON5;
+  var BUILTIN_LESSON6 = window.RU_ZH_LESSON6;
   var VOWELS = 'аеёиоуыэюяАЕЁИОУЫЭЮЯ';
   var WORD_RE = /(?:[А-Яа-яЁёA-Za-z0-9]|\[[А-Яа-яЁё]\])+(?:[-–—](?:[А-Яа-яЁёA-Za-z0-9]|\[[А-Яа-яЁё]\])+)*/g;
   var CASE_RE = /(主格|宾格|与格|属格|工具格|前置格|第一格|第二格|第三格|第四格|第五格|第六格)/;
@@ -4081,6 +4196,11 @@ window.RU_ZH_LEMMAS = {"августа":"август","автобус":"авт�
       var lesson5 = Object.assign({}, BUILTIN_LESSON5);
       lesson5.id = 'lesson5';
       list.push(lesson5);
+    }
+    if (BUILTIN_LESSON6) {
+      var lesson6 = Object.assign({}, BUILTIN_LESSON6);
+      lesson6.id = 'lesson6';
+      list.push(lesson6);
     }
     return list;
   }
@@ -6212,6 +6332,7 @@ window.RU_ZH_VERSIONS = {
       "label": "Beta v2.0",
       "date": "2026-11-08",
       "items": [
+        "第 6 课新增 8 张卡（分类：对话 1），含同义表达合并与逐词语法。",
         "文本库扩展为 12 课 36 篇：第 6–12 课先导入对话和课文，单词卡暂未生成。",
         "前 5 课 15 篇按新语料覆盖；来源匹配更新为 192 张有来源、34 张暂无来源。",
         "对话改为逐行排版，每句以“—”开头，不再把多个说话人合并成一段。",
