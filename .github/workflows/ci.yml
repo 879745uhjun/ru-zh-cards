@@ -26,6 +26,8 @@ jobs:
           node --check sidebar.js
           node --check global-search.js
           node --check version-update.js
+          node --check sw.js
+          node --check pwa.js
       - name: Verify version data is generated from changelog
         run: |
           node build-version-data.js
