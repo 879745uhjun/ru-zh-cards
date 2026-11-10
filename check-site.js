@@ -58,5 +58,11 @@ check('不在书首页链接来源查询作为文本入口', !fs.readFileSync(pa
 check('删除状态键存在', fs.readFileSync(path.join(base, 'app.js'), 'utf8').includes('ru-zh-cards-deleted-v1'));
 check('备份包含 deleted', fs.readFileSync(path.join(base, 'app.js'), 'utf8').includes('deleted: loadDeleted()'));
 
+const swSource = fs.readFileSync(path.join(base, 'sw.js'), 'utf8');
+check('sw.js 内容完整', swSource.length > 500 && swSource.includes('const CACHE'), String(swSource.length));
+check('sw.js 已包含第 6 课数据', swSource.includes("'./data/lesson6.js'"));
+const pwaSource = fs.readFileSync(path.join(base, 'pwa.js'), 'utf8');
+check('pwa.js 内容完整', pwaSource.length > 300 && pwaSource.includes('serviceWorker'), String(pwaSource.length));
+
 console.log(failures ? ('FAILED: ' + failures) : 'ALL PASS');
 process.exit(failures ? 1 : 0);
