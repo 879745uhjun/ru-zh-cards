@@ -88,9 +88,12 @@ function serve() {
     await page.waitForTimeout(1000);
     const sw = await page.evaluate(async () => {
       if (!('serviceWorker' in navigator)) return -1;
-      await new Promise(resolve => setTimeout(resolve, 500));
-      const reg = await navigator.serviceWorker.getRegistration();
-      return reg ? 1 : 0;
+      for (let i = 0; i < 20; i++) {
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (reg && (reg.active || reg.installing || reg.waiting)) return 1;
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+      return 0;
     });
     check('Service Worker 注册', sw === 1);
 
