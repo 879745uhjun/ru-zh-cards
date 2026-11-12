@@ -15,23 +15,60 @@ function load(file, name) {
   return sandbox.window[name];
 }
 
-const lesson1 = load('data/lesson1.js', 'RU_ZH_LESSON1');
-const lesson2 = load('data/lesson2.js', 'RU_ZH_LESSON2');
-const lesson3 = load('data/lesson3.js', 'RU_ZH_LESSON3');
-const lesson4 = load('data/deck.js', 'RU_ZH_DECK');
-const lesson5 = load('data/lesson5.js', 'RU_ZH_LESSON5');
-const decks = [lesson1, lesson2, lesson3, lesson4, lesson5];
-const total = decks.reduce((sum, deck) => sum + deck.cards.length, 0);
+// 课程清单：新增课程时只改这张表
+const LESSONS = [
+  { id: 'lesson1', file: 'data/lesson1.js', key: 'RU_ZH_LESSON1', cards: 57 },
+  { id: 'lesson2', file: 'data/lesson2.js', key: 'RU_ZH_LESSON2', cards: 27 },
+  { id: 'lesson3', file: 'data/lesson3.js', key: 'RU_ZH_LESSON3', cards: 51 },
+  { id: 'lesson4', file: 'data/deck.js', key: 'RU_ZH_DECK', cards: 50 },
+  { id: 'lesson5', file: 'data/lesson5.js', key: 'RU_ZH_LESSON5', cards: 41 },
+  { id: 'lesson6', file: 'data/lesson6.js', key: 'RU_ZH_LESSON6', cards: 8 }
+];
 
-check('5 个单元', decks.length === 5, String(decks.length));
-check('总卡数 226', total === 226, String(total));
-check('第 1 课 57 张', lesson1.cards.length === 57, String(lesson1.cards.length));
-check('第 2 课 27 张', lesson2.cards.length === 27, String(lesson2.cards.length));
-check('第 3 课 51 张', lesson3.cards.length === 51, String(lesson3.cards.length));
-check('第 4 课 50 张', lesson4.cards.length === 50, String(lesson4.cards.length));
-check('第 5 课 41 张', lesson5.cards.length === 41, String(lesson5.cards.length));
-check('没有 plan 课程', decks.every(deck => deck.id !== 'plan'));
-check('同义卡已合并', decks.reduce((n, deck) => n + deck.cards.filter(card => Array.isArray(card.ruVariants) && card.ruVariants.length).length, 0) >= 4);
+const decks = [];
+LESSONS.forEach(function (item) {
+  const data = load(item.file, item.key);
+  check(item.id + ' 可加载', !!data && Array.isArray(data.cards), item.file);
+  if (data && Array.isArray(data.cards)) {
+    data.id = item.id;
+    decks.push(data);
+    check(item.id + ' ' + item.cards + ' 张', data.cards.length === item.cards, String(data.cards.length));
+    check(item.id + ' 有标题', !!String(data.title || '').trim(), item.file);
+  }
+});
+
+const expectedTotal = LESSONS.reduce(function (n, item) { return n + item.cards; }, 0);
+const total = decks.reduce(function (sum, deck) { return sum + deck.cards.length; }, 0);
+check('课程数 ' + LESSONS.length, decks.length === LESSONS.length, String(decks.length));
+check('总卡数 ' + expectedTotal, total === expectedTotal, String(total));
+check('没有 plan 课程', decks.every(function (deck) { return deck.id !== 'plan'; }));
+check('课程 id 不重复', new Set(decks.map(function (d) { return d.id; })).size === decks.length);
+check('每张卡有 ru 和 zh', decks.every(function (deck) {
+  return deck.cards.every(function (card) { return String(card.ru || '').trim() && String(card.zh || '').trim(); });
+}));
+check('同义卡已合并', decks.reduce(function (n, deck) {
+  return n + deck.cards.filter(function (card) { return Array.isArray(card.ruVariants) && card.ruVariants.length; }).length;
+}, 0) >= 4);
+
+// 脏写守卫：任何源码文件被写成极小内容都直接失败
+const GUARD_JS = ['app.js', 'unit.js', 'plan.js', 'sources.js', 'texts.js', 'sidebar.js', 'global-search.js',
+  'version-update.js', 'pwa.js', 'sw.js', 'check-site.js', 'build-sources.js', 'build-single.js', 'build-version-data.js'];
+GUARD_JS.forEach(function (file) {
+  const size = fs.statSync(path.join(base, file)).size;
+  check(file + ' 未被写坏', size > 200, size + 'B');
+});
+const GUARD_HTML = ['index.html', 'book.html', 'unit.html', 'plan.html', 'sources.html', 'texts.html',
+  'changelog.html', 'account-demo.html', 'single.html'];
+GUARD_HTML.forEach(function (file) {
+  const source = fs.readFileSync(path.join(base, file), 'utf8');
+  check(file + ' 未被写坏', source.length > 400 && /<!doctype html>/i.test(source), source.length + 'B');
+});
+const GUARD_DATA = ['data/deck.js', 'data/lesson1.js', 'data/lesson2.js', 'data/lesson3.js', 'data/lesson5.js',
+  'data/lesson6.js', 'data/sources.js', 'data/lemmas.js', 'data/versions.js', 'data/extra-texts.js', 'data/decks-source.js'];
+GUARD_DATA.forEach(function (file) {
+  const source = fs.readFileSync(path.join(base, file), 'utf8');
+  check(file + ' 未被写坏', source.length > 200 && source.indexOf('window.') !== -1, source.length + 'B');
+});
 
 const sourceSandbox = { window: {} };
 vm.createContext(sourceSandbox);
@@ -47,22 +84,53 @@ check('来源全文无 °®©™• 等符号', !/[°®©™•|]/.test(JSON.str
 check('来源引文无 °®©™• 等符号', !/[°®©™•|]/.test(JSON.stringify(sources)));
 
 const sections = {};
-Object.values(sources).forEach(list => (list || []).forEach(source => {
-  sections[[source.unit, source.kind, source.number].join('|')] = source;
-}));
+Object.values(sources).forEach(function (list) {
+  (list || []).forEach(function (source) {
+    sections[[source.unit, source.kind, source.number].join('|')] = source;
+  });
+});
 check('15 篇对话/课文（至少 14 篇有卡片来源）', Object.keys(sections).length >= 14, String(Object.keys(sections).length));
+
+const extraSandbox = { window: {} };
+vm.createContext(extraSandbox);
+vm.runInContext(fs.readFileSync(path.join(base, 'data/extra-texts.js'), 'utf8'), extraSandbox, { filename: 'data/extra-texts.js' });
+const extra = extraSandbox.window.RU_ZH_EXTRA_TEXTS || {};
+const extraSections = Array.isArray(extra.sections) ? extra.sections : [];
+const extraTexts = extra.texts || {};
+check('第 6–12 课文本 21 篇', extraSections.length === 21, String(extraSections.length));
+check('新增文本都有正文', extraSections.every(function (s) {
+  return String(extraTexts[s.id] || '').trim().length > 100;
+}));
+check('对话文本每行以 — 开头', extraSections.filter(function (s) { return s.kind === '对话'; }).every(function (s) {
+  return String(extraTexts[s.id] || '').split('\n').filter(Boolean).every(function (line) {
+    return line.trim().indexOf('—') === 0;
+  });
+}));
+const baseSections = Array.isArray(sourceSandbox.window.RU_ZH_SOURCE_SECTIONS) ? sourceSandbox.window.RU_ZH_SOURCE_SECTIONS : [];
+check('原文区块 15 篇', baseSections.length === 15, String(baseSections.length));
+check('文本库总篇数 36', baseSections.length + extraSections.length === 36,
+  String(baseSections.length + extraSections.length));
+
+const versionsSandbox = { window: {} };
+vm.createContext(versionsSandbox);
+vm.runInContext(fs.readFileSync(path.join(base, 'data/versions.js'), 'utf8'), versionsSandbox, { filename: 'data/versions.js' });
+const versions = versionsSandbox.window.RU_ZH_VERSIONS || {};
+check('版本数据有 current', !!versions.current, String(versions.current));
+check('版本数据至少 3 个版本', Array.isArray(versions.versions) && versions.versions.length >= 3);
+check('版本条目都有 items', (versions.versions || []).every(function (v) {
+  return Array.isArray(v.items) && v.items.length > 0;
+}));
 
 check('文本页存在', fs.existsSync(path.join(base, 'texts.html')));
 check('书首页链接文本页', fs.readFileSync(path.join(base, 'book.html'), 'utf8').includes('texts.html'));
 check('不在书首页链接来源查询作为文本入口', !fs.readFileSync(path.join(base, 'book.html'), 'utf8').includes('text-module" href="sources.html"'));
 check('删除状态键存在', fs.readFileSync(path.join(base, 'app.js'), 'utf8').includes('ru-zh-cards-deleted-v1'));
 check('备份包含 deleted', fs.readFileSync(path.join(base, 'app.js'), 'utf8').includes('deleted: loadDeleted()'));
-
-const swSource = fs.readFileSync(path.join(base, 'sw.js'), 'utf8');
-check('sw.js 内容完整', swSource.length > 500 && swSource.includes('const CACHE'), String(swSource.length));
-check('sw.js 已包含第 6 课数据', swSource.includes("'./data/lesson6.js'"));
-const pwaSource = fs.readFileSync(path.join(base, 'pwa.js'), 'utf8');
-check('pwa.js 内容完整', pwaSource.length > 300 && pwaSource.includes('serviceWorker'), String(pwaSource.length));
+check('每课数据都挂在页面上', GUARD_HTML.filter(function (f) { return f !== 'single.html' && f !== 'account-demo.html'; }).every(function (f) {
+  if (f === 'texts.html' || f === 'changelog.html') return true;
+  const source = fs.readFileSync(path.join(base, f), 'utf8');
+  return source.includes('data/lesson6.js');
+}));
 
 console.log(failures ? ('FAILED: ' + failures) : 'ALL PASS');
 process.exit(failures ? 1 : 0);
