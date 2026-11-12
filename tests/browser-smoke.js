@@ -95,7 +95,7 @@ function watch(target, label) {
       total: (document.getElementById('totalNum') || {}).textContent,
       words: Array.from(document.querySelectorAll('.card .word')).map(el => el.textContent).join(' | ')
     }));
-    check('第 6 课共 8 张', Number(lesson6.total) === 8, lesson6.total);
+    check('第 6 课共 37 张', Number(lesson6.total) === 37, lesson6.total);
     check('第 6 课首卡重音正确', lesson6.words.includes('одноко'), lesson6.words);
 
     await page.goto(base + 'index.html?deck=lesson1', { waitUntil: 'load' });

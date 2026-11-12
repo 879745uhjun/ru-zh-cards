@@ -22,7 +22,7 @@ const LESSONS = [
   { id: 'lesson3', file: 'data/lesson3.js', key: 'RU_ZH_LESSON3', cards: 51 },
   { id: 'lesson4', file: 'data/deck.js', key: 'RU_ZH_DECK', cards: 50 },
   { id: 'lesson5', file: 'data/lesson5.js', key: 'RU_ZH_LESSON5', cards: 41 },
-  { id: 'lesson6', file: 'data/lesson6.js', key: 'RU_ZH_LESSON6', cards: 8 }
+  { id: 'lesson6', file: 'data/lesson6.js', key: 'RU_ZH_LESSON6', cards: 37 }
 ];
 
 const decks = [];
