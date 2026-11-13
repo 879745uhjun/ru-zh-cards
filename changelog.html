@@ -32,10 +32,23 @@
     <div>
       <span class="unit-eyebrow">CHANGELOG</span>
       <h2>更新日志</h2>
-      <p>记录每个版本的界面、功能和内容变化。当前版本：<b>Beta v2.0</b>。</p>
+      <p>记录每个版本的界面、功能和内容变化。当前版本：<b>Beta v2.1</b>。</p>
     </div>
-    <div class="log-current">Beta v2.0</div>
+    <div class="log-current">Beta v2.1</div>
   </div>
+
+  <section class="log-entry">
+    <div class="log-head"><span class="log-version">Beta v2.1</span><span class="log-date">2026-11-13</span></div>
+    <ul>
+      <li>文本库新增搜索框，可搜索 12 课对话与课文里的俄语单词、词组和中文释义。</li>
+      <li>俄语搜索支持词形还原，输入「длинная」也能找到「длинные」。</li>
+      <li>中文搜索按卡片释义反查课文，输入「一居室」可以定位到第 6 课对话 1。</li>
+      <li>结果按优先级排序：词组/句子 → 词形匹配 → 部分匹配 → 中文释义 → 标题。</li>
+      <li>每条结果给出命中片段和高亮，并带「展开全文」按钮。</li>
+      <li>搜索框固定在页面上方，清空后恢复原来的 12 课列表。</li>
+      <li>新增构建脚本生成搜索索引 data/text-search.js。</li>
+    </ul>
+  </section>
 
   <section class="log-entry">
     <div class="log-head"><span class="log-version">Beta v2.0</span><span class="log-date">2026-11-08</span></div>
@@ -176,7 +189,7 @@
     </ul>
   </section>
 
-  <footer class="log-foot">更新记录会继续追加到这里。当前线上版本：Beta v2.0。</footer>
+  <footer class="log-foot">更新记录会继续追加到这里。当前线上版本：Beta v2.1。</footer>
 </main>
 
 <script src="sidebar.js"></script>

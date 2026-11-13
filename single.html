@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#eee7db">
-<title>俄汉记忆卡 · Beta v2.0 · 单文件版</title>
+<title>俄汉记忆卡 · Beta v2.1</title>
 
 <style>
 :root{
@@ -626,7 +626,7 @@ body{padding-top:46px;}
       <div class="brand-copy">
         <div class="brand-line">
           <h1>俄汉记忆卡</h1>
-          <span class="alpha-badge">BETA v2.0</span>
+          <span class="alpha-badge">BETA v2.1</span>
         </div>
         <p>РУССКИЙ · 逐词重音与语法</p>
       </div>
@@ -872,7 +872,7 @@ body{padding-top:46px;}
     </header>
     <div class="source-list" id="sourceList"></div>
     <footer class="modal-foot">
-      <div class="foot-left"><a class="text-btn" href="sources.html?v=2.1.0">全局来源查询</a></div>
+      <div class="foot-left"><a class="text-btn" href="sources.html?v=2.1.5">全局来源查询</a></div>
       <div class="foot-right"><button type="button" class="btn ghost" data-close-source>关闭</button></div>
     </footer>
   </section>
@@ -6720,11 +6720,25 @@ window.RU_ZH_LEMMAS = {"августа":"август","автобус":"авт�
 </script>
 <script>
 window.RU_ZH_VERSIONS = {
-  "current": "2.0",
+  "current": "2.1",
   "versions": [
     {
-      "version": "2.0",
-      "label": "Beta v2.0",
+      "version": "2.1",
+      "label": "Beta v2.1",
+      "date": "2026-11-13",
+      "items": [
+        "文本库新增搜索框，可搜索 12 课对话与课文里的俄语单词、词组和中文释义。",
+        "俄语搜索支持词形还原，输入「длинная」也能找到「длинные」。",
+        "中文搜索按卡片释义反查课文，输入「一居室」可以定位到第 6 课对话 1。",
+        "结果按优先级排序：词组/句子 → 词形匹配 → 部分匹配 → 中文释义 → 标题。",
+        "每条结果给出命中片段和高亮，并带「展开全文」按钮。",
+        "搜索框固定在页面上方，清空后恢复原来的 12 课列表。",
+        "新增构建脚本生成搜索索引 data/text-search.js。"
+      ]
+    },
+    {
+      "version": "2.1",
+      "label": "Beta v2.1",
       "date": "2026-11-08",
       "items": [
         "第 6 课新增 8 张卡（分类：对话 1），含同义表达合并与逐词语法。",

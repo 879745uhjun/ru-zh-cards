@@ -6,9 +6,9 @@
 <meta name="theme-color" content="#eee7db">
 <title>Диалоги и Текст · 俄汉记忆卡</title>
 <link rel="stylesheet" href="unit.css">
-<link rel="stylesheet" href="texts.css?v=2.1.0">
-<link rel="stylesheet" href="sidebar.css?v=2.1.0">
-<link rel="stylesheet" href="version-update.css?v=2.1.0">
+<link rel="stylesheet" href="texts.css?v=2.1.5">
+<link rel="stylesheet" href="sidebar.css?v=2.1.5">
+<link rel="stylesheet" href="version-update.css?v=2.1.5">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -25,25 +25,34 @@
   </div>
   <div class="unit-controls">
     <a class="unit-btn" href="book.html">← 上一级</a>
-    <a class="unit-btn" href="sources.html?v=2.1.0">来源查询</a>
+    <a class="unit-btn" href="sources.html?v=2.1.5">来源查询</a>
   </div>
 </header>
 
 <main class="texts-main">
   <div class="texts-hero">
-    <span class="unit-eyebrow">ТЕКСТЫ · 5 УРОКОВ</span>
+    <span class="unit-eyebrow">ТЕКСТЫ · 12 УРОКОВ</span>
     <h2>Диалоги и Текст</h2>
     <p>按课次整理 12 课 36 篇对话与课文。展开查看全文，原文为精校转写，旧课保留原有版本。</p>
   </div>
+  <div class="text-search">
+    <div class="text-search-field">
+      <input id="textSearch" type="search" placeholder="搜索俄语或中文，例如 длинная / 一居室 / 住宅" autocomplete="off" aria-label="搜索对话和课文">
+      <button type="button" class="text-search-clear" id="textSearchClear" aria-label="清空搜索" hidden>×</button>
+    </div>
+    <p class="text-search-hint" id="textSearchHint">支持俄语词形变化：输入 длинная 也能找到 длинные</p>
+  </div>
+  <div class="text-search-results" id="textSearchResults" hidden></div>
   <div class="texts-list" id="textsList"></div>
 </main>
 
-<script src="data/sources.js?v=2.1.0"></script>
-<script src="data/extra-texts.js?v=2.1.0"></script>
-<script src="texts.js?v=2.1.0"></script>
-<script src="sidebar.js?v=2.1.0"></script>
-<script src="data/versions.js?v=2.1.0"></script>
-<script src="version-update.js?v=2.1.0"></script>
-<script src="pwa.js?v=2.1.0"></script>
+<script src="data/sources.js?v=2.1.5"></script>
+<script src="data/extra-texts.js?v=2.1.5"></script>
+<script src="data/text-search.js?v=2.1.5"></script>
+<script src="texts.js?v=2.1.5"></script>
+<script src="sidebar.js?v=2.1.5"></script>
+<script src="data/versions.js?v=2.1.5"></script>
+<script src="version-update.js?v=2.1.5"></script>
+<script src="pwa.js?v=2.1.5"></script>
 </body>
 </html>

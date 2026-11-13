@@ -173,6 +173,16 @@ function watch(target, label) {
     check('文本库 12 课', await texts.locator('.text-unit').count() === expectedTexts.units,
       String(await texts.locator('.text-unit').count()));
 
+    if (await texts.locator('#versionOk').count()) await texts.click('#versionOk');
+    await texts.fill('#textSearch', 'квартира');
+    check('文本库搜索（俄语）', await poll(async () => (await texts.locator('.text-result').count()) > 0, 8000));
+    await texts.fill('#textSearch', '一居室');
+    check('文本库搜索（中文）', await poll(async () => (await texts.locator('.text-result').count()) > 0, 8000));
+    await texts.locator('.text-result-toggle').first().click();
+    check('搜索结果可展开全文', await texts.locator('.text-result-body:not([hidden])').count() > 0);
+    await texts.fill('#textSearch', '');
+    check('清空搜索恢复列表', await poll(async () => (await texts.locator('.text-item').count()) === expectedTexts.total, 8000));
+
     const sourcePage = await context.newPage();
     watch(sourcePage, 'sources');
     await sourcePage.goto(base + 'sources.html', { waitUntil: 'load' });

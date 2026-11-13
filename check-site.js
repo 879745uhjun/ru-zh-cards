@@ -64,7 +64,7 @@ GUARD_HTML.forEach(function (file) {
   check(file + ' 未被写坏', source.length > 400 && /<!doctype html>/i.test(source), source.length + 'B');
 });
 const GUARD_DATA = ['data/deck.js', 'data/lesson1.js', 'data/lesson2.js', 'data/lesson3.js', 'data/lesson5.js',
-  'data/lesson6.js', 'data/sources.js', 'data/lemmas.js', 'data/versions.js', 'data/extra-texts.js', 'data/decks-source.js'];
+  'data/lesson6.js', 'data/sources.js', 'data/lemmas.js', 'data/versions.js', 'data/extra-texts.js', 'data/text-search.js', 'data/decks-source.js'];
 GUARD_DATA.forEach(function (file) {
   const source = fs.readFileSync(path.join(base, file), 'utf8');
   check(file + ' 未被写坏', source.length > 200 && source.indexOf('window.') !== -1, source.length + 'B');
@@ -110,6 +110,15 @@ const baseSections = Array.isArray(sourceSandbox.window.RU_ZH_SOURCE_SECTIONS) ?
 check('原文区块 15 篇', baseSections.length === 15, String(baseSections.length));
 check('文本库总篇数 36', baseSections.length + extraSections.length === 36,
   String(baseSections.length + extraSections.length));
+
+const searchSandbox = { window: {} };
+vm.createContext(searchSandbox);
+vm.runInContext(fs.readFileSync(path.join(base, 'data/text-search.js'), 'utf8'), searchSandbox, { filename: 'data/text-search.js' });
+const searchIndex = searchSandbox.window.RU_ZH_TEXT_SEARCH || {};
+check('搜索索引 36 篇', (searchIndex.sections || []).length === 36, String((searchIndex.sections || []).length));
+check('搜索索引含中文条目', (searchIndex.sections || []).some(function (s) { return (s.zh || []).length > 0; }));
+check('搜索索引含词元', (searchIndex.sections || []).every(function (s) { return Array.isArray(s.lemmas); }));
+check('文本页有搜索框', fs.readFileSync(path.join(base, 'texts.html'), 'utf8').includes('id="textSearch"'));
 
 const versionsSandbox = { window: {} };
 vm.createContext(versionsSandbox);
