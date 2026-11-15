@@ -174,6 +174,7 @@ button:disabled{cursor:not-allowed;}
 .mark-btn:hover{background:var(--paper);border-color:#bfae97;color:var(--ink);transform:translateY(-1px);}
 .mark-btn[data-mark="mastered"].active{background:#e8f0e6;border-color:#b8cbb4;color:#3d6540;}
 .mark-btn[data-mark="review"].active{background:var(--accent-soft);border-color:#e2b9b1;color:var(--accent-deep);}
+.mark-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 .due-label{margin-left:auto;color:var(--muted);font-size:10.5px;white-space:nowrap;}
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:330px;padding:36px 20px;color:var(--muted);}
 .empty-state .empty-icon{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent-deep);font-family:var(--ru-serif);font-size:27px;margin-bottom:14px;}
@@ -872,7 +873,7 @@ body{padding-top:46px;}
     </header>
     <div class="source-list" id="sourceList"></div>
     <footer class="modal-foot">
-      <div class="foot-left"><a class="text-btn" href="sources.html?v=2.1.5">全局来源查询</a></div>
+      <div class="foot-left"><a class="text-btn" href="sources.html?v=2.1.6">全局来源查询</a></div>
       <div class="foot-right"><button type="button" class="btn ghost" data-close-source>关闭</button></div>
     </footer>
   </section>
@@ -5088,6 +5089,8 @@ window.RU_ZH_LEMMAS = {"августа":"август","автобус":"авт�
     }
     saveProgress();
     saveSchedule();
+    // 标记学习进度后直接显示原文，方便核对
+    if (state.mode !== 'both') state.revealed = true;
     refreshVisible({ preferredKey: key, fallbackIndex: state.index });
     render();
   }
@@ -6348,7 +6351,9 @@ window.RU_ZH_LEMMAS = {"августа":"август","автобус":"авт�
 
     var tag = (event.target.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'textarea' || tag === 'select' || event.target.isContentEditable) return;
-    if (event.target.closest('button, a, [role="button"]')) return;
+    // 标记按钮保留默认行为（空格激活），其余按钮上按空格仍然显示/隐藏原文
+    if (event.target.closest('[data-mark]')) return;
+    if (event.target.closest('button, a, [role="button"]') && event.key !== ' ' && event.key !== 'Spacebar') return;
 
     if (event.key === 'ArrowLeft') {
       event.preventDefault();
@@ -6737,8 +6742,8 @@ window.RU_ZH_VERSIONS = {
       ]
     },
     {
-      "version": "2.1",
-      "label": "Beta v2.1",
+      "version": "2.0",
+      "label": "Beta v2.0",
       "date": "2026-11-08",
       "items": [
         "第 6 课新增 8 张卡（分类：对话 1），含同义表达合并与逐词语法。",

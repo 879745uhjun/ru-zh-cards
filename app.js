@@ -895,6 +895,8 @@
     }
     saveProgress();
     saveSchedule();
+    // 标记学习进度后直接显示原文，方便核对
+    if (state.mode !== 'both') state.revealed = true;
     refreshVisible({ preferredKey: key, fallbackIndex: state.index });
     render();
   }
@@ -2155,7 +2157,9 @@
 
     var tag = (event.target.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'textarea' || tag === 'select' || event.target.isContentEditable) return;
-    if (event.target.closest('button, a, [role="button"]')) return;
+    // 标记按钮保留默认行为（空格激活），其余按钮上按空格仍然显示/隐藏原文
+    if (event.target.closest('[data-mark]')) return;
+    if (event.target.closest('button, a, [role="button"]') && event.key !== ' ' && event.key !== 'Spacebar') return;
 
     if (event.key === 'ArrowLeft') {
       event.preventDefault();
