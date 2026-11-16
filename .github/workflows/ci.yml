@@ -6,7 +6,32 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      ui: ${{ steps.diff.outputs.ui }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: diff
+        name: Detect UI changes
+        run: |
+          base="HEAD^"
+          if ! git rev-parse "$base" >/dev/null 2>&1; then base="$(git rev-list --max-parents=0 HEAD | tail -1)"; fi
+          files=$(git diff --name-only "$base" HEAD || true)
+          echo "$files"
+          if echo "$files" | grep -Eq '(^|/)(app\.js|unit\.js|plan\.js|sources\.js|texts\.js|sidebar\.js|global-search\.js|version-update\.js|pwa\.js|sw\.js)$|\.html$|\.css$|^data/'; then
+            echo "ui=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ui=false" >> "$GITHUB_OUTPUT"
+          fi
+
   verify:
     runs-on: ubuntu-latest
     steps:
@@ -34,12 +59,19 @@ jobs:
           git diff --exit-code data/versions.js
 
   browser:
+    needs: changes
+    if: needs.changes.outputs.ui == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-1.65.0-chromium
       - name: Install Playwright
         run: |
           npm install --no-save playwright@1.65.0
