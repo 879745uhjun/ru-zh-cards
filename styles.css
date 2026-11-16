@@ -503,3 +503,9 @@ mark.search-hl{background:#f2d98b;color:inherit;padding:0 .08em;border-radius:2p
 /* 书首页错题本入口 */
 .review-module.is-empty{opacity:.72}
 .review-module.is-empty .text-module-arrow{color:#c9bda9}
+
+/* 书首页错题本小按钮 */
+.review-btn{display:inline-flex;align-items:center;gap:7px}
+.review-btn .review-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;margin:0;padding:0 6px;border-radius:999px;background:var(--accent-soft);color:var(--accent-deep);font-size:10px;font-weight:700}
+.review-btn.is-empty{opacity:.62}
+.review-btn.is-empty .review-count{background:#efe7da;color:#9a8c7b}

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#eee7db">
-<title>俄汉记忆卡 · Beta v2.1</title>
+<title>俄汉记忆卡 · Beta v2.2</title>
 
 <style>
 :root{
@@ -513,6 +513,12 @@ mark.search-hl{background:#f2d98b;color:inherit;padding:0 .08em;border-radius:2p
 .review-module.is-empty{opacity:.72}
 .review-module.is-empty .text-module-arrow{color:#c9bda9}
 
+/* 书首页错题本小按钮 */
+.review-btn{display:inline-flex;align-items:center;gap:7px}
+.review-btn .review-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;margin:0;padding:0 6px;border-radius:999px;background:var(--accent-soft);color:var(--accent-deep);font-size:10px;font-weight:700}
+.review-btn.is-empty{opacity:.62}
+.review-btn.is-empty .review-count{background:#efe7da;color:#9a8c7b}
+
 </style>
 <style>
 .global-search-toggle.active,.global-search-toggle[aria-pressed="true"]{background:var(--accent-soft);border-color:#e2b9b1;color:var(--accent-deep);}
@@ -642,7 +648,7 @@ body{padding-top:46px;}
       <div class="brand-copy">
         <div class="brand-line">
           <h1>俄汉记忆卡</h1>
-          <span class="alpha-badge">BETA v2.1</span>
+          <span class="alpha-badge">BETA v2.2</span>
         </div>
         <p>РУССКИЙ · 逐词重音与语法</p>
       </div>
@@ -889,7 +895,7 @@ body{padding-top:46px;}
     </header>
     <div class="source-list" id="sourceList"></div>
     <footer class="modal-foot">
-      <div class="foot-left"><a class="text-btn" href="sources.html?v=2.1.7">全局来源查询</a></div>
+      <div class="foot-left"><a class="text-btn" href="sources.html?v=2.2.0">全局来源查询</a></div>
       <div class="foot-right"><button type="button" class="btn ghost" data-close-source>关闭</button></div>
     </footer>
   </section>
@@ -6889,11 +6895,23 @@ window.RU_ZH_LEMMAS = {"августа":"август","автобус":"авт�
 </script>
 <script>
 window.RU_ZH_VERSIONS = {
-  "current": "2.1",
+  "current": "2.2",
   "versions": [
     {
-      "version": "2.1",
-      "label": "Beta v2.1",
+      "version": "2.2",
+      "label": "Beta v2.2",
+      "date": "2026-11-16",
+      "items": [
+        "新增挖空训练：点「挖空」进入标记模式，点不记得的单词，复习时这些词会变成 ·····，点一下即可显示。",
+        "挖空标记按卡片保存，刷新、换卡片都保留；快捷键 G 可快速进入或退出标记模式。",
+        "书首页新增「错题本」按钮，显示待复习数量，点击进入汇总所有课程的错题本。",
+        "空格键在任何位置都能显示/隐藏原文，不再受焦点影响；已掌握、需复习按钮支持键盘操作。",
+        "标记「已掌握 / 需复习」后自动显示原文，方便马上核对。"
+      ]
+    },
+    {
+      "version": "2.2",
+      "label": "Beta v2.2",
       "date": "2026-11-13",
       "items": [
         "文本库新增搜索框，可搜索 12 课对话与课文里的俄语单词、词组和中文释义。",
