@@ -488,3 +488,18 @@ body.modal-open{overflow:hidden;}
 /* 搜索命中的词/释义 */
 mark.search-hl{background:#f2d98b;color:inherit;padding:0 .08em;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .word mark.search-hl{background:#f2d98b}
+
+/* 挖空训练 */
+.gap-chip .word-line{cursor:pointer;border-radius:6px;outline:1px dashed rgba(178,58,47,.35);outline-offset:3px}
+.gap-chip:hover .word-line{background:rgba(178,58,47,.06)}
+.gap-chip.gap-on .word-line{outline:2px solid var(--accent);background:var(--accent-soft)}
+.gap-chip.gap-on .word{opacity:.55}
+.gap-blank .word-line{cursor:pointer}
+.gap-blank .word{border-bottom:2px dashed #c9978d;color:transparent;min-width:2.2em;display:inline-block}
+.gap-blank .word .gap-dots{color:#b23a2f;letter-spacing:.12em}
+.gap-blank:hover .word .gap-dots{color:var(--accent-deep)}
+.gap-editing .card-body::after{content:"标记模式：点击单词标记不记得的词，按 G 退出";display:block;margin-top:14px;padding:8px 12px;border-radius:10px;background:#f7ede0;color:#8d5a2a;font-size:10px}
+
+/* 书首页错题本入口 */
+.review-module.is-empty{opacity:.72}
+.review-module.is-empty .text-module-arrow{color:#c9bda9}

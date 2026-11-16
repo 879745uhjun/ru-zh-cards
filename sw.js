@@ -1,4 +1,4 @@
-const CACHE = 'ru-zh-cards-v2.1.6';
+const CACHE = 'ru-zh-cards-v2.1.7';
 const ASSETS = [
   './', './index.html', './book.html', './unit.html', './plan.html', './sources.html', './texts.html',
   './styles.css', './unit.css', './plan.css', './sources.css', './texts.css', './changelog.css',

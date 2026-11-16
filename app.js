@@ -6,6 +6,7 @@
   var UI_KEY = 'ru-zh-cards-ui-v0.2';
   var PROGRESS_KEY = 'ru-zh-cards-progress-v0.2';
   var SCHEDULE_KEY = 'ru-zh-cards-schedule-v0.3';
+  var GAP_KEY = 'ru-zh-cards-gap-v1';
   var PLAN_KEY = 'ru-zh-cards-plan-v1';
   var DELETED_KEY = 'ru-zh-cards-deleted-v1';
   var BUILTIN_DECK = window.RU_ZH_DECK;
@@ -29,6 +30,9 @@
     revealed: false,
     study: false,
     editEnabled: false,
+    gap: {},
+    gapMode: false,
+    gapShown: {},
     filter: 'all',
     query: '',
     random: false,
@@ -500,17 +504,41 @@
     }
   }
 
+  function buildReviewDeck() {
+    var cards = [];
+    var seenKey = {};
+    state.decks.forEach(function (deck) {
+      if (deck.id === 'plan' || deck.id === 'review') return;
+      deck.cards.forEach(function (card) {
+        var key = cardKey(card);
+        if (seenKey[key]) return;
+        if (state.progress[key] === 'review') { seenKey[key] = true; cards.push(card); }
+      });
+    });
+    if (!cards.length) return null;
+    return {
+      id: 'review',
+      title: '错题本 · 需复习',
+      subtitle: '所有课程里标记为需复习的卡片',
+      tag: '错题本',
+      cards: cards
+    };
+  }
+
   function renderDeckOptions() {
     var select = $('#deckSelect');
     if (!select) return;
-    var normalDecks = state.decks.filter(function (deck) { return deck.id !== 'plan'; });
+    var normalDecks = state.decks.filter(function (deck) { return deck.id !== 'plan' && deck.id !== 'review'; });
     select.innerHTML = normalDecks.map(function (deck) {
       return '<option value="' + escapeHtml(deck.id) + '">' + escapeHtml(deck.title) + ' · ' + deck.cards.length + ' 张</option>';
     }).join('');
-    var planActive = state.deckId === 'plan';
+    var planActive = state.deckId === 'plan' || state.deckId === 'review';
     select.hidden = planActive;
     var badge = $('#planModeBadge');
-    if (badge) badge.hidden = !planActive;
+    if (badge) {
+      badge.hidden = !planActive;
+      badge.textContent = state.deckId === 'review' ? '错题本' : '学习计划';
+    }
     if (!planActive) select.value = state.deckId;
   }
 
@@ -555,6 +583,55 @@
 
   function statusOf(card) {
     return (card && state.progress[cardKey(card)]) || 'new';
+  }
+
+  function loadGap() {
+    try {
+      var raw = localStorage.getItem(GAP_KEY);
+      var data = raw ? JSON.parse(raw) : {};
+      return (data && typeof data === 'object' && !Array.isArray(data)) ? data : {};
+    } catch (err) { return {}; }
+  }
+
+  function saveGap() {
+    try { localStorage.setItem(GAP_KEY, JSON.stringify(state.gap)); } catch (err) { /* ignore */ }
+  }
+
+  function gapMarks(card) {
+    if (!card) return [];
+    var list = state.gap[cardKey(card)];
+    return Array.isArray(list) ? list : [];
+  }
+
+  function isGapMarked(card, index) {
+    return gapMarks(card).indexOf(index) !== -1;
+  }
+
+  function toggleGapMark(card, index) {
+    if (!card) return;
+    var key = cardKey(card);
+    var list = gapMarks(card).slice();
+    var at = list.indexOf(index);
+    if (at === -1) list.push(index); else list.splice(at, 1);
+    list.sort(function (a, b) { return a - b; });
+    if (list.length) state.gap[key] = list; else delete state.gap[key];
+    var shown = state.gapShown[key];
+    if (shown) { delete shown[index]; }
+    saveGap();
+  }
+
+  function isGapShown(card, index) {
+    if (!card) return false;
+    var shown = state.gapShown[cardKey(card)];
+    return Array.isArray(shown) && shown.indexOf(index) !== -1;
+  }
+
+  function showGap(card, index) {
+    if (!card) return;
+    var key = cardKey(card);
+    var shown = Array.isArray(state.gapShown[key]) ? state.gapShown[key].slice() : [];
+    if (shown.indexOf(index) === -1) shown.push(index);
+    state.gapShown[key] = shown;
   }
 
   function loadProgress() {
@@ -953,6 +1030,11 @@
     return '<span class="grammar-wrap"><span class="grammar">' + inner + '</span><span class="grammar-hint">点击</span></span>';
   }
 
+  function repeatDots(text) {
+    var n = Math.max(3, String(text || '').replace(/[^А-Яа-яЁё]/gi, '').length);
+    return new Array(n + 1).join('·');
+  }
+
   function ruHtml(card, first, interactive) {
     var tokens = card.words.map(function (word, i) {
       if (word.punctOnly) {
@@ -969,6 +1051,17 @@
       var punct = word.punct ? '<span class="punct">' + escapeHtml(word.punct) + '</span>' : '';
       var body = wordBody(word);
       if (isRussianQuery() && wordMatchesQuery(word)) body = '<mark class="search-hl">' + body + '</mark>';
+      if (interactive !== false && card && card.ru) {
+        var marked = isGapMarked(card, i);
+        if (state.gapMode) {
+          cls += ' gap-chip' + (marked ? ' gap-on' : '');
+          role = ' role="button" tabindex="0" data-gap-toggle="' + i + '" aria-pressed="' + (marked ? 'true' : 'false') + '" aria-label="' + (marked ? '取消挖空 ' : '挖空 ') + escapeHtml(word.text) + '"';
+        } else if (marked && !isGapShown(card, i)) {
+          cls += ' gap-blank';
+          role = ' role="button" tabindex="0" data-gap-reveal="' + i + '" aria-label="显示被挖空的单词"';
+          body = '<span class="gap-dots">' + repeatDots(word.text) + '</span>';
+        }
+      }
       return '<span class="' + cls + '" style="--i:' + i + '"' + role + '>' +
         '<span class="word-line">' + lead +
           '<span class="word' + (noStress ? ' no-stress' : '') + '"' + title + '>' + body + '</span>' + punct +
@@ -1086,6 +1179,14 @@
     var editToggle = $('#editToggle');
     if (editToggle) editToggle.setAttribute('aria-pressed', state.editEnabled ? 'true' : 'false');
     $('#rehideBtn').hidden = !card || !(state.mode !== 'both' && state.revealed);
+    var gapBtn = $('#gapBtn');
+    if (gapBtn) {
+      gapBtn.setAttribute('aria-pressed', state.gapMode ? 'true' : 'false');
+      gapBtn.textContent = state.gapMode ? '挖空 · 标记中' : '挖空';
+      gapBtn.title = state.gapMode ? '退出标记模式' : '点击单词标记不记得的词，复习时挖空';
+    }
+    var cardEl = $('#card');
+    if (cardEl) cardEl.classList.toggle('gap-editing', !!state.gapMode);
     var nextLesson = nextLessonDeck();
     var atLast = total > 0 && state.index === total - 1;
     $('#prevBtn').disabled = !total || state.index === 0;
@@ -1938,6 +2039,14 @@
   }
   $('#editCardBtn').addEventListener('click', openEditModal);
   $('#sourceBtn').addEventListener('click', openSourceModal);
+  var gapBtn = $('#gapBtn');
+  if (gapBtn) {
+    gapBtn.addEventListener('click', function () {
+      state.gapMode = !state.gapMode;
+      render();
+      showToast(state.gapMode ? '标记模式：点击单词标记不记得的词' : '已退出标记模式，被标记的词会挖空显示');
+    });
+  }
   $('#closeSourceModal').addEventListener('click', closeSourceModal);
   document.querySelectorAll('[data-close-source]').forEach(function (el) {
     el.addEventListener('click', closeSourceModal);
@@ -2075,6 +2184,26 @@
   });
 
   cardBody.addEventListener('click', function (event) {
+    var gapToggle = event.target.closest('[data-gap-toggle]');
+    if (gapToggle) {
+      var gapCard = currentCard();
+      if (gapCard) {
+        toggleGapMark(gapCard, Number(gapToggle.dataset.gapToggle));
+        render();
+      }
+      return;
+    }
+
+    var gapReveal = event.target.closest('[data-gap-reveal]');
+    if (gapReveal) {
+      var revealCard = currentCard();
+      if (revealCard) {
+        showGap(revealCard, Number(gapReveal.dataset.gapReveal));
+        render();
+      }
+      return;
+    }
+
     var mark = event.target.closest('[data-mark]');
     if (mark) {
       event.preventDefault();
@@ -2088,6 +2217,13 @@
   });
 
   cardBody.addEventListener('keydown', function (event) {
+    var gapEl = event.target.closest('[data-gap-toggle], [data-gap-reveal]');
+    if (gapEl && (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar')) {
+      event.preventDefault();
+      event.stopPropagation();
+      gapEl.click();
+      return;
+    }
     var token = event.target.closest('.token[data-word-index]');
     if (!token) return;
     if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
@@ -2172,6 +2308,10 @@
         event.preventDefault();
         toggleReveal();
       }
+    } else if (event.key === 'g' || event.key === 'G') {
+      event.preventDefault();
+      state.gapMode = !state.gapMode;
+      render();
     } else if (event.key === 's' || event.key === 'S') {
       event.preventDefault();
       toggleStudy();
@@ -2201,6 +2341,7 @@
       state.decks = loadDecks();
       state.progress = loadProgress();
       state.schedule = loadSchedule();
+      state.gap = loadGap();
       var ui = loadUI();
       state.lastCards = (ui.lastCards && typeof ui.lastCards === 'object') ? ui.lastCards : {};
 
@@ -2224,6 +2365,13 @@
         if (planDeck) {
           state.deck = planDeck;
           state.deckId = 'plan';
+        }
+      }
+      if (params.get('review') === '1') {
+        var reviewDeck = buildReviewDeck();
+        if (reviewDeck) {
+          state.deck = reviewDeck;
+          state.deckId = 'review';
         }
       }
       if (ui.lastCard && !state.lastCards[state.deckId]) state.lastCards[state.deckId] = ui.lastCard;
