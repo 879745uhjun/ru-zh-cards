@@ -14,8 +14,8 @@ window.RU_ZH_VERSIONS = {
       ]
     },
     {
-      "version": "2.2",
-      "label": "Beta v2.2",
+      "version": "2.1",
+      "label": "Beta v2.1",
       "date": "2026-11-13",
       "items": [
         "文本库新增搜索框，可搜索 12 课对话与课文里的俄语单词、词组和中文释义。",
