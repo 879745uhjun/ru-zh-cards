@@ -88,7 +88,7 @@ function watch(target, label) {
     check('课程选择器有 6 课', deckInfo.options === 6, String(deckInfo.options));
 
     // 第 6 课卡片
-    await page.goto(base + 'index.html?deck=lesson6', { waitUntil: 'load' });
+    await page.goto(base + 'index.html?deck=lesson6&card=1', { waitUntil: 'load' });
     if (await page.locator('#versionOk').count()) await page.click('#versionOk');
     await page.waitForSelector('.card .word', { timeout: 15000 });
     const lesson6 = await page.evaluate(() => ({
@@ -191,6 +191,33 @@ function watch(target, label) {
     check('来源页词形还原', await poll(async () => (await sourcePage.locator('.source-result').count()) > 0, 8000));
     await sourcePage.fill('#sourceSearch', '长发');
     check('来源页中文搜索高亮', await poll(async () => (await sourcePage.locator('.source-result-zh .source-hl').count()) > 0, 8000));
+
+    // 挖空训练：标记两个词后应出现挖空
+    await page.goto(base + 'index.html?deck=lesson6', { waitUntil: 'load' });
+    if (await page.locator('#versionOk').count()) await page.click('#versionOk');
+    await page.waitForSelector('.card .word', { timeout: 15000 });
+    await page.fill('#jumpInput', '9');
+    await page.press('#jumpInput', 'Enter');
+    await page.waitForTimeout(300);
+    await page.click('#gapBtn');
+    const chipCount = await page.locator('[data-gap-toggle]').count();
+    if (chipCount >= 2) {
+      await page.locator('[data-gap-toggle]').nth(0).click();
+      await page.locator('[data-gap-toggle]').nth(2).click();
+    }
+    await page.click('#gapBtn');
+    const blanks = await page.locator('.gap-blank').count();
+    check('挖空训练可标记并挖空', chipCount >= 2 && blanks >= 2, 'chips=' + chipCount + ' blanks=' + blanks);
+    if (blanks > 0) {
+      await page.locator('[data-gap-reveal]').first().click();
+      check('挖空可点击显示', await page.locator('.gap-blank').count() === blanks - 1);
+    }
+
+    const book = await context.newPage();
+    watch(book, 'book');
+    await book.goto(base + 'book.html', { waitUntil: 'load' });
+    if (await book.locator('#versionOk').count()) await book.click('#versionOk');
+    check('书首页有错题本入口', await book.locator('#reviewModule').count() === 1);
 
     const single = await context.newPage();
     watch(single, 'single');
