@@ -217,7 +217,7 @@ function watch(target, label) {
     watch(book, 'book');
     await book.goto(base + 'book.html', { waitUntil: 'load' });
     if (await book.locator('#versionOk').count()) await book.click('#versionOk');
-    check('书首页有错题本入口', await book.locator('#reviewModule').count() === 1);
+    check('书首页有错题本按钮', await book.locator('#reviewBtn').count() === 1);
 
     const single = await context.newPage();
     watch(single, 'single');
