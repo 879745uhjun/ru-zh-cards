@@ -286,25 +286,37 @@ a{color:inherit}
     while((m=re.exec(src))){
       if(m.index>last&&tokens.length)tokens[tokens.length-1].punct+=src.slice(last,m.index);
       else if(m.index>last)tokens.push({text:src.slice(last,m.index),stress:null,punct:'',punctOnly:true});
-      var raw=m[0],st=null,text='',k=0;
+      var raw=m[0],st=null,text='',k=0,marks=[];
       while(k<raw.length){
         if(raw[k]==='['&&raw[k+2]===']'){
           if(st===null)st=text.length;
+          marks.push(text.length);
           text+=raw[k+1];k+=3;continue;
         }
         text+=raw[k];k++;
       }
-      tokens.push({text:text,stress:st,punct:'',punctOnly:false});
+      tokens.push({text:text,stress:st,stresses:marks,punct:'',punctOnly:false});
       last=re.lastIndex;
     }
     if(last<src.length&&tokens.length)tokens[tokens.length-1].punct+=src.slice(last);
     return tokens;
   }
   function countV(text){var n=0;for(var i=0;i<text.length;i++)if(VOWELS.indexOf(text[i])>=0)n++;return n;}
+  function markAt(w,i){
+    var marks=Array.isArray(w.stresses)?w.stresses:null;
+    if(marks&&marks.length){
+      if(marks.indexOf(i)===-1)return false;
+      return !(i===0&&/[А-ЯЁ]/.test(w.text[0]));
+    }
+    if(!Number.isInteger(w.stress)||w.stress<0)return false;
+    if(i!==w.stress)return false;
+    if(countV(w.text)<=1)return false;
+    if(w.stress===0&&/[А-ЯЁ]/.test(w.text[0]))return false;
+    return true;
+  }
   function wordHtml(w){
-    var mark=Number.isInteger(w.stress)&&w.stress>=0&&countV(w.text)>1&&!(w.stress===0&&/[А-ЯЁ]/.test(w.text[0]));
     var out='';
-    for(var i=0;i<w.text.length;i++)out+=mark&&i===w.stress?'<span class="vowel">'+esc(w.text[i])+(w.text[i].toLowerCase()==='ё'?'':'\u0301')+'</span>':esc(w.text[i]);
+    for(var i=0;i<w.text.length;i++)out+=markAt(w,i)?'<span class="vowel">'+esc(w.text[i])+(w.text[i].toLowerCase()==='ё'?'':'\u0301')+'</span>':esc(w.text[i]);
     return out+w.punct;
   }
   function gram(group){

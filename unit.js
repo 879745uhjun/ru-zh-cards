@@ -64,7 +64,12 @@
     while ((m = re.exec(src))) {
       if (m[1] && /[А-Яа-яЁёA-Za-z0-9]/.test(m[1].replace(/\[[^\]]*\]/g, ''))) {
         var parsed = extractStress(m[1]);
-        tokens.push({ text: parsed.text, stress: parsed.stress, grammar: [], punct: '', lead: '', punctOnly: false });
+        var marks = [], kk = 0, tm = '', rr = m[1];
+        while (kk < rr.length) {
+          if (rr[kk] === '[' && rr[kk + 2] === ']') { marks.push(tm.length); tm += rr[kk + 1]; kk += 3; continue; }
+          tm += rr[kk]; kk++;
+        }
+        tokens.push({ text: parsed.text, stress: parsed.stress, stresses: marks, grammar: [], punct: '', lead: '', punctOnly: false });
       } else {
         var p = m[2] || m[1] || '';
         if (tokens.length) tokens[tokens.length - 1].punct += p;
@@ -91,12 +96,24 @@
     return true;
   }
 
+  function markStressAt(word, index) {
+    var marks = Array.isArray(word.stresses) ? word.stresses : null;
+    if (marks && marks.length) {
+      if (marks.indexOf(index) === -1) return false;
+      return !(index === 0 && /[А-ЯЁ]/.test(word.text[0]));
+    }
+    if (!Number.isInteger(word.stress) || word.stress < 0) return false;
+    if (index !== word.stress) return false;
+    if (countVowels(word.text) <= 1) return false;
+    if (word.stress === 0 && /[А-ЯЁ]/.test(word.text[0])) return false;
+    return true;
+  }
+
   function wordHtml(word) {
     var out = '';
-    var mark = shouldMarkStress(word);
     for (var i = 0; i < word.text.length; i++) {
       var ch = word.text[i];
-      if (mark && i === word.stress) {
+      if (markStressAt(word, i)) {
         out += '<span class="vowel">' + escapeHtml(ch) + (ch.toLowerCase() === 'ё' ? '' : '\u0301') + '</span>';
       } else {
         out += escapeHtml(ch);
