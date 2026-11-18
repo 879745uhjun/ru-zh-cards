@@ -286,9 +286,15 @@ a{color:inherit}
     while((m=re.exec(src))){
       if(m.index>last&&tokens.length)tokens[tokens.length-1].punct+=src.slice(last,m.index);
       else if(m.index>last)tokens.push({text:src.slice(last,m.index),stress:null,punct:'',punctOnly:true});
-      var raw=m[0],st=null,b=raw.match(/\[([А-Яа-яЁё])\]/);
-      if(b){st=b.index;raw=raw.slice(0,b.index)+b[1]+raw.slice(b.index+b[0].length);}
-      tokens.push({text:raw,stress:st,punct:'',punctOnly:false});
+      var raw=m[0],st=null,text='',k=0;
+      while(k<raw.length){
+        if(raw[k]==='['&&raw[k+2]===']'){
+          if(st===null)st=text.length;
+          text+=raw[k+1];k+=3;continue;
+        }
+        text+=raw[k];k++;
+      }
+      tokens.push({text:text,stress:st,punct:'',punctOnly:false});
       last=re.lastIndex;
     }
     if(last<src.length&&tokens.length)tokens[tokens.length-1].punct+=src.slice(last);

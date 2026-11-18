@@ -219,6 +219,12 @@ function watch(target, label) {
     if (await book.locator('#versionOk').count()) await book.click('#versionOk');
     check('书首页有错题本按钮', await book.locator('#reviewBtn').count() === 1);
 
+    await book.evaluate(() => { if (window.openUnit) window.openUnit('lesson6'); });
+    await book.waitForTimeout(500);
+    const gridTexts = await book.locator('.word-grid .word-ru').allTextContents();
+    check('课内卡片无方括号残留', gridTexts.length > 0 && gridTexts.every(function (t) { return t.indexOf('[') === -1; }),
+      String(gridTexts.filter(function (t) { return t.indexOf('[') !== -1; }).slice(0, 2).join(' / ')));
+
     const single = await context.newPage();
     watch(single, 'single');
     await single.goto(base + 'single.html', { waitUntil: 'load' });
