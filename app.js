@@ -15,6 +15,7 @@
   var BUILTIN_LESSON3 = window.RU_ZH_LESSON3;
   var BUILTIN_LESSON5 = window.RU_ZH_LESSON5;
   var BUILTIN_LESSON6 = window.RU_ZH_LESSON6;
+  var BUILTIN_LESSON7 = window.RU_ZH_LESSON7;
   var VOWELS = 'аеёиоуыэюяАЕЁИОУЫЭЮЯ';
   var WORD_RE = /(?:[А-Яа-яЁёA-Za-z0-9]|\[[А-Яа-яЁё]\])+(?:[-–—](?:[А-Яа-яЁёA-Za-z0-9]|\[[А-Яа-яЁё]\])+)*/g;
   var CASE_RE = /(主格|宾格|与格|属格|工具格|前置格|第一格|第二格|第三格|第四格|第五格|第六格)/;
@@ -430,6 +431,11 @@
       var lesson6 = Object.assign({}, BUILTIN_LESSON6);
       lesson6.id = 'lesson6';
       list.push(lesson6);
+    }
+    if (BUILTIN_LESSON7) {
+      var lesson7 = Object.assign({}, BUILTIN_LESSON7);
+      lesson7.id = 'lesson7';
+      list.push(lesson7);
     }
     return list;
   }
