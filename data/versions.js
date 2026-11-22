@@ -1,9 +1,9 @@
 window.RU_ZH_VERSIONS = {
-  "current": "2.2",
+  "current": "2.3",
   "versions": [
     {
-      "version": "2.2",
-      "label": "Beta v2.2",
+      "version": "2.3",
+      "label": "Beta v2.3",
       "date": "2026-11-16",
       "items": [
         "新增挖空训练：点「挖空」进入标记模式，点不记得的单词，复习时这些词会变成 ·····，点一下即可显示。",
