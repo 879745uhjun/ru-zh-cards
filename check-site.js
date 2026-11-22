@@ -22,7 +22,8 @@ const LESSONS = [
   { id: 'lesson3', file: 'data/lesson3.js', key: 'RU_ZH_LESSON3', cards: 51 },
   { id: 'lesson4', file: 'data/deck.js', key: 'RU_ZH_DECK', cards: 50 },
   { id: 'lesson5', file: 'data/lesson5.js', key: 'RU_ZH_LESSON5', cards: 41 },
-  { id: 'lesson6', file: 'data/lesson6.js', key: 'RU_ZH_LESSON6', cards: 45 }
+  { id: 'lesson6', file: 'data/lesson6.js', key: 'RU_ZH_LESSON6', cards: 45 },
+  { id: 'lesson7', file: 'data/lesson7.js', key: 'RU_ZH_LESSON7', cards: 46 }
 ];
 
 const decks = [];
@@ -64,7 +65,7 @@ GUARD_HTML.forEach(function (file) {
   check(file + ' 未被写坏', source.length > 400 && /<!doctype html>/i.test(source), source.length + 'B');
 });
 const GUARD_DATA = ['data/deck.js', 'data/lesson1.js', 'data/lesson2.js', 'data/lesson3.js', 'data/lesson5.js',
-  'data/lesson6.js', 'data/sources.js', 'data/lemmas.js', 'data/versions.js', 'data/extra-texts.js', 'data/text-search.js', 'data/decks-source.js'];
+  'data/lesson6.js', 'data/lesson7.js', 'data/sources.js', 'data/lemmas.js', 'data/versions.js', 'data/extra-texts.js', 'data/text-search.js', 'data/decks-source.js'];
 GUARD_DATA.forEach(function (file) {
   const source = fs.readFileSync(path.join(base, file), 'utf8');
   check(file + ' 未被写坏', source.length > 200 && source.indexOf('window.') !== -1, source.length + 'B');

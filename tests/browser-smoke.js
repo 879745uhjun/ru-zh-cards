@@ -85,7 +85,7 @@ function watch(target, label) {
       const select = document.getElementById('deckSelect');
       return { options: select ? Array.from(select.options).length : 0 };
     });
-    check('课程选择器有 6 课', deckInfo.options === 6, String(deckInfo.options));
+    check('课程选择器有 7 课', deckInfo.options === 7, String(deckInfo.options));
 
     // 第 6 课卡片
     await page.goto(base + 'index.html?deck=lesson6&card=1', { waitUntil: 'load' });
@@ -97,6 +97,12 @@ function watch(target, label) {
     }));
     check('第 6 课共 45 张', Number(lesson6.total) === 45, lesson6.total);
     check('第 6 课首卡重音正确', lesson6.words.includes('одноко'), lesson6.words);
+
+    await page.goto(base + 'index.html?deck=lesson7&card=1', { waitUntil: 'load' });
+    if (await page.locator('#versionOk').count()) await page.click('#versionOk');
+    await page.waitForSelector('.card .word', { timeout: 15000 });
+    const lesson7Total = (await page.textContent('#totalNum')).trim();
+    check('第 7 课共 46 张', Number(lesson7Total) === 46, lesson7Total);
 
     await page.goto(base + 'index.html?deck=lesson1', { waitUntil: 'load' });
     if (await page.locator('#versionOk').count()) await page.click('#versionOk');

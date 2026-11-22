@@ -17,8 +17,8 @@ const baseSections = load('data/sources.js', 'RU_ZH_SOURCE_SECTIONS') || [];
 const extra = load('data/extra-texts.js', 'RU_ZH_EXTRA_TEXTS') || { sections: [], texts: {} };
 const lemmas = load('data/lemmas.js', 'RU_ZH_LEMMAS') || {};
 
-const LESSONS = ['data/lesson1.js', 'data/lesson2.js', 'data/lesson3.js', 'data/deck.js', 'data/lesson5.js', 'data/lesson6.js'];
-const KEYS = ['RU_ZH_LESSON1', 'RU_ZH_LESSON2', 'RU_ZH_LESSON3', 'RU_ZH_DECK', 'RU_ZH_LESSON5', 'RU_ZH_LESSON6'];
+const LESSONS = ['data/lesson1.js', 'data/lesson2.js', 'data/lesson3.js', 'data/deck.js', 'data/lesson5.js', 'data/lesson6.js', 'data/lesson7.js'];
+const KEYS = ['RU_ZH_LESSON1', 'RU_ZH_LESSON2', 'RU_ZH_LESSON3', 'RU_ZH_DECK', 'RU_ZH_LESSON5', 'RU_ZH_LESSON6', 'RU_ZH_LESSON7'];
 
 const SUFFIX = ['иями','ями','ами','ией','иях','ях','ах','ов','ев','ий','ый','ой','ая','яя','ое','ее','ые','ие','ую','юю','ем','ом','ам','ям','ия','ию','ии','ей','а','я','о','е','ы','и','у','ю'];
 function stem(word) {
