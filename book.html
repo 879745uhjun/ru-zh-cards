@@ -90,6 +90,38 @@ a{color:inherit}
 .foot{margin-top:38px;display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:9px;letter-spacing:.04em}
 .foot a{text-decoration:none}
 .foot a:hover{color:var(--accent)}
+/* random quiz sheet */
+.quiz-overlay{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:20px}
+.quiz-overlay[hidden]{display:none}
+.quiz-backdrop{position:absolute;inset:0;background:rgba(31,42,56,.34);backdrop-filter:blur(3px)}
+.quiz-sheet{position:relative;width:min(560px,100%);max-height:calc(100vh - 40px);overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 70px rgba(31,42,56,.28)}
+.quiz-sheet-head{display:flex;justify-content:space-between;gap:16px;padding:20px 22px 14px;border-bottom:1px solid var(--line-soft)}
+.quiz-sheet-head h2{margin:5px 0 4px;font-family:var(--zh);font-size:21px;font-weight:600}
+.quiz-sheet-head p{margin:0;max-width:400px;color:var(--muted);font-size:11.5px;line-height:1.7}
+.quiz-close{border:0;background:transparent;color:var(--muted);font-size:22px;line-height:1;padding:2px 6px;cursor:pointer}
+.quiz-close:hover{color:var(--accent)}
+.quiz-sheet-body{padding:16px 22px 8px;display:grid;gap:16px}
+.quiz-field-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;font-size:11.5px;font-weight:700;color:var(--soft)}
+.quiz-field-label em{font-style:normal;font-weight:400;color:var(--muted);font-size:10.5px}
+.quiz-choice-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.quiz-choice{border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:10px 4px;text-align:center;cursor:pointer;color:var(--soft)}
+.quiz-choice b{display:block;font-family:var(--ru);font-size:21px;font-weight:400;line-height:1.2}
+.quiz-choice small{font-size:10px;color:var(--muted)}
+.quiz-choice:hover{border-color:#c9b7a0}
+.quiz-choice.on{border:2px solid var(--accent);background:#fdf3f0;color:var(--accent-deep)}
+.quiz-choice.on small{color:var(--accent-deep)}
+.quiz-choice.custom b{font-family:var(--sans);font-size:12.5px;font-weight:700;padding:5px 0 2px}
+.quiz-custom-row,.quiz-deck-row{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:11.5px;color:var(--soft)}
+.quiz-custom-row[hidden],.quiz-deck-row[hidden]{display:none}
+.quiz-custom-row input,.quiz-deck-row select{border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:6px 8px;font-size:11.5px;color:var(--ink)}
+.quiz-custom-row input{width:76px;text-align:center}
+.quiz-seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--paper)}
+.quiz-seg button{border:0;background:transparent;padding:7px 14px;font-size:11.5px;color:var(--muted);cursor:pointer}
+.quiz-seg button.on{background:var(--ink);color:#fffdf8;font-weight:600}
+.quiz-sheet-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 22px 18px;border-top:1px solid var(--line-soft);background:rgba(251,246,236,.7)}
+.quiz-pool{font-size:10.5px;color:var(--muted)}
+.quiz-pool b{color:var(--soft)}
+@media (max-width:640px){.quiz-choice-grid{grid-template-columns:repeat(2,1fr)}}
 /* unit detail overlay */
 .unit-overlay{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;display:none}
 .unit-overlay.open{display:block}
@@ -123,8 +155,8 @@ a{color:inherit}
 @media(max-width:1100px){.unit-open{display:none}.book-hero{grid-template-columns:280px minmax(0,1fr);gap:28px}.cover{height:380px}.unit-row{grid-template-columns:44px minmax(0,1fr) 170px 60px 16px}.word-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.page{padding:26px 24px 44px}}
 @media(max-width:760px){.unit-open{display:none}html,body{max-width:100%;}.topbar{padding:13px 16px;flex-wrap:wrap;max-width:100%}.top-actions{display:none}.section-count{display:none}.page{padding:20px 16px 40px;width:100%;max-width:100%}.book-hero{display:block;width:100%;max-width:100%;min-width:0}.cover{margin:0 auto}.book-copy{width:100%;max-width:100%}.book-desc{width:100%;max-width:100%}.cover{height:300px;max-width:280px}.cover-title{margin-top:40px;font-size:25px}.cover-num{font-size:88px}.book-copy h1{font-size:28px}.unit-row{grid-template-columns:34px minmax(0,1fr) 22px;gap:10px}.unit-progress,.unit-count{display:none}.unit-title{font-size:14px}.overlay-head{padding:12px 16px}.overlay-body{padding:22px 16px 40px}.overlay-title-row{display:block}.overlay-actions{margin-top:14px}.word-grid{grid-template-columns:1fr}}
 </style>
-<link rel="stylesheet" href="sidebar.css?v=2.4.0">
-<link rel="stylesheet" href="version-update.css?v=2.4.0">
+<link rel="stylesheet" href="sidebar.css?v=2.5.0">
+<link rel="stylesheet" href="version-update.css?v=2.5.0">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -135,7 +167,7 @@ a{color:inherit}
   <div class="brand">
     <div class="brand-mark">Я</div>
     <div>
-      <div class="brand-name">俄汉记忆卡 <span class="brand-version">BETA v2.4</span></div>
+      <div class="brand-name">俄汉记忆卡 <span class="brand-version">BETA v2.5</span></div>
       <div class="brand-sub">РУССКИЙ · 逐词重音与语法</div>
     </div>
   </div>
@@ -168,14 +200,15 @@ a{color:inherit}
       <div class="book-actions">
         <a class="primary-btn" href="index.html?deck=lesson1">继续学习 第 1 课</a>
         <a class="ghost-btn" href="plan.html">学习计划</a>
-        <a class="ghost-btn" href="sources.html?v=2.4.0">来源查询</a>
+        <a class="ghost-btn" href="sources.html?v=2.5.0">来源查询</a>
         <a class="ghost-btn review-btn" id="reviewBtn" href="index.html?review=1">错题本 <span class="review-count" id="reviewCount">0</span></a>
+        <button class="ghost-btn" id="quizBtn" type="button" title="从全部课程随机抽词组/句子自测">随机抽查</button>
         <button class="default-toggle" id="defaultToggle" type="button" aria-pressed="true" onclick="toggleDefault()"><span class="switch"></span>默认打开本书</button>
       </div>
     </div>
   </section>
 
-  <a class="text-module" href="texts.html?v=2.4.0">
+  <a class="text-module" href="texts.html?v=2.5.0">
     <span class="text-module-copy">
       <span class="text-module-kicker">ТЕКСТЫ · 5 УРОКОВ</span>
       <span class="text-module-title">Диалоги и Текст</span>
@@ -193,10 +226,62 @@ a{color:inherit}
   </section>
 
   <footer class="foot">
-    <span>新东方大学俄语（3） · Beta v2.4</span>
+    <span>新东方大学俄语（3） · Beta v2.5</span>
     <a href="changelog.html">更新日志</a>
   </footer>
 </main>
+
+<div class="quiz-overlay" id="quizOverlay" hidden>
+  <div class="quiz-backdrop" data-quiz-close></div>
+  <section class="quiz-sheet" role="dialog" aria-modal="true" aria-labelledby="quizTitle">
+    <header class="quiz-sheet-head">
+      <div>
+        <span class="eyebrow">RANDOM QUIZ</span>
+        <h2 id="quizTitle">随机抽查</h2>
+        <p>从题库随机抽一组词组/句子，先自己想，再点开答案自评。答错的会自动加入错题本。</p>
+      </div>
+      <button type="button" class="quiz-close" data-quiz-close aria-label="关闭抽查设置">×</button>
+    </header>
+    <div class="quiz-sheet-body">
+      <div class="quiz-field">
+        <div class="quiz-field-label">抽多少题 <em id="quizPoolHint">题库共 317 张</em></div>
+        <div class="quiz-choice-grid" id="quizChoices">
+          <button type="button" class="quiz-choice" data-quiz-n="20"><b>20</b><small>约 5 分钟</small></button>
+          <button type="button" class="quiz-choice" data-quiz-n="50"><b>50</b><small>约 12 分钟</small></button>
+          <button type="button" class="quiz-choice" data-quiz-n="100"><b>100</b><small>约 25 分钟</small></button>
+          <button type="button" class="quiz-choice custom" data-quiz-n="custom"><b>自定义</b><small>1–317</small></button>
+        </div>
+        <label class="quiz-custom-row" id="quizCustomRow" hidden>
+          <span>自定义题量</span>
+          <input id="quizCustomInput" type="number" min="1" max="317" value="30" inputmode="numeric">
+          <span>张</span>
+        </label>
+      </div>
+      <div class="quiz-field">
+        <div class="quiz-field-label">抽查范围</div>
+        <div class="quiz-seg" id="quizScopeSeg">
+          <button type="button" data-quiz-scope="all" class="on">全部课程</button>
+          <button type="button" data-quiz-scope="deck">指定课程</button>
+        </div>
+        <label class="quiz-deck-row" id="quizDeckRow" hidden>
+          <span>选择课程</span>
+          <select id="quizDeckSelect"></select>
+        </label>
+      </div>
+      <div class="quiz-field">
+        <div class="quiz-field-label">题面方向</div>
+        <div class="quiz-seg" id="quizDirSeg">
+          <button type="button" data-quiz-dir="ru" class="on">俄 → 汉</button>
+          <button type="button" data-quiz-dir="zh">汉 → 俄</button>
+        </div>
+      </div>
+    </div>
+    <footer class="quiz-sheet-foot">
+      <span class="quiz-pool" id="quizStartHint">将随机抽取 20 张 · 不重复</span>
+      <button type="button" class="primary-btn" id="quizStartBtn">开始抽查</button>
+    </footer>
+  </section>
+</div>
 
 <div class="unit-overlay" id="unitOverlay">
   <header class="overlay-head">
@@ -357,13 +442,126 @@ a{color:inherit}
   }
   window.toggleDefault=function(){var b=document.getElementById('defaultToggle');var on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem('ru-zh-cards-book-default-v1',on?'1':'0');}catch(e){}};
   try{if(localStorage.getItem('ru-zh-cards-book-default-v1')==='0')document.getElementById('defaultToggle').setAttribute('aria-pressed','false');}catch(e){}
+
+  // ---------- 随机抽查设置 ----------
+  var QUIZ_KEY='ru-zh-cards-quiz-v1';
+  var quiz={n:20,scope:'all',deck:(DECKS[0]&&DECKS[0].id)||'',dir:'ru',custom:false};
+  var deckSelect=document.getElementById('quizDeckSelect');
+  if(deckSelect){
+    deckSelect.innerHTML=DECKS.map(function(d){
+      return '<option value="'+esc(d.id)+'">第 '+Number(d.num)+' 课 · '+esc(String(d.title||'').replace(/^第 [0-9]+ 课 · /,''))+'（'+d.cards.length+' 张）</option>';
+    }).join('');
+  }
+  function quizPoolCount(){
+    if(quiz.scope==='deck'){
+      var hit=DECKS.filter(function(d){return d.id===quiz.deck;})[0];
+      return hit?hit.cards.length:0;
+    }
+    return DECKS.reduce(function(sum,d){return sum+d.cards.length;},0);
+  }
+  function quizClamp(n){
+    var pool=Math.max(1,quizPoolCount());
+    n=Math.round(Number(n)||1);
+    return Math.max(1,Math.min(pool,n));
+  }
+  function syncQuiz(){
+    var pool=quizPoolCount();
+    document.getElementById('quizPoolHint').textContent='题库共 '+pool+' 张';
+    document.querySelectorAll('#quizChoices [data-quiz-n]').forEach(function(btn){
+      var v=btn.getAttribute('data-quiz-n');
+      var on=quiz.custom?(v==='custom'):(Number(v)===quiz.n);
+      btn.classList.toggle('on',on);
+      btn.setAttribute('aria-pressed',on?'true':'false');
+    });
+    document.getElementById('quizCustomRow').hidden=!quiz.custom;
+    document.querySelectorAll('#quizScopeSeg button').forEach(function(btn){
+      var on=btn.getAttribute('data-quiz-scope')===quiz.scope;
+      btn.classList.toggle('on',on);
+      btn.setAttribute('aria-pressed',on?'true':'false');
+    });
+    document.getElementById('quizDeckRow').hidden=quiz.scope!=='deck';
+    document.querySelectorAll('#quizDirSeg button').forEach(function(btn){
+      var on=btn.getAttribute('data-quiz-dir')===quiz.dir;
+      btn.classList.toggle('on',on);
+      btn.setAttribute('aria-pressed',on?'true':'false');
+    });
+    document.getElementById('quizStartHint').textContent='将随机抽取 '+quizClamp(quiz.n)+' 张 · 不重复';
+  }
+  function openQuiz(){
+    try{
+      var saved=JSON.parse(localStorage.getItem(QUIZ_KEY)||'null');
+      if(saved&&typeof saved==='object'){
+        quiz.n=quizClamp(saved.n||20);
+        quiz.dir=saved.dir==='zh'?'zh':'ru';
+        quiz.scope=saved.scope==='deck'?'deck':'all';
+        if(saved.deck&&DECKS.some(function(d){return d.id===saved.deck;}))quiz.deck=saved.deck;
+      }
+    }catch(e){}
+    if(!quiz.deck&&DECKS.length)quiz.deck=DECKS[0].id;
+    quiz.custom=[20,50,100].indexOf(quiz.n)===-1;
+    if(deckSelect)deckSelect.value=quiz.deck;
+    document.getElementById('quizCustomInput').value=quizClamp(quiz.n);
+    syncQuiz();
+    document.getElementById('quizOverlay').hidden=false;
+    document.body.style.overflow='hidden';
+    document.getElementById('quizStartBtn').focus();
+  }
+  function closeQuiz(){
+    document.getElementById('quizOverlay').hidden=true;
+    document.body.style.overflow='';
+  }
+  function startQuizNow(){
+    var n=quizClamp(quiz.n);
+    var url='index.html?quiz=1&n='+n+'&dir='+quiz.dir+'&scope='+quiz.scope;
+    if(quiz.scope==='deck')url+='&deck='+encodeURIComponent(quiz.deck);
+    try{localStorage.setItem(QUIZ_KEY,JSON.stringify({n:n,dir:quiz.dir,scope:quiz.scope,deck:quiz.deck}));}catch(e){}
+    location.href=url;
+  }
+  document.getElementById('quizBtn').addEventListener('click',openQuiz);
+  document.querySelectorAll('[data-quiz-close]').forEach(function(el){el.addEventListener('click',closeQuiz);});
+  document.getElementById('quizChoices').addEventListener('click',function(event){
+    var btn=event.target.closest('[data-quiz-n]');
+    if(!btn)return;
+    var v=btn.getAttribute('data-quiz-n');
+    if(v==='custom'){
+      quiz.custom=true;
+      document.getElementById('quizCustomInput').focus();
+    }else{
+      quiz.custom=false;
+      quiz.n=Number(v);
+      document.getElementById('quizCustomInput').value=quiz.n;
+    }
+    syncQuiz();
+  });
+  document.getElementById('quizCustomInput').addEventListener('input',function(){
+    quiz.n=quizClamp(this.value);
+    quiz.custom=true;
+    syncQuiz();
+  });
+  document.getElementById('quizScopeSeg').addEventListener('click',function(event){
+    var btn=event.target.closest('[data-quiz-scope]');
+    if(!btn)return;
+    quiz.scope=btn.getAttribute('data-quiz-scope');
+    syncQuiz();
+  });
+  if(deckSelect)deckSelect.addEventListener('change',function(){quiz.deck=this.value;syncQuiz();});
+  document.getElementById('quizDirSeg').addEventListener('click',function(event){
+    var btn=event.target.closest('[data-quiz-dir]');
+    if(!btn)return;
+    quiz.dir=btn.getAttribute('data-quiz-dir');
+    syncQuiz();
+  });
+  document.getElementById('quizStartBtn').addEventListener('click',startQuizNow);
+  document.addEventListener('keydown',function(event){
+    if(event.key==='Escape'&&!document.getElementById('quizOverlay').hidden)closeQuiz();
+  });
   renderHome();
   if(location.hash.indexOf('#unit-')===0)openUnit(location.hash.slice(6));
 })();
 </script>
-<script src="sidebar.js?v=2.4.0"></script>
-<script src="data/versions.js?v=2.4.0"></script>
-<script src="version-update.js?v=2.4.0"></script>
-<script src="pwa.js?v=2.4.0"></script>
+<script src="sidebar.js?v=2.5.0"></script>
+<script src="data/versions.js?v=2.5.0"></script>
+<script src="version-update.js?v=2.5.0"></script>
+<script src="pwa.js?v=2.5.0"></script>
 </body>
 </html>

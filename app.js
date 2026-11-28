@@ -8,6 +8,7 @@
   var SCHEDULE_KEY = 'ru-zh-cards-schedule-v0.3';
   var GAP_KEY = 'ru-zh-cards-gap-v1';
   var PLAN_KEY = 'ru-zh-cards-plan-v1';
+  var QUIZ_KEY = 'ru-zh-cards-quiz-v1';
   var DELETED_KEY = 'ru-zh-cards-deleted-v1';
   var BUILTIN_DECK = window.RU_ZH_DECK;
   var BUILTIN_LESSON1 = window.RU_ZH_LESSON1;
@@ -18,7 +19,14 @@
   var BUILTIN_LESSON7 = window.RU_ZH_LESSON7;
   var VOWELS = 'аеёиоуыэюяАЕЁИОУЫЭЮЯ';
   var WORD_RE = /(?:[А-Яа-яЁёA-Za-z0-9]|\[[А-Яа-яЁё]\])+(?:[-–—](?:[А-Яа-яЁёA-Za-z0-9]|\[[А-Яа-яЁё]\])+)*/g;
-  var CASE_RE = /(主格|宾格|与格|属格|工具格|前置格|第一格|第二格|第三格|第四格|第五格|第六格)/;
+  var CASE_RE = /(主格|宾格|与格|属格|工具格|前置格|第一格|第二格|第三格|第四格|第五格|第六格)/g;
+  // 格名双写：显示时把「中文本名」和「第X格」同时给出，如 属格（第二格）。
+  // 注意：只影响显示，卡片数据与编辑框仍用原始写法。
+  var CASE_NAME = {
+    '主格': '主格', '属格': '属格', '与格': '与格', '宾格': '宾格', '工具格': '工具格', '前置格': '前置格',
+    '第一格': '主格', '第二格': '属格', '第三格': '与格', '第四格': '宾格', '第五格': '工具格', '第六格': '前置格'
+  };
+  var CASE_ORDINAL = { '主格': '第一格', '属格': '第二格', '与格': '第三格', '宾格': '第四格', '工具格': '第五格', '前置格': '第六格' };
 
   var state = {
     decks: [],
@@ -44,7 +52,9 @@
     importTab: 'table',
     fileText: '',
     fileName: '',
-    fileType: 'auto'
+    fileType: 'auto',
+    quiz: null,
+    quizSettings: { n: 20, dir: 'ru', scope: 'all', deck: '' }
   };
 
   var $ = function (sel) { return document.querySelector(sel); };
@@ -1057,9 +1067,22 @@
     }
     var inner = labels.map(function (label) {
       var safe = String(label).split(/\s*·\s*/).map(function (part) {
-        var chunk = escapeHtml(part);
-        chunk = chunk.replace(CASE_RE, '<span class="g-case">$1</span>');
-        return '<span class="g-seg">' + chunk + '</span>';
+        // 格名同时显示两种叫法：属格（第二格）／主格（第一格）
+        // 若原文已带括号注释（如「主格（专有名词）」），合并成一个括号，避免套括号
+        var text = String(part);
+        var trail = /^(.*?)（([^）]*)）$/.exec(text);
+        var core = trail ? trail[1] : text;
+        var tail = trail ? trail[2] : '';
+        var ordinal = null;
+        var chunk = escapeHtml(core).replace(CASE_RE, function (hit) {
+          var name = CASE_NAME[hit] || hit;
+          ordinal = CASE_ORDINAL[name] || null;
+          return '<span class="g-case">' + escapeHtml(name) + '</span>';
+        });
+        if (ordinal) chunk += '<span class="g-case-alt">（' + escapeHtml(tail ? tail + '；' + ordinal : ordinal) + '）</span>';
+        else if (tail) chunk += '<span class="g-tail">（' + escapeHtml(tail) + '）</span>';
+        // 带格名的段允许换行（否则「…属格（第二格）」比原来长，会撑出 166px 列宽）
+        return '<span class="g-seg' + (ordinal ? ' g-seg-case' : '') + '">' + chunk + '</span>';
       }).join(' ');
       return '<span class="g-label">' + safe + '</span>';
     }).join('');
@@ -1156,6 +1179,7 @@
   }
 
   function render() {
+    if (state.quiz) { renderQuiz(); return; }
     var deck = state.deck;
     var total = state.visible.length;
     var card = total ? state.visible[state.index] : null;
@@ -2039,6 +2063,285 @@
     showToast('已清除全部学习进度');
   }
 
+  // ---------- 随机抽查 ----------
+
+  function loadQuizSettings() {
+    var fallback = { n: 20, dir: 'ru', scope: 'all', deck: '' };
+    try {
+      var raw = localStorage.getItem(QUIZ_KEY);
+      var data = raw ? JSON.parse(raw) : null;
+      if (!data || typeof data !== 'object') return fallback;
+      var n = parseInt(data.n, 10);
+      return {
+        n: isNaN(n) ? 20 : Math.max(1, Math.min(1000, n)),
+        dir: data.dir === 'zh' ? 'zh' : 'ru',
+        scope: data.scope === 'deck' ? 'deck' : 'all',
+        deck: typeof data.deck === 'string' ? data.deck : ''
+      };
+    } catch (err) { return fallback; }
+  }
+
+  function saveQuizSettings() {
+    try { localStorage.setItem(QUIZ_KEY, JSON.stringify(state.quizSettings)); } catch (err) { /* ignore */ }
+  }
+
+  function quizFromUrl() {
+    var params = new URLSearchParams(window.location.search);
+    var n = parseInt(params.get('n'), 10);
+    var scope = params.get('scope') === 'deck' ? 'deck' : 'all';
+    var deck = params.get('deck') || '';
+    var dir = params.get('dir') === 'zh' ? 'zh' : 'ru';
+    return {
+      n: isNaN(n) ? 20 : Math.max(1, n),
+      scope: scope,
+      deck: deck,
+      dir: dir
+    };
+  }
+
+  function quizPoolDecks(scope, deckId) {
+    var list = state.decks.filter(function (d) {
+      return d.id !== 'plan' && d.id !== 'review' && d.id !== 'quiz';
+    });
+    if (scope === 'deck' && deckId) {
+      var hit = list.filter(function (d) { return d.id === deckId; });
+      if (hit.length) return hit;
+    }
+    return list;
+  }
+
+  function quizDeckLabel(deck) {
+    var title = String(deck.title || deck.id || '');
+    return title.split(' · ')[0] || deck.id;
+  }
+
+  function startQuiz() {
+    var opts = quizFromUrl();
+    var decks = quizPoolDecks(opts.scope, opts.deck);
+    var pool = [];
+    decks.forEach(function (deck) {
+      deck.cards.forEach(function (card) {
+        pool.push({ card: card, deckId: deck.id, deckTag: deck.tag || '', deckName: quizDeckLabel(deck) });
+      });
+    });
+    if (!pool.length) {
+      showToast('题库为空，无法开始抽查');
+      return;
+    }
+    shuffle(pool);
+    var size = Math.max(1, Math.min(opts.n, pool.length));
+    var items = pool.slice(0, size);
+    state.quiz = {
+      items: items,
+      index: 0,
+      revealed: false,
+      correct: 0,
+      wrong: 0,
+      skipped: 0,
+      answers: [],
+      startedAt: Date.now(),
+      dir: opts.dir,
+      n: opts.n,
+      scope: opts.scope,
+      deck: opts.deck,
+      finished: false
+    };
+    state.quizSettings = { n: opts.n, dir: opts.dir, scope: opts.scope, deck: opts.deck };
+    saveQuizSettings();
+    state.mode = opts.dir;
+    state.study = false;
+    state.gapMode = false;
+    state.gapShown = {};
+    state.filter = 'all';
+    state.query = '';
+    state.onlyReview = false;
+    state.dueOnly = false;
+    state.random = false;
+    state.deckId = 'quiz';
+    state.deck = {
+      id: 'quiz',
+      title: '随机抽查 · ' + (opts.scope === 'deck' ? quizDeckLabel(decks[0]) : '全部课程'),
+      subtitle: '',
+      tag: '抽查',
+      cards: items.map(function (item) { return item.card; })
+    };
+    state.visible = state.deck.cards;
+    state.index = 0;
+    state.revealed = false;
+    document.body.classList.add('quiz-mode');
+  }
+
+  function markQuizReview(card) {
+    var key = cardKey(card);
+    var old = state.schedule[key];
+    state.progress[key] = 'review';
+    state.schedule[key] = {
+      due: todayKey(),
+      interval: 1,
+      lapses: ((old && old.lapses) || 0) + 1
+    };
+    saveProgress();
+    saveSchedule();
+  }
+
+  function quizAnswer(remembered) {
+    var q = state.quiz;
+    if (!q || q.finished) return;
+    var item = q.items[q.index];
+    if (!item) return;
+    if (remembered) {
+      q.correct++;
+    } else {
+      q.wrong++;
+      markQuizReview(item.card);
+    }
+    q.answers.push({ card: item.card, correct: !!remembered, deckName: item.deckName, deckTag: item.deckTag });
+    if (q.index + 1 >= q.items.length) {
+      q.finished = true;
+    } else {
+      q.index++;
+      q.revealed = false;
+    }
+    render();
+    if (q.finished) showToast('抽查完成：答对 ' + q.correct + ' / ' + q.items.length);
+  }
+
+  function quizSkip() {
+    var q = state.quiz;
+    if (!q || q.finished) return;
+    var item = q.items[q.index];
+    if (!item) return;
+    q.skipped++;
+    q.answers.push({ card: item.card, correct: null, deckName: item.deckName, deckTag: item.deckTag });
+    if (q.index + 1 >= q.items.length) {
+      q.finished = true;
+    } else {
+      q.index++;
+      q.revealed = false;
+    }
+    render();
+    if (q.finished) showToast('抽查结束：答对 ' + q.correct + ' / ' + q.items.length);
+  }
+
+  function quizReveal() {
+    var q = state.quiz;
+    if (!q || q.finished || q.revealed) return;
+    q.revealed = true;
+    render();
+  }
+
+  function quizElapsedText(ms) {
+    var sec = Math.max(0, Math.round(ms / 1000));
+    var m = Math.floor(sec / 60);
+    var s = sec % 60;
+    return m + ':' + (s < 10 ? '0' + s : s);
+  }
+
+  function quizResultHtml() {
+    var q = state.quiz;
+    var total = q.items.length;
+    var answered = q.correct + q.wrong;
+    var pct = answered ? Math.round(q.correct / answered * 100) : 0;
+    var wrong = q.answers.filter(function (a) { return a.correct === false; });
+    var skipped = q.answers.filter(function (a) { return a.correct === null; });
+    var rows = wrong.map(function (a) {
+      return '<li><span class="quiz-wrong-ru">' + escapeHtml(cleanRu(a.card.ru)) + '</span>' +
+        '<span class="quiz-wrong-zh">' + escapeHtml(a.card.zh || '') + '</span>' +
+        '<span class="quiz-wrong-src">' + escapeHtml((a.deckTag && a.deckTag !== a.deckName ? a.deckTag + ' · ' : '') + a.deckName) + '</span></li>';
+    }).join('');
+    return '<div class="quiz-result">' +
+      '<div class="quiz-result-head">' +
+        '<div class="quiz-ring" style="background:conic-gradient(var(--ok) 0 ' + pct + '%, #e8ddcb ' + pct + '% 100%)">' +
+          '<div><b>' + pct + '%</b><span>正确率</span></div>' +
+        '</div>' +
+        '<div class="quiz-stats">' +
+          '<div><b>' + q.correct + ' / ' + total + '</b><span>答对</span></div>' +
+          '<div><b>' + q.wrong + '</b><span>答错</span></div>' +
+          '<div><b>' + q.skipped + '</b><span>跳过</span></div>' +
+          '<div><b>' + quizElapsedText(Date.now() - q.startedAt) + '</b><span>用时</span></div>' +
+        '</div>' +
+      '</div>' +
+      (rows
+        ? '<div class="quiz-wrong-box"><h4>错题已自动加入错题本（' + wrong.length + ' 张）</h4><ul>' + rows + '</ul></div>'
+        : '<div class="quiz-wrong-box empty"><h4>全部答对，没有错题</h4><p>' + (skipped.length ? '有 ' + skipped.length + ' 题跳过，未加入错题本。' : '继续保持！') + '</p></div>') +
+    '</div>';
+  }
+
+  function renderQuiz() {
+    var q = state.quiz;
+    var hud = $('#quizHud');
+    var footer = $('#quizFooter');
+    if (!q || !hud || !footer) return;
+    document.body.classList.add('quiz-mode');
+    hud.hidden = false;
+    footer.hidden = false;
+    var total = q.items.length;
+    var answered = q.correct + q.wrong + q.skipped;
+    $('#quizStep').textContent = q.finished ? '抽查完成' : '第 ' + (q.index + 1) + ' / ' + total + ' 题';
+    $('#quizScore').textContent = '✓ ' + q.correct + ' · ✗ ' + q.wrong + (q.skipped ? ' · – ' + q.skipped : '');
+    $('#quizFill').style.width = Math.round((q.finished ? total : answered) / total * 100) + '%';
+    $('#deckTag').textContent = '随机抽查 · 共 ' + total + ' 题';
+    $('#deckTitle').textContent = state.deck.title;
+
+    if (q.finished) {
+      $('#cardTag').textContent = '抽查结果';
+      $('#cardIndex').textContent = 'DONE';
+      var srcEl = $('#cardSource');
+      if (srcEl) srcEl.hidden = true;
+      cardBody.innerHTML = quizResultHtml();
+      cardBody.classList.remove('study-mode');
+      footer.innerHTML =
+        '<button type="button" class="quiz-btn primary" data-quiz="again">再来一组</button>' +
+        '<button type="button" class="quiz-btn ghost" data-quiz="settings">换题量</button>' +
+        '<a class="quiz-btn ghost" href="index.html?review=1">看错题本</a>' +
+        '<a class="quiz-btn ghost" href="book.html">返回书首页</a>';
+      return;
+    }
+
+    var item = q.items[q.index];
+    var card = item.card;
+    $('#cardTag').textContent = (item.deckTag && item.deckTag !== item.deckName ? item.deckTag + ' · ' : '') + item.deckName;
+    $('#cardIndex').textContent = 'Q ' + pad(q.index + 1);
+    var srcEl2 = $('#cardSource');
+    if (srcEl2) srcEl2.hidden = true;
+
+    var body = '';
+    if (q.dir === 'zh') {
+      body += zhHtml(card, true);
+      if (q.revealed) {
+        body += ruHtml(card, false);
+        body += noteHtml(card);
+      } else {
+        body += '<div class="quiz-ask">先在心里译成俄语，再显示答案</div>';
+      }
+    } else {
+      body += ruHtml(card, true);
+      if (q.revealed) {
+        body += zhHtml(card, false);
+        body += noteHtml(card);
+      } else {
+        body += '<div class="quiz-ask">先在心里译成中文，再显示答案</div>';
+      }
+    }
+    cardBody.innerHTML = body;
+    cardBody.classList.remove('study-mode');
+
+    footer.innerHTML = q.revealed
+      ? '<button type="button" class="quiz-btn forget" data-quiz="forget">不记得 <kbd>1</kbd></button>' +
+        '<button type="button" class="quiz-btn remember" data-quiz="remember">记得 <kbd>2</kbd></button>'
+      : '<button type="button" class="quiz-btn ghost" data-quiz="skip">跳过</button>' +
+        '<button type="button" class="quiz-btn primary" data-quiz="reveal">显示答案 <kbd>空格</kbd></button>';
+  }
+
+  function handleQuizAction(action) {
+    if (action === 'reveal') quizReveal();
+    else if (action === 'remember') quizAnswer(true);
+    else if (action === 'forget') quizAnswer(false);
+    else if (action === 'skip') quizSkip();
+    else if (action === 'again') window.location.reload();
+    else if (action === 'settings') window.location.href = 'book.html';
+  }
+
   function readFile(file) {
     if (!file) return;
     state.fileName = file.name;
@@ -2056,6 +2359,13 @@
     };
     reader.readAsText(file, 'utf-8');
   }
+
+  document.addEventListener('click', function (event) {
+    var hit = event.target.closest('[data-quiz]');
+    if (!hit) return;
+    event.preventDefault();
+    handleQuizAction(hit.dataset.quiz);
+  });
 
   document.querySelectorAll('.mode-switch button').forEach(function (btn) {
     btn.addEventListener('click', function () { setMode(btn.dataset.mode); });
@@ -2329,6 +2639,22 @@
 
     var tag = (event.target.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'textarea' || tag === 'select' || event.target.isContentEditable) return;
+
+    if (state.quiz) {
+      var quiz = state.quiz;
+      var quizKey = event.key;
+      if (quizKey === ' ' || quizKey === 'Spacebar' || quizKey === 'Enter') {
+        event.preventDefault();
+        if (!quiz.finished && !quiz.revealed) quizReveal();
+        return;
+      }
+      if (!quiz.finished && quiz.revealed && (quizKey === '1' || quizKey === '2')) {
+        event.preventDefault();
+        quizAnswer(quizKey === '2');
+        return;
+      }
+      return;
+    }
     // 标记按钮保留默认行为（空格激活），其余按钮上按空格仍然显示/隐藏原文
     if (event.target.closest('[data-mark]')) return;
     if (event.target.closest('button, a, [role="button"]') && event.key !== ' ' && event.key !== 'Spacebar') return;
@@ -2379,6 +2705,7 @@
       state.schedule = loadSchedule();
       state.gap = loadGap();
       var ui = loadUI();
+      state.quizSettings = loadQuizSettings();
       state.lastCards = (ui.lastCards && typeof ui.lastCards === 'object') ? ui.lastCards : {};
 
       var params = new URLSearchParams(window.location.search);
@@ -2461,6 +2788,7 @@
 
       renderDeckOptions();
       rebuildCategoryOptions();
+      if (params.get('quiz') === '1') startQuiz();
       var preferred = !isNaN(cardParam) ? '' : (state.lastCards[state.deckId] || ui.lastCard || '');
       refreshVisible({ preferredKey: preferred, fallbackIndex: 0 });
       if (!isNaN(cardParam)) {

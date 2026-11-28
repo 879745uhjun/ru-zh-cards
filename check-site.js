@@ -134,6 +134,16 @@ check('版本条目都有 items', (versions.versions || []).every(function (v) {
 check('文本页存在', fs.existsSync(path.join(base, 'texts.html')));
 check('书首页链接文本页', fs.readFileSync(path.join(base, 'book.html'), 'utf8').includes('texts.html'));
 check('不在书首页链接来源查询作为文本入口', !fs.readFileSync(path.join(base, 'book.html'), 'utf8').includes('text-module" href="sources.html"'));
+
+// 随机抽查入口与卡片页容器
+const bookHtml = fs.readFileSync(path.join(base, 'book.html'), 'utf8');
+const indexHtml = fs.readFileSync(path.join(base, 'index.html'), 'utf8');
+const appJs = fs.readFileSync(path.join(base, 'app.js'), 'utf8');
+check('书首页有随机抽查入口', bookHtml.includes('id="quizBtn"'));
+check('抽查设置弹层含 20/50/100', bookHtml.includes('data-quiz-n="20"') && bookHtml.includes('data-quiz-n="50"') && bookHtml.includes('data-quiz-n="100"'));
+check('抽查弹层含俄汉与汉俄方向', bookHtml.includes('data-quiz-dir="ru"') && bookHtml.includes('data-quiz-dir="zh"'));
+check('卡片页有抽查进度容器', indexHtml.includes('id="quizHud"') && indexHtml.includes('id="quizStep"'));
+check('app.js 支持 quiz 参数', appJs.includes('params.get(\'quiz\')') && appJs.includes('startQuiz'));
 check('删除状态键存在', fs.readFileSync(path.join(base, 'app.js'), 'utf8').includes('ru-zh-cards-deleted-v1'));
 check('备份包含 deleted', fs.readFileSync(path.join(base, 'app.js'), 'utf8').includes('deleted: loadDeleted()'));
 check('每课数据都挂在页面上', GUARD_HTML.filter(function (f) { return f !== 'single.html' && f !== 'account-demo.html'; }).every(function (f) {

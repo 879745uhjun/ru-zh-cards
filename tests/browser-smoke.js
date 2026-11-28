@@ -224,6 +224,12 @@ function watch(target, label) {
     await book.goto(base + 'book.html', { waitUntil: 'load' });
     if (await book.locator('#versionOk').count()) await book.click('#versionOk');
     check('书首页有错题本按钮', await book.locator('#reviewBtn').count() === 1);
+    check('书首页有随机抽查按钮', await book.locator('#quizBtn').count() === 1);
+    await book.click('#quizBtn');
+    check('抽查设置弹层可打开', await book.locator('#quizOverlay').isVisible());
+    check('抽查可选 20/50/100', await book.locator('#quizChoices [data-quiz-n]').count() === 4);
+    await book.click('#quizOverlay .quiz-close');
+    check('抽查设置弹层可关闭', !(await book.locator('#quizOverlay').isVisible()));
 
     await book.evaluate(() => { if (window.openUnit) window.openUnit('lesson6'); });
     await book.waitForTimeout(500);
@@ -242,6 +248,31 @@ function watch(target, label) {
     await account.fill('#email', 'ci@example.com');
     await account.click('#submitAuth');
     check('账号测试版登录态', await account.locator('#profileView').evaluate(el => el.classList.contains('show')));
+
+    const quiz = await context.newPage();
+    watch(quiz, 'quiz');
+    await quiz.goto(base + 'index.html?quiz=1&n=3&dir=ru&scope=all', { waitUntil: 'load' });
+    await quiz.waitForSelector('#quizHud', { timeout: 15000 });
+    check('抽查页显示题号', (await quiz.textContent('#quizStep')).includes('/ 3'));
+    check('抽查模式隐藏翻页', await quiz.locator('.pager').evaluate(el => getComputedStyle(el).display === 'none'));
+    const beforeReview = await quiz.evaluate(() => {
+      const p = JSON.parse(localStorage.getItem('ru-zh-cards-progress-v0.2') || '{}');
+      return Object.keys(p).filter(k => p[k] === 'review').length;
+    });
+    await quiz.keyboard.press('Space');
+    check('抽查空格显示答案', await poll(async () => (await quiz.locator('.zh-wrap').count()) > 0, 5000));
+    await quiz.keyboard.press('1');
+    const afterReview = await quiz.evaluate(() => {
+      const p = JSON.parse(localStorage.getItem('ru-zh-cards-progress-v0.2') || '{}');
+      return Object.keys(p).filter(k => p[k] === 'review').length;
+    });
+    check('抽查答错自动进错题本', afterReview === beforeReview + 1, beforeReview + '->' + afterReview);
+    await quiz.keyboard.press('Space');
+    await quiz.keyboard.press('2');
+    await quiz.keyboard.press('Space');
+    await quiz.keyboard.press('2');
+    check('抽查结束显示结果', (await quiz.textContent('#cardBody')).includes('正确率'));
+    check('抽查结果可再来一组', await quiz.locator('#quizFooter [data-quiz="again"]').count() === 1);
 
     const mobile = await browser.newContext({ viewport: { width: 390, height: 844 } });
     const mp = await mobile.newPage();
